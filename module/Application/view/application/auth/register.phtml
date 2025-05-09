@@ -1,0 +1,49 @@
+<h2>Inscription</h2>
+
+<?= $this->form()->openTag($form) ?>
+
+<div class="row">
+
+    <div class='col-6'>
+        <?= $this->formLabel($form->get('lastname')) ?>
+        <?= $this->formElement($form->get('lastname')) ?>
+    </div>
+
+    <div class='col-6'>
+        <?= $this->formLabel($form->get('firstname')) ?>
+        <?= $this->formElement($form->get('firstname')) ?>
+    </div>
+
+</div>
+<div class="row">
+    <div  class='col-6'>
+        <?= $this->formLabel($form->get('nickname')) ?>
+        <?= $this->formElement($form->get('nickname')) ?>
+    </div>
+
+    <div >
+        <?= $this->formLabel($form->get('birthday')) ?>
+        <?= $this->formElement($form->get('birthday')) ?>
+    </div>
+</div>
+
+
+    <div>
+        <?= $this->formLabel($form->get('email')) ?>
+        <?= $this->formElement($form->get('email')) ?>
+    </div>
+
+    <div>
+        <?= $this->formLabel($form->get('password')) ?>
+        <?= $this->formElement($form->get('password')) ?>
+    </div>
+
+    <div>
+        <?= $this->formLabel($form->get('confirm_password')) ?>
+        <?= $this->formElement($form->get('confirm_password')) ?>
+    </div>
+
+    <div style="margin-top:20px; margin-bottom:20px;">
+        <?= $this->formElement($form->get('submit')) ?>
+    </div>
+<?= $this->form()->closeTag() ?>

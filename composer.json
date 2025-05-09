@@ -1,0 +1,91 @@
+{
+    "name": "laminas/laminas-mvc-skeleton",
+    "description": "Laminas MVC Skeleton Application",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "laminas",
+        "mvc",
+        "skeleton",
+        "framework"
+    ],
+    "require": {
+        "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
+        "laminas/laminas-component-installer": "^3.2",
+        "laminas/laminas-development-mode": "^3.10",
+        "laminas/laminas-skeleton-installer": "^1.2",
+        "laminas/laminas-mvc": "^3.6.0",
+        "laminas/laminas-cache": "^3.10",
+        "laminas/laminas-cache-storage-adapter-filesystem": "^2.3",
+        "laminas/laminas-serializer": "^2.17",
+        "doctrine/doctrine-laminas-hydrator": "^2.2",
+        "doctrine/dbal": "^3.8",
+        "doctrine/orm": "^2.12",
+        "doctrine/doctrine-module": "^4.4",
+        "doctrine/doctrine-orm-module": "^4.2",
+        "doctrine/instantiator": "^2.0",
+        "psr/http-server-middleware": "^1.0",
+        "laminas/laminas-diactoros": "^3.4",
+        "laminas/laminas-crypt": "^4.0",
+        "psr/container": "^1.1",
+        "grpc/grpc": "1.38",
+        "symfony/var-dumper": "^6.4",
+        "laminas/laminas-session": "^2.24",
+        "laminas/laminas-i18n": "^2.29",
+        "laminas/laminas-mvc-plugin-flashmessenger": "^1.11",
+        "laminas/laminas-authentication": "^2.18",
+        "laminas/laminas-mvc-plugin-identity": "^1.7",
+        "laminas/laminas-view": "^2.36"
+    },
+    "autoload": {
+        "psr-4": {
+            "Application\\": "module/Application/src/",
+            "User\\": "module/User/src/",
+            "Parties\\": "module/Parties/src/",
+            "Forum\\": "module/Forum/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApplicationTest\\": "module/Application/test/"
+        }
+    },
+    "scripts": {
+        "clear-config-cache": "php bin/clear-config-cache.php",
+        "cs-check": "vendor/bin/phpcs",
+        "cs-fix": "vendor/bin/phpcbf",
+        "development-disable": "laminas-development-mode disable",
+        "development-enable": "laminas-development-mode enable",
+        "development-status": "laminas-development-mode status",
+        "post-create-project-cmd": [
+            "@development-enable",
+            "php bin/update-gitignore.php",
+            "php -r 'if (file_exists(\"bin/remove-package-artifacts.php\")) include \"bin/remove-package-artifacts.php\";'",
+            "php -r 'if (file_exists(\"CHANGELOG.md\")) unlink(\"CHANGELOG.md\");'"
+        ],
+        "post-install-cmd": "@clear-config-cache",
+        "post-update-cmd": "@clear-config-cache",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "php -S 0.0.0.0:8080 -t public"
+        ],
+        "test": "vendor/bin/phpunit",
+        "static-analysis": "vendor/bin/psalm --shepherd --stats"
+    },
+    "scripts-descriptions": {
+        "clear-config-cache": "Clears merged config cache. Required for config changes to be applied.",
+        "cs-check": "Run coding standards checks.",
+        "cs-fix": "Automatically fix coding standard issues.",
+        "development-disable": "Disable development mode.",
+        "development-enable": "Enable development mode.",
+        "development-status": "Detail whether or not the application is in development mode.",
+        "serve": "Start the built-in PHP web server and serve the application.",
+        "test": "Run unit tests."
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-component-installer": true,
+            "laminas/laminas-skeleton-installer": true
+        }
+    }
+}

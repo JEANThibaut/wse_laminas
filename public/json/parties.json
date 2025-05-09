@@ -1,0 +1,4802 @@
+[
+    {
+        "date": "2024-09-01T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "gautierlegout76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevindelasalle@outlook.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexydelasalle@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevin.delasalle@revima.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "flavtou@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "allan.maffeis@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevin.maffeis27@gmail.clm",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "maxboursier@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "aurelram@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "maximebayeul1@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "drisschapelliere@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "paul.vuichoud@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "rudy.armand@viacesi.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "suplieadrien@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romain.plourde76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "console974.ad@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alainmoto46@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "gwladys.hurard@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "tef1973@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "fb.bouzidi75@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romainduval@myyahoo.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "entreprisejr@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "thibox27@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "amelia.etancelin74@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "caponi.valentin0904@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "bengo2911@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "tomlaniel27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ratajuan01@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "martin.gendry24@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "kevin.goubert06@gmail.com",
+            "brandon.vanesch1@gmail.com",
+            "alexis.dealmeida@outlook.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-07-02T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "02-07-2023",
+        "participants": [
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "gagasv76120@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "antonin27600@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "angel27180@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "adri1dutot@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jacksaladin.js@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "auduberteau.aurelien@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nic131@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "m.sante0@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "a.ganee@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibautduhaze@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aymeric.rsnt@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "noalebeau76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "abdesselam.sofiane468@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "heuttevalentin@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ti.duflo@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "boulnoisstan@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gancilucas@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "johanna.groot@tutanota.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ilianapanizzoli@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jeremymathieu77450@hotmail.fr",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": false
+    },
+    {
+        "date": "2023-12-03T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "ti.duflo@laposte.net",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "jerome-vallee@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "benoit7434@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "thibautduhaze@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "tassery.paul@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "calvinferrand63@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "laurent.grente@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "matys.grosjean@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.ronzoni27940@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.jerome@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hugo.grosse6@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jonathan.guibet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bastien.godard4@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.guibet@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "arthu.bengoa@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "d.harelplombier@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexandre.ph.cros@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "konesinhalex@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "roro.barth@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mathbarth7@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "samsondylan22@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "heuttevalentin@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cyrilbarthoux45@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "noanfillion63@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sebetso27@dbmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-02-04T00:00:00.756",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "cyrilbarthoux45@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "lorenzoroux@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "noa27600@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ccoulomban27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jocelinfreret@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mattvauquelin5@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ans6tm@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "konesinhalex@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "matthieu.lebiez@cnpp.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cyrillehude@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "erisaykevin27430@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lyhamnimes@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "blarretheo01@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "damienmaisonneuve76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "maisonneuvemarc.batiment@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "t.charles@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sosoabdeslam@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "arthu.bengoa@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexandre.ph.cros@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.guibet@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "theochandellier274@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lolaborel20@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "robertnulpart@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "morgan_leflon@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "georges_leflon@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florent.del@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "floflo-76520@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hugotellier78@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sims974@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "heuttevalentin@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gregoirefaure4@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thomastv595100@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ericengwala@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ducros.ludovic@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lorenzo.ducros@hotmail.fr",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2023-06-04T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "04-06-2023",
+        "participants": [
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "brandonlucile27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "antonin27600@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "richard.giroux27700@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "t.charles@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "quentin.78800@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "paul.vuichoud@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cos27@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chehirbentoumi@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kamanepro@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "guillaumepercepied07@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lebel.mathis@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "pascal.suplie@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "valentinp6259@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "marc.bourdon12@gmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "calbrix.lawrent@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nicobourdon15@gmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "abdesselam.sofiane468@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibautduhaze@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "enzoraffin41@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ismael.yalaoui@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "fuldermax001@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-08-04T02:00:00.000",
+        "joueursMax": 30,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "arthur.bengoa@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "math.lesueur76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "debaradam@yahoo.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "wpsiikoz@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alex.lasne10@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "valentinp6259@hotmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ladiraymickael27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "enzogroultpro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "robertnulpart@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lolaborel20@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lemehaute.g@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "theochandellier274@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mitridu76.dr55@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "anais.messe276@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "quentin.roger-27@outllok.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mitridu76@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "anais162023@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sebetso27@dbmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "rorol27400@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "qentin.le@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "slimsworld27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "legayclotaire@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "maxime.helliet@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lucasvenet7@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexfrance7264@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "casanova.mickael@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "chronolegio@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "boraschi.nicolas@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "kevin.goubert06@gmail.com",
+            "k.porquet27@gmail.com",
+            "comparin.thibault@gmail.com",
+            "brandon.vanesch1@gmail.com"
+        ],
+        "isActive": false
+    },
+    {
+        "date": "2023-03-05T00:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2023-11-05T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "langloislucas@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "adrien.lengrand@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "angel27180@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "sylvainchabaille2002@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jocelinfreret@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "akira12@msn.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "duke7.8@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "courval.c@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "camilottimathis@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.ronzoni27940@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bastien.godard4@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "amelia.etancelin74@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chronolegio@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "casanova.mickael@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jerome-vallee@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "boraschi.nicolas@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thomastv595100@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aymeric.perrotto@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "guillaume.raissac@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "matteo.lerolle@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bmarceau1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bentoumichehir@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "dylazz.trd27@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-07-07T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "roland.audrey@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "pique.theo27380@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "balexandre091@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mikailkececarik27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "dylazz.trd27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexiscrestey9@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "dam.lefebvre76@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jean-bond76@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romainduval@myyahoo.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "entreprisejr@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "marvin.mnt276@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexismury@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "cyprienroussel7@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ti.duflo@laposte.net",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "elodie.brenet@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "konesinhalex@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "elodiyadu27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "duboislogan27@outlook.fr",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "kevin.goubert06@gmail.com",
+            "comparin.thibault@gmail.com",
+            "brandon.vanesch1@gmail.com",
+            "alexis.dealmeida@outlook.com",
+            "k.porquet27@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-10-08T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "brandonlucile27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "enzo.guerleau@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "thibautduhaze@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bastien.godard4@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gyzmo27400@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cyrillehude@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ducros.ludovic@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.roussely78@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "damien.hbrt@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "president@pat78.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.ronzoni27940@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "amelia.etancelin74@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bmarceau1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "petitcyril0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "adrien.lengrand@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "borasch.nicolas@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "badouetr@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "julien_berger@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jschmittlaroche@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lililianbhr78@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "a.ganee@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "clarisse.edde@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "inesbtm16@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gregoirefaure4@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "baudouindylan66@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "arthur.madoyan@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sosoabdeslam@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "margote001@hotmail.fr",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2022-04-09T00:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "09-04-2022",
+        "participants": [],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-06-09T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "dam.lefebvre76@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "l.dorian27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "tristan.renard08@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "pique.theo27380@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sammi27pro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ahic476@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sebastien27750@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "dylazz.trd27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romainduval@myyahoo.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "entreprisejr@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "antoche.3007@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "axel274@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "hugo.grosse6@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jonathan.guibet27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "aurelram@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "gilfachir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "paul.vuichoud@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "rudy.armand@viacesi.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "marvin.mnt27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "louisragnar76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexismury@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "duboislogan27@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "cos27@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "axel.michel52@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "thibaut-jean@live.fr",
+            "kevin.goubert06@gmail.com",
+            "brandon.vanesch1@gmail.com",
+            "alexis.dealmeida@outlook.com",
+            "lucas7612051@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-09-10T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "jerome-vallee@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jonathan.guibet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hugo.grosse6@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.jerome@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dias.vasconcelos@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "valentinlywahoi@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nic131@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "yael.norblin@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ange.julien27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "allardchristopher020@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "konesinhalex@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "soso27210@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "margote001@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dias.vasconcelos@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit.laurent66500@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ti.duflo@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.tasserie@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kiliancontet98@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2023-02-12T00:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "12-02-2023",
+        "participants": [],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-05-12T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "antoche.3007@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "romainduval@myyahoo.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "delgardbruno@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ccoulomban27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jocelinfreret@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mikailkececarik27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kohanagwenno0576@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ahic476@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nanajonasse@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "haudebourgalexis27130@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "petitcyril0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kingeph619@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sammi27pro@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "loustantoine@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "julien_berger@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "haisjuli1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jacksaladin.js@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "thibaut-jean@live.fr",
+            "brandon.vanesch1@gmail.com",
+            "comparin.thibault@gmail.com",
+            "alexis.dealmeida@outlook.com",
+            "kevin.goubert06@gmail.com",
+            "k.porquet27@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-08-13T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "morisseau.mylene44@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "rudy.mariesainte@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "priscillaetsandra222@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "thibautduhaze@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "samos1984@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "airsofteur76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurianeguedon@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "moreaugaetan97@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "titou.hoyaux@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.morin012@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nic131@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "a.ganee@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sylvainchabaille2002@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mitridu76.dr55@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mitridu76@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "anais.messe276@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jacksaladin.js@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ltmomo@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "arthur_74_@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "axelqui84@googlemail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dvdfy@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "romain.plourde76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "console974.ad@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benjamindeshayes123@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-10-13T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "duboislogan27@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "binjamin.hautefeuille@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "romaintaylor76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "alexismury@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "pique.theo27380@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "cyrilbarthoux45@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "alexandre.nobleaux@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "julius-challange076@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "mael.darcissac@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "kevin.maffeis27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "mattvauquelin28@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "angel27180@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "kevin.delasalle@revima.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "jb.desombre@hotmail.fr",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "enzo.guerleau@gmail.com",
+            "kevin.goubert06@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2024-04-14T02:00:00.745",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "kingeph619@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "anais162023@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "antoche.3007@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "marvin.mnt276@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "momodu28380@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "konesinhalex@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "remi_91@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ludovic.hoan1@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sosoabdeslam@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "hlxrsanku@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "fourniertheo76680@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "geoffrey19982010@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ccoulomban27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sammi27pro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kohanagwenno0576@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "cyprienroussel7@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexismury@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "marvin.mnt27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romainduval@myyahoo.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "l.dorian27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mitridu76.dr55@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mitridu76@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "quentin_20_roger@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "anais.messe276@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "robertnulpart@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lolaborel20@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jocelinfreret@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "turtlebeach46@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ahic476@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "nanajonasse@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "loustantoine@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "entreprisejr@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "bastien.godard4@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "thibaut-jean@live.fr",
+            "comparin.thibault@gmail.com",
+            "brandon.vanesch1@gmail.com"
+        ],
+        "isActive": false
+    },
+    {
+        "date": "2023-01-15T00:00:00.000",
+        "joueursMax": 10,
+        "photosUrl": "15-01-2023",
+        "participants": [],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-09-15T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "cyprienroussel7@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexismury@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "corentincornu0@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "petitcyril0@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "julien_berger@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jeremylestang@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevin.maffeis27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "maxboursier@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lucasvenet7@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "agentm4xx@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "k.porquet27@gmail.com",
+            "enzo.guerleau@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-07-16T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "asap_k@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "brandonlucile27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "rudy.mariesainte@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "antonin27600@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lebel.mathis@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "michelbedhomme@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "martin.gendry24@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "killian.langlois.vds@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucaluke1999@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chehirbentoumi@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ismael.yalaoui@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "liana.mahdani@icloud.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.tasserie@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jacksaladin.js@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kiliancontet98@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "geoffrey.marc@live.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jocelyne54@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "yannis.kamiri@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "fafa27420@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sylvainchabaille2002@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "elyesdu76@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "christopher76.allard76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "elitheo76160@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "enzoandamaye892@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "themangaka@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lyeszermane@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "fuldermax001@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benjamindeshayes123@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "delauney94@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-03-17T00:00:00.986",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "mmoreau2005@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "brice.hami27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "ccoulomban27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "slimsworld27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "corentincornu0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "owen.ren@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tristan.renard08@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tassery.paul@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dorival.aurelien@free.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dorivalckeny27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "paco.jrt76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "quesada.pascal@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "valentinp6259@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gaellemlt@icloud.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "delgardbruno@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hlxrsanku@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "fourniertheo76680@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gyzmo27400@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "matthieu.lebiez@cnpp.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "matmatherisson@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "maelba910@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.guibet@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jejemilie@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "romuherisson@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cyrillehude@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "remi_91@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hugo.grosse6@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lilian78pommier@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "casanova.mickael@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chronolegio@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ducros.ludovic@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "arthur.madoyan@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "baudouindylan66@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "timyriou@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [
+            "enzo.guerleau@gmail.com",
+            "comparin.thibault@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-06-17T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "chehirbentoumi@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "antonin27600@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "brandonlucile27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "priscillaetsandra222@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "boulnoisstan@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "romain.plourde76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "olivier.lecoultre10@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "antoinedeschamps27700@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "goubert414@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "console974.ad@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "akira12@msn.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "duke7.8@hotmail.fr",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-02-18T00:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "cyrilbarthoux45@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "hugo.grosse6@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "michelbedhomme@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "adrien.popescu06@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "noa27600@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "noanfillion63@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "nathangauquelin@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "quentincornilleau@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ccoulomban27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "konesinhalex@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "corentincornu0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kifano84@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gregoiredmtt@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "petitcyril0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "julien_berger@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mitridu76@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mitridu76.dr55@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.branly7@icloud.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "valentin_16_roger@icloud.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ti.duflo@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jonathan.camus33@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "sims974@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florent.del@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ans6tm@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "eliseph2714@icloud.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "raphaelle-jousset@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "yloecoignardfcb10@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-08-18T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "enzogroultpro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "rorol27400@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "qentin.le@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "corentin.haas.pro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "wermuit@hotmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "condorcet.glegall@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "aubert.laura15@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexandre76660@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alainmoto46@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alex.lasne10@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "tef1973@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "fb.bouzidi75@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "robertnulpart@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lolaborel20@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "theochandellier274@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romuherisson@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "karinecourage@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "slimsworld27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "arthur.bengoa@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevgou06@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "kevin.goubert06@gmail.com",
+            "alexis.dealmeida@outlook.com",
+            "thibaut-jean@live.fr"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-11-19T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "bentoumichehir@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "bababicrave@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "sosoabdeslam@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "mhdmpio@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "ilhianraafa@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "bastien.godard4@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "gaillardsalomon@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jerome-vallee@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "charpentiergustave27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kmickaz1988@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cyrillehude@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "le-biezmatthieu@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "melanie-picot@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "quentin.gresle@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "allods.compte@laposte.net",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "amelia.etancelin74@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "blw.frost@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "casanova.mickael@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chronolegio@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tauninlycee@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bruno.taunin@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lena-0901@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas.jobin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit.laurent66500@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jonathan.guibet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "konesinhalex@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cachaca.vida@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "diksoncapelot123@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bergeretheo@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "diksoncapelot29@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cleopatmodzz2@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alvarezdiego14290@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benjamindeshayes123@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2023-05-21T02:00:00.818",
+        "joueursMax": 50,
+        "photosUrl": "21-05-2023",
+        "participants": [
+            {
+                "paid": false,
+                "id": "flavtou@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "kevindelasalle@outlook.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "alexydelasalle@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "rudy.mariesainte@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tini78580@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "a.ganee@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "mj76762929@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "duke7.8@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gillou.rakky@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "akira12@msn.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "duboislogan27@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "wolften@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "romain.plourde76@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "console974.ad@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "michelbedhomme@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lecuyergwendo68@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chehirbentoumi@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "benoit.laurent66500@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mathieu76320@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "warrenp76@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nic131@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "yae.norblin@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-07-21T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "chronolegio@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "casanova.mickael@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "cyrilbarthoux45@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jocelinfreret@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ccoulomban27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "corentin.haas.pro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "corentin.gaston@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "gyzmo27400@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "cyrillehude@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "matthieu.lebiez@cnpp.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "pique.theo27380@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "yveschristopher@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexmypsy@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "allanduchemin@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "morgan.marchand02@hotmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "quentin.rogeret@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "aziz.mohamed76@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "hugo.grosse6@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "grosse.corentin@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "konesinhalex@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "leroy.dimitri.27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "brice.fauvel@hotmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "matysshopp@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "elodiyadu27@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "enzo.guerleau@gmail.com",
+            "thibaut-jean@live.fr",
+            "comparin.thibault@gmail.com",
+            "brandon.vanesch1@gmail.com",
+            "alexis.dealmeida@outlook.com",
+            "k.porquet27@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-10-22T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "enzo.guerleau@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "zlaticenzo2@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "dylazz.trd27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "arthurlct27@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": false,
+                "id": "thibautduhaze@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chronolegio@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "casanova.mickael@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "brulard.lilian@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kylian.champenois@free.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevin.goubert06@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "amelia.etancelin74@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "jeremymath27300@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "chloe.herman0112@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "calbrix.lawrent@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "darkprince76@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "axel274@hotmail.fr",
+                "presence": false
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2023-04-23T00:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "23-04-2023",
+        "participants": [],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-06-23T02:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "guerryyanismn@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "benoit7434@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "bmarceau1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "delgardbruno@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sandy.lim@sfr.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "m-a-x-i-m-e.doutreleau@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "pinault7815@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alainmoto46@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "duboislogan27@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "pique.theo27380@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dylan.peroumal95@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "antoine.staffie@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "sandrineguerinot@yahoo.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "kevinoualle@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tassery.paul@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexandre.oualle60400@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "tristan.renard08@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "boraschi.nicolas@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thomastv595100@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "lucas7612051@gmail.com",
+            "k.porquet27@gmail.com"
+        ],
+        "isActive": true
+    },
+    {
+        "date": "2023-09-24T00:00:00.000",
+        "joueursMax": 50,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": true,
+                "id": "thibaut-jean@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "comparin.thibault@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexis.dealmeida@outlook.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "florian.cochard27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "brandonlucile27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "enzo.guerleau@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "sheurlet.garcia1@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lucas7612051@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "k.porquet27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "yannick.voelkel@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "olisohm@wanadoo.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "benoit7434@live.fr",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "bmarceau1@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "clarisse.edde@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thibaut.dumonet@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "thomastv595100@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "xquvince@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "blacksamdjip.tac41@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "borasch.nicolas@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": false,
+                "id": "adrien.lengrand@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "swann.boquelet@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "felletaxel@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "corentincornu0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "raphaelle-jousset@hotmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "elisephilippe27300@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "dellavalentinaricardo@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "alexfrance7264@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "gregoirefaure4@gmail.com",
+                "presence": true
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-04-28T02:00:00.785",
+        "joueursMax": 40,
+        "photosUrl": "",
+        "participants": [
+            {
+                "paid": false,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexandre.oualle60400@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "enzo.payen27@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "duke7.8@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "akira12@msn.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "entreprisejr@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "scealesec@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "cyrilbarthoux45@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "dj_oskale@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "matthieu.lebiez@cnpp.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "slimsworld27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "lolaborel20@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "petitcyril0@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "robertnulpart@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "grammosenis.g@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "antoche.3007@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "corentin.haas.pro@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "cyrillehude@hotmail.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "julien_berger@orange.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "nolan.laroche0103@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alex_du28@live.fr",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "mikailkececarik27@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "theoleguay@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevinoualle@gmail.com",
+                "presence": true
+            },
+            {
+                "paid": true,
+                "id": "ducros.ludovic@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lorenzo.ducros@hotmail.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "camille.mouchelblaisot@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "adrien.popescu06@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "nathangauquelin@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "loustantoine@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "nicolas.jaume@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "turtlebeach46@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kohanagwenno0576@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "l.dorian27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "yael.norblin@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "thomas.ledoux76@laposte.net",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ludovic.hoan1@live.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "bastien.godard4@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sammi27pro@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [
+            "brandon.vanesch1@gmail.com",
+            "lucas7612051@gmail.com",
+            "alexis.dealmeida@outlook.com",
+            "kevin.goubert06@gmail.com",
+            "comparin.thibault@gmail.com"
+        ],
+        "isActive": false
+    },
+    {
+        "date": "2023-01-29T00:00:00.167",
+        "joueursMax": 40,
+        "photosUrl": "29-01-2023",
+        "participants": [],
+        "member_presence": [],
+        "isActive": true
+    },
+    {
+        "date": "2024-03-31T01:00:00.000",
+        "joueursMax": 40,
+        "photosUrl": "31-03-2024",
+        "participants": [
+            {
+                "paid": false,
+                "id": "tassery.paul@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "corentin.haas.pro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "martin.loisy3@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "jeremy.cauvin76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mattvauquelin5@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "ange.julien27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexismury@orange.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "marvin.mnt27@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "louisragnar76@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "loustantoine@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "turtlebeach46@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "mickmartin27@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kohanagwenno0576@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "sammi27pro@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "entreprisejr@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "romainduval@myyahoo.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "angel27180@yahoo.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "bastien.godard4@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "julien.dasilva7@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "dias.vasconcelos@sfr.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "lempereur-pierre@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "antoche.3007@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "kevinoualle@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "alexandre.oualle60400@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "enzo.payen27@icloud.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "tristan.renard08@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "hlxrsanku@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "fourniertheo76680@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "dias.vasconcelos@gmail.com",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "aurelien.grout@outlook.fr",
+                "presence": false
+            },
+            {
+                "paid": true,
+                "id": "hector.riessmaillard@gmail.com",
+                "presence": false
+            }
+        ],
+        "member_presence": [],
+        "isActive": true
+    }
+]

@@ -1,0 +1,102 @@
+<?php $matchedRoute = $this->layout()->getVariable('matchedRouteName') ?? null; ?>
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title><?= $this->headTitle('Wolf Soft Eure') ?></title>
+    <?= $this->headScript()
+        ->prependFile($this->basePath('assets/js/jquery.min.js'))
+    ?>
+    <?= $this->inlineScript()
+        ->prependFile($this->basePath('assets/js/main.js'))
+        ->prependFile($this->basePath('assets/js/util.js'))
+        ->prependFile($this->basePath('assets/js/jquery.scrolly.min.js'))
+        ->prependFile($this->basePath('assets/js/jquery.scrollex.min.js'))
+        ->prependFile($this->basePath('assets/js/browser.min.js'))
+        ->prependFile($this->basePath('assets/js/breakpoints.min.js'))
+    ?>
+    <!-- Styles -->
+    <?= $this->headLink()
+        ->prependStylesheet($this->basePath('assets/css/main.css'))
+        ->prependStylesheet($this->basePath('assets/css/noscript.css'))
+    ?>
+</head>
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper" class="fade-in">
+        <!-- Header -->
+        <header id="header">
+        <a href="<?= $this->url('home') ?>" class="logo">
+        <img class="logo-default" style="max-height: 50px; max-width:80vw;" src="/images/WSE.png">
+        <img class="logo-hover" style="max-height: 50px; max-width:80vw;" src="/images/WSE_hover.png">
+    </a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul class="links">
+                <li class="active"><a href="<?= $this->url('home') ?>">Accueil</a></li>
+                <li><a href="#">À propos</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="<?= $this->url('register') ?>">S'inscrire</a></li>
+            </ul>
+            <ul class="icons">
+                <!--
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                 -->
+            </ul>
+        </nav>
+
+
+        <!-- Main -->
+        <div id="main">
+        <?php if ($this->flashMessenger()->hasMessages()): ?>
+            <div class="alert alert-success">
+                <?php foreach ($this->flashMessenger()->getMessages() as $message): ?>
+                    <?= $message ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($this->flashMessenger()->hasErrorMessages()): ?>
+            <div class="alert alert-danger">
+                <?php foreach ($this->flashMessenger()->getErrorMessages() as $message): ?>
+                    <?= $message ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+            <?= $this->content ?> <!-- 🔥 Ici, Laminas affichera le contenu dynamique des vues -->
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+        
+            -->
+        </footer>
+
+        <!-- Copyright -->
+          <!-- 
+        <div id="copyright">
+            <ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+        </div>
+            -->
+    </div>
+
+    <!-- Scripts -->
+    <?= $this->inlineScript()
+        ->prependFile($this->basePath('assets/js/jquery.min.js'))
+        ->prependFile($this->basePath('assets/js/jquery.scrollex.min.js'))
+        ->prependFile($this->basePath('assets/js/jquery.scrolly.min.js'))
+        ->prependFile($this->basePath('assets/js/browser.min.js'))
+        ->prependFile($this->basePath('assets/js/breakpoints.min.js'))
+        ->prependFile($this->basePath('assets/js/util.js'))
+        ->prependFile($this->basePath('assets/js/main.js'))
+    ?>
+</body>
+</html>
