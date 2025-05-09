@@ -1,12 +1,8 @@
 <?php
-
-declare(strict_types=1);
-
 namespace Application\Form;
 
 use Laminas\Form\Form;
 use Laminas\Form\Element;
-use Laminas\InputFilter\InputFilter;
 
 class LoginForm extends Form
 {
@@ -21,7 +17,8 @@ class LoginForm extends Form
                 'label' => 'Email',
             ],
             'attributes' => [
-                'required' => true,
+                'required' => 'required',
+                'placeholder' => 'Email',
             ],
         ]);
 
@@ -32,7 +29,8 @@ class LoginForm extends Form
                 'label' => 'Mot de passe',
             ],
             'attributes' => [
-                'required' => true,
+                'required' => 'required',
+                'placeholder' => 'Mot de passe',
             ],
         ]);
 
@@ -41,29 +39,8 @@ class LoginForm extends Form
             'type' => Element\Submit::class,
             'attributes' => [
                 'value' => 'Se connecter',
+                'class' => 'btn btn-primary',
             ],
         ]);
-
-        $this->setInputFilter($this->getInputFilterSpecification());
-    }
-
-    public function getInputFilterSpecification()
-    {
-        $inputFilter = new InputFilter();
-
-        $inputFilter->add([
-            'name' => 'email',
-            'required' => true,
-            'validators' => [
-                ['name' => 'EmailAddress'],
-            ],
-        ]);
-
-        $inputFilter->add([
-            'name' => 'password',
-            'required' => true,
-        ]);
-
-        return $inputFilter;
     }
 }

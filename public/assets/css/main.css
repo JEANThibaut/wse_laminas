@@ -11,15 +11,7 @@
 	--primary-blue : #1d60a7;
 }
 
-/* .logo img {
-    content: url('/images/WSE.png');
-}
-
-.logo:hover img {
-    content: url('/images/WSE_hover.png');
-} */
-
-
+ 
 .logo {
     position: relative;
     display: inline-block;

@@ -1,0 +1,55 @@
+<?php
+
+namespace User\Controller;
+
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Application\Form\LoginForm;
+use Application\Form\RegisterForm;
+use Application\Service\AuthService;
+use Doctrine\ORM\EntityManager;
+
+class AuthController extends AbstractActionController
+{
+    private AuthService $authService;
+    private EntityManager $entityManager;
+
+    public function __construct(AuthService $authService, EntityManager $entityManager)
+    {
+        $this->authService = $authService;
+        $this->entityManager = $entityManager;
+    }
+
+    public function loginAction()
+    {
+        $form = new LoginForm();
+        $message = null;
+
+        if ($this->getRequest()->isPost()) {
+            $data = $this->params()->fromPost();
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $email = $data['email'];
+                $password = $data['password'];
+
+                if ($this->authService->login($email, $password)) {
+                    return $this->redirect()->toRoute('home');
+                } else {
+                    $message = "Identifiants incorrects.";
+                }
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+            'message' => $message,
+        ]);
+    }
+
+    public function logoutAction()
+    {
+        $this->authService->logout();
+        return $this->redirect()->toRoute('login');
+    }
+}

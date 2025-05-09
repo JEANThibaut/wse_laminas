@@ -20,18 +20,18 @@ class UserManager
     {
         $bcrypt = new Bcrypt();
         $newHashedPassword = $bcrypt->create($data['password']);
+        $dateString = $data['birthday'];
+        $birthdate = new \DateTime($dateString);
         $user = new User();
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
-        $user->setBirthday($data['birthday']);
+        $user->setBirthdate($birthdate);
         $user->setNickname($data['nickname']);
         $user->setEmail($data['email']);
         $user->setPassword($newHashedPassword);
-        $user->setRole('["user"]');
-        $user->setBlacklist(0);
-        $user->setAvatar('');
-        $user->setGotKey(0);
-        $user->setGotRemote(0);
+        $user->setRoles('["user"]');
+        $user->setIsMember(0);
+        $user->setIsBlacklist(0);
         $user->setIsActive(1);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -43,10 +43,8 @@ class UserManager
     {
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
-        $user->setBirthday($data['birthday']);
- 
+        $user->setBirthdate($data['birthday']);
         $this->entityManager->flush();
-
         return $user;
     }
 }

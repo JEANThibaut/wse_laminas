@@ -1,0 +1,10 @@
+
+  .dataTable-selector {
+    display: none !important;
+  }
+  .dt-length , .dt-search, .dt-info{
+    display:none !important;
+  }
+  p{
+    margin:0 !important;
+}

@@ -1,19 +1,30 @@
 <?php
+
+/**
+ * Global Configuration Override
+ *
+ * You can use this file for overriding configuration values from modules, etc.
+ * You would place values in here that are agnostic to the environment and not
+ * sensitive to security.
+ *
+ * NOTE: In practice, this file will typically be INCLUDED in your source
+ * control, so do not include passwords or other sensitive information in this
+ * file.
+ */
+
 return [
-    'session_config' => [
-        'cookie_lifetime' => 3600,           // Durée de vie du cookie (1 heure)
-        'gc_maxlifetime'  => 3600,           // Durée de vie de la session côté serveur
-        'cookie_samesite' => 'None',          // Autorise les requêtes cross-origin
-        'cookie_secure'   => true,           // Mettre `true` si en HTTPS, `false` sinon
-        'use_cookies'     => true,            // Active l'utilisation de cookies
-    ],
-    'session_storage' => [
-        'type' => \Laminas\Session\Storage\SessionArrayStorage::class,
-    ],
-    'session_manager' => [
-        'validators' => [
-            \Laminas\Session\Validator\RemoteAddr::class,
-            \Laminas\Session\Validator\HttpUserAgent::class,
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+                'params' => [
+                    'dbname'   => 'wse',
+                    'user'     => 'root',           // à adapter
+                    'password' => '',               // à adapter
+                    'host'     => '127.0.0.1',
+                    'driver'   => 'pdo_mysql',
+                    'charset'  => 'utf8mb4',
+                ],
+            ],
         ],
     ],
 ];

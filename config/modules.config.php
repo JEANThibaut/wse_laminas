@@ -9,21 +9,19 @@ return [
     'Laminas\Mvc\Plugin\FlashMessenger',
     'Laminas\I18n',
     'Laminas\Session',
+    'Laminas\Cache',
     'Laminas\Form',
+    'Laminas\Hydrator',
     'Laminas\InputFilter',
     'Laminas\Filter',
     'Laminas\Paginator',
     'Laminas\Router',
     'Laminas\Validator',
-    'Laminas\Cache',
-    'Laminas\Serializer',
+    'Laminas\Cache\Storage\Adapter\Filesystem',
+    'Laminas\Cache\Storage\Adapter\Memory',
     'DoctrineModule',
     'DoctrineORMModule',
-    'Laminas\Diactoros',
     'Application',
     'User',
-    'Parties',
-    'Forum',
+    'Profil'
 ];
-
-

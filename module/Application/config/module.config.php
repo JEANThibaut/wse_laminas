@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 namespace Application;
 
 use Laminas\Router\Http\Literal;
@@ -9,7 +6,7 @@ use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Authentication\Storage\Session;
 use Laminas\Authentication\AuthenticationService;
-use Laminas\Authentication\Storage\Session as SessionStorage;
+
 return [
     'router' => [
         'routes' => [
@@ -23,23 +20,13 @@ return [
                     ],
                 ],
             ],
-            'register' => [
-                'type'    => Literal::class,
-                'options' => [
-                    'route'    => '/register',
-                    'defaults' => [
-                        'controller' => Controller\AuthController::class,
-                        'action'     => 'register',
-                    ],
-                ],
-            ],
             'login' => [
                 'type' => Literal::class,
                 'options' => [
                     'route' => '/login',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
-                        'action' => 'login',
+                        'action'     => 'login',
                     ],
                 ],
             ],
@@ -49,39 +36,45 @@ return [
                     'route' => '/logout',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
-                        'action' => 'logout',
+                        'action'     => 'logout',
+                    ],
+                ],
+            ],
+                        'register' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/register',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'register',
                     ],
                 ],
             ],
         ],
     ],
-'controllers' => [
-    'factories' => [
-        Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
-        Controller\RegisterController::class => InvokableFactory::class,
-        Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
-    ],
-],
-    'controller_plugins' => [
+
+    'controllers' => [
         'factories' => [
-            Plugin\ValidateApiKey::class => InvokableFactory::class,
-        ],
-        'aliases' => [
-            'validateApiKey' => Plugin\ValidateApiKey::class,
+      
+            Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
+            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+
+            // Controller\IndexController::class => InvokableFactory::class,
         ],
     ],
+
     'service_manager' => [
         'factories' => [
-            Application\Service\UserAuthService::class => Application\Service\Factory\UserAuthServiceFactory::class,
-            Application\Service\UserManager::class => Application\Service\Factory\UserManagerFactory::class,
-            Laminas\Authentication\AuthenticationService::class => function ($container) {
-                $storage = new Laminas\Authentication\Storage\Session('UserAuth');
-                return new Laminas\Authentication\AuthenticationService($storage);
+            Service\UserManager::class => Service\Factory\UserManagerFactory::class,
+            Service\AuthService::class => Service\Factory\AuthServiceFactory::class,
+            // Configuration d'AuthenticationService avec storage en session
+            AuthenticationService::class => function ($container) {
+                $storage = new Session('UserAuth');
+                return new AuthenticationService($storage);
             },
         ],
         'aliases' => [
-            'authentication' => Laminas\Authentication\AuthenticationService::class,
-            'UserAuthService' => Application\Service\UserAuthService::class,  // Ajoute cet alias
+            'authentication' => AuthenticationService::class,
         ],
     ],
 

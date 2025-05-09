@@ -1,24 +1,19 @@
 <?php
+
 namespace Application\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Application\Form\LoginForm;
-use Application\Service\UserAuthService;
-use Doctrine\ORM\EntityManager;
-use Application\Service\UserManager;
+use Application\Service\AuthService;
 
 class AuthController extends AbstractActionController
 {
-    private $authService;
-    private $entityManager;
-    private $userManager;
+    private AuthService $authService;
 
-    public function __construct(UserAuthService $authService, EntityManager $entityManager, UserManager $userManager)
+    public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
-        $this->entityManager = $entityManager;
-        $this->userManager = $userManager;
     }
 
     public function loginAction()
@@ -35,15 +30,16 @@ class AuthController extends AbstractActionController
                 $password = $data['password'];
 
                 if ($this->authService->login($email, $password)) {
+                    $this->flashMessenger()->addSuccessMessage("Connexion réussie.");
                     return $this->redirect()->toRoute('home');
                 } else {
                     $message = "Identifiants incorrects.";
                 }
             }
         }
-
+        $this->layout()->setVariable('activeMenu', 'login');
         return new ViewModel([
-            'form' => $form,
+            'form'    => $form,
             'message' => $message,
         ]);
     }
@@ -51,8 +47,7 @@ class AuthController extends AbstractActionController
     public function logoutAction()
     {
         $this->authService->logout();
+        $this->flashMessenger()->addSuccessMessage("Déconnexion réussie.");
         return $this->redirect()->toRoute('home');
     }
 }
-
-

@@ -1,13 +1,10 @@
 <?php
-
-declare(strict_types=1);
-
 namespace User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="User\Repository\UserRepository")
+ * @ORM\Entity
  * @ORM\Table(name="user")
  */
 class User
@@ -17,230 +14,171 @@ class User
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private $iduser;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $firstname;
-
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $lastname;
-
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $nickname;
-
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $birthday;
-
-    /**
-     * @ORM\Column(type="string", length=150, unique=true)
-     */
+    /** @ORM\Column(type="string") */
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $role;
+    /** @ORM\Column(type="text", nullable=true) */
+    private $roles;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $blacklist ;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $avatar;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    /** @ORM\Column(type="string") */
     private $password;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $gotKey ;
+    /** @ORM\Column(type="string") */
+    private $firstname;
 
-        /**
-     * @ORM\Column(type="integer")
-     */
-    private $gotRemote;
+    /** @ORM\Column(type="string") */
+    private $lastname;
 
-        /**
-     * @ORM\Column(type="integer")
-     */
+    /** @ORM\Column(type="boolean") */
+    private $member;
+
+    /** @ORM\Column(type="boolean") */
+    private $blacklist;
+
+    
+    /** @ORM\Column(type="boolean") */
     private $isActive;
 
+    /** @ORM\Column(type="datetime", nullable=true) */
+    private $birthdate;
 
-    // Getters and Setters
-    public function getId()
+    /** @ORM\Column(type="string", nullable=true) */
+    private $nickname;
+
+    // /**
+    //  * @ORM\OneToMany(targetEntity="Profil\Entity\Arsenal", mappedBy="user")
+    //  */
+    // private $arsenaux;
+
+    // public function __construct()
+    // {
+    //     $this->arsenaux = new \Doctrine\Common\Collections\ArrayCollection();
+    // }
+
+    public function getIdUser(): ?int
     {
-        return $this->id;
+        return $this->iduser;
     }
 
-    public function getFirstname()
-    {
-        return $this->firstname;
-    }
-
-    public function setFirstname($firstname)
-    {
-        $this->firstname = $firstname;
-    }
-
-    public function getLastname()
-    {
-        return $this->lastname;
-    }
-
-    public function setLastname($lastname)
-    {
-        $this->lastname = $lastname;
-    }
-
-    public function getNickname()
-    {
-        return $this->nickname;
-    }
-
-    public function setNickname($nickname)
-    {
-        $this->nickname = $nickname;
-    }
-
-    public function getBirthday()
-    {
-        return $this->birthday;
-    }
-
-    public function setBirthday($birthday)
-    {
-        $this->birthday = $birthday;
-    }
-
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail($email)
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+        return $this;
     }
 
-    public function getRole()
+    public function getRoles(): ?string
     {
-        return $this->role;
+        return $this->roles;
     }
 
-    public function setRole($role)
+    public function setRoles(?string $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
+        return $this;
     }
 
-    public function isBlacklist()
-    {
-        return $this->blacklist;
-    }
-
-    public function setBlacklist($blacklist)
-    {
-        $this->blacklist = $blacklist;
-    }
-
-    public function getAvatar()
-    {
-        return $this->avatar;
-    }
-
-    public function setAvatar($avatar)
-    {
-        $this->avatar = $avatar;
-    }
-
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword($password)
+    public function setPassword(string $password): self
     {
         $this->password = $password;
+        return $this;
     }
 
-    public function getGotKey()
+    public function getFirstname(): ?string
     {
-        return $this->gotKey;
+        return $this->firstname;
     }
 
-    public function setGotKey($gotKey)
+    public function setFirstname(string $firstname): self
     {
-        $this->gotKey = $gotKey;
+        $this->firstname = $firstname;
+        return $this;
     }
 
-    public function getGotRemote()
+    public function getLastname(): ?string
     {
-        return $this->gotRemote;
+        return $this->lastname;
     }
 
-    public function setGotRemote($gotRemote)
+    public function setLastname(string $lastname): self
     {
-        $this->gotRemote = $gotRemote;
+        $this->lastname = $lastname;
+        return $this;
     }
 
-    public function getIsActive()
+
+
+    public function getIsMember(): bool
+    {
+        return $this->member;
+    }
+
+    public function setIsMember(bool $member): self
+    {
+        $this->member = $member;
+        return $this;
+    }
+
+    public function getIsBlacklist(): bool
+    {
+        return $this->blacklist;
+    }
+
+    public function setIsBlacklist(bool $blacklist): self
+    {
+        $this->blacklist = $blacklist;
+        return $this;
+    }
+
+
+    public function getIsActive(): bool
     {
         return $this->isActive;
     }
 
-    public function setIsActive($isActive)
+    public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+        return $this;
     }
-    public function hasRole(string $requiredRole, ?string $module = null): bool
+
+
+    public function getBirthdate(): ?\DateTimeInterface
     {
-        // Convertir le champ role en tableau si ce n'est pas déjà un tableau
-        $roles = is_array($this->role) ? $this->role : json_decode($this->role, true);
-    
-        // Vérifier si le rôle global "god" est présent
-        if (in_array('god', $roles, true)) {
-            return true;
-        }
-    
-        if ($module && isset($roles[$module])) {
-            return in_array($requiredRole, $roles[$module], true);
-        }
-    
-        return in_array($requiredRole, $roles, true);
+        return $this->birthdate;
     }
-    
 
-    /**
-     * Retourne tous les rôles d'un module ou globaux.
-     * @param string|null $module Module spécifique (facultatif).
-     * @return array
-     */
-    public function getRoles(?string $module = null): array
+    public function setBirthdate(?\DateTimeInterface $birthdate): self
     {
-        if ($this->role === 'god') {
-            return ['god']; // Retourne uniquement le rôle global "God"
-        }
-
-        $roles = json_decode($this->role, true);
-
-        if ($module && isset($roles[$module])) {
-            return $roles[$module];
-        }
-
-        return [];
+        $this->birthdate = $birthdate;
+        return $this;
     }
 
+
+    public function getNickname(): ?string
+    {
+        return $this->nickname;
+    }
+
+    public function setNickname(?string $nickname): self
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
+
+    // public function getArsenaux()
+    // {
+    //     return $this->arsenaux;
+    // }
 }
