@@ -23,5 +23,7 @@ return [
     'DoctrineORMModule',
     'Application',
     'User',
-    'Profil'
+    'Profil',
+    'Game',
+    'Admin'
 ];

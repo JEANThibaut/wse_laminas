@@ -37,7 +37,6 @@ class User
     /** @ORM\Column(type="boolean") */
     private $blacklist;
 
-    
     /** @ORM\Column(type="boolean") */
     private $isActive;
 
@@ -46,16 +45,6 @@ class User
 
     /** @ORM\Column(type="string", nullable=true) */
     private $nickname;
-
-    // /**
-    //  * @ORM\OneToMany(targetEntity="Profil\Entity\Arsenal", mappedBy="user")
-    //  */
-    // private $arsenaux;
-
-    // public function __construct()
-    // {
-    //     $this->arsenaux = new \Doctrine\Common\Collections\ArrayCollection();
-    // }
 
     public function getIdUser(): ?int
     {
@@ -177,8 +166,29 @@ class User
         return $this;
     }
 
-    // public function getArsenaux()
+    public function isInRoles($role): bool
+    {
+        $roles = $this->getRoles();
+    
+        if (is_string($roles)) {
+            $roles = json_decode($roles, true);
+        }
+    
+        return is_array($roles) && in_array($role, $roles, true);
+    }
+    
+
+    // public function hasAnyRole(array $rolesToCheck): bool
     // {
-    //     return $this->arsenaux;
+    //     $roles = $this->getRoles();
+    
+    //     if (is_string($roles)) {
+    //         $roles = json_decode($roles, true);
+    //     }
+    
+    //     if (!is_array($roles)) return false;
+    
+    //     return (bool) array_intersect($roles, $rolesToCheck);
     // }
+
 }

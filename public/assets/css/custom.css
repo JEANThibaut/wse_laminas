@@ -10,6 +10,21 @@ nav#nav ul.links li a {
     padding-top: 50px !important;
     padding-bottom: 50px !important;
 }
+.btn-sm{
+  /* padding-left:10px !important;
+  padding-right:10px !important; */
+
+  align-items: center !important;
+  justify-content: center !important;
+}
+.btn-primary{
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-primary a{
+  border-style: none !important;
+}
 
 #nav{
     display: flex;
@@ -51,3 +66,78 @@ nav#nav ul.links li a {
 p{
     margin:0!important;
 }
+
+div{
+    border-top: none !important;
+    border-bottom: none !important;
+}
+
+/* TABBAR */
+
+  .tab-nav-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+    padding:0 !important;
+    padding-top:5px !important;
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+  
+  .tab-nav-scroll {
+    overflow-x: auto;
+    flex: 1;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab-nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tab-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .tab-nav li {
+    flex: 0 0 auto;
+  }
+  
+  .tab-link {
+    display: inline-block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #333;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    margin-right: 4px;
+    border-radius: 4px 4px 0 0;
+    white-space: nowrap;
+  }
+  
+  .tab-link.active {
+    background: white;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+  }
+  
+  .scroll-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0 10px;
+    cursor: pointer;
+    user-select: none;
+    display: none;
+  }
+  
+  .scroll-btn.visible {
+    display: inline-block;
+  }
+  

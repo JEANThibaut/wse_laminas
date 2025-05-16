@@ -34,7 +34,9 @@
         "psr-4": {
             "Application\\": "module/Application/src/",
             "User\\": "module/User/src/",
-            "Profil\\": "module/Profil/src/"
+            "Profil\\": "module/Profil/src/",
+            "Game\\": "module/Game/src",
+            "Admin\\": "module/Admin/src"
         }
     },
     "autoload-dev": {

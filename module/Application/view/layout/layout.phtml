@@ -32,6 +32,8 @@
         <!-- DataTables Vanilla JS -->
         <script src="https://cdn.datatables.net/v/dt/dt-2.0.7/datatables.min.js"></script>
 
+        
+
     
 </head>
 
@@ -50,19 +52,15 @@
         <nav id="nav">
     <ul class="links">
         <?php if ($this->currentUser && $this->currentUser->getIsMember()) : ?>
-            <li class="nav-link <?= ($activeMenu === 'membres') ? 'active' : '' ?>">
-                <a href="<?= $this->url('home') ?>">Espace membres</a>
+            <li class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>">
+                <a href="<?= $this->url('admin-index') ?>">Espace membres</a>
             </li>
         <?php endif; ?>
 
         <li class="nav-link <?= ($activeMenu === '') ? 'active' : '' ?>">
             <a href="<?= $this->url('home') ?>">Accueil</a>
         </li>
-
-        <li class="nav-link <?= ($activeMenu === 'parties') ? 'active' : '' ?>">
-            <a href="#">Les parties</a>
-        </li>
-
+        
         <li class="nav-link <?= ($activeMenu === 'photos') ? 'active' : '' ?>">
             <a href="#">Les photos</a>
         </li>

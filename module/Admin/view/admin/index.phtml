@@ -1,0 +1,18 @@
+
+<div class="tab-nav-wrapper">
+  <div class="tab-nav-scroll">
+    <ul class="tab-nav">
+      <li><a href="#" class="tab-link active" data-tab="next-game">Prochaine Partie</a></li>
+      <li><a href="#" class="tab-link" data-tab="games">Prochain amenagement</a></li>
+      <?php if($currentUser->isInRoles("GOD")):?>
+        <li><a href="#" class="tab-link " data-tab="games">Parties</a></li>
+        <li><a href="#" class="tab-link" data-tab="users">Utilisateurs</a></li>
+      <?php endif;?>
+    </ul>
+  </div>
+ </div>
+<div id="tabContent" class="mt-3">
+  <div>Chargement...</div>
+</div>
+
+<script src="/js/pages/admin-index.js"></script>
