@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="/css/pages/profil-index.css">
 <div class='row'>
         <div class="col-lg-6 col-sm-8" >
             <h2><?php echo $currentUser->getNickname();?></h2>
@@ -20,66 +19,3 @@
         </div>
 </div>
 
-
-
-<div>
-    <h3>Mon Arsenal</h3>
-
-    <table id="repliqueTable" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Puissance</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-    
-<h4>Ajouter une réplique</h4>
-
-<?php
-   $form->setAttribute('id', 'repliqueForm');
-   echo $this->form()->openTag($form);
-    $form->prepare();
-?>
-
-
-<div class='row'>
-    <div class="form-group col-sm-5">
-        <?php
-        echo $this->formLabel($form->get('nom_replique'));
-        echo $this->formElement($form->get('nom_replique'));
-        echo $this->formElementErrors($form->get('nom_replique'));
-        ?>
-    </div>
-
-    <div class="form-group col-sm-3">
-        <?php
-        echo $this->formLabel($form->get('type_replique'));
-        echo $this->formElement($form->get('type_replique'));
-        echo $this->formElementErrors($form->get('type_replique'));
-        ?>
-    </div>
-
-    <div class="form-group col-sm-3">
-        <?php
-        echo $this->formLabel($form->get('puissance'));
-        echo $this->formElement($form->get('puissance'));
-        echo $this->formElementErrors($form->get('puissance'));
-        ?>
-    </div>
-
-    
-    <div class="form-group mt-3">
-        <?php echo $this->formElement($form->get('submit')); ?>
-    </div>
-</div>
-
-
-
-<?php echo $this->form()->closeTag(); ?>
-
-<script src="js/pages/profil-index.js"></script>

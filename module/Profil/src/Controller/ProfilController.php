@@ -21,7 +21,7 @@ class ProfilController extends AbstractActionController
     }
 
 
-    public function profilAction()
+    public function indexAction()
     {
 
         $currentUser = $this->authService->getIdentity();
@@ -35,6 +35,41 @@ class ProfilController extends AbstractActionController
         return $view;
 
     }
+
+
+    public function profilAction()
+    {
+
+        $currentUser = $this->authService->getIdentity();
+        $form = new \Profil\Form\RepliqueForm();
+        $view = new ViewModel([
+            'form' => $form,
+            'currentUser'=>$currentUser,
+        ]);
+        $this->layout()->setVariable('activeMenu', 'profil');
+        $view->setTemplate('profil/profil');
+        $view->setTerminal(true); 
+        return $view;
+
+    }
+
+    
+    public function arsenalAction()
+    {
+
+        $currentUser = $this->authService->getIdentity();
+        $form = new \Profil\Form\RepliqueForm();
+        $view = new ViewModel([
+            'form' => $form,
+            'currentUser'=>$currentUser,
+        ]);
+        $this->layout()->setVariable('activeMenu', 'profil');
+        $view->setTemplate('profil/arsenal');
+        // $view->setTerminal(true); 
+        return $view;
+
+    }
+
 
 
     public function updateRepliqueAction()

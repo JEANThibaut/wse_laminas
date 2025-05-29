@@ -39,7 +39,7 @@ class AjaxController extends AbstractActionController
             ];
         }
         return new JsonModel([
-            'data' => $data
+            'data' => $data,
         ]);
     }
     

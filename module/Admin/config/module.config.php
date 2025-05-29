@@ -2,6 +2,7 @@
 namespace Admin;
 
 use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Admin\Controller\AdminController;
 use Admin\Controller\AjaxController;
@@ -11,30 +12,50 @@ use Application\Service\Factory\AuthServiceFactory;
 return [
     'router' => [
         'routes' => [
-            'admin-index' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/admin-index',
-                    'defaults' => [
-                        'controller' => AdminController::class,
-                        'action' => 'index',
-                    ],
-                ],
-            ],
+            // 'admin-index' => [
+            //     'type' => Literal::class,
+            //     'options' => [
+            //         'route' => '/admin-index',
+            //         'defaults' => [
+            //             'controller' => AdminController::class,
+            //             'action' => 'index',
+            //         ],
+            //     ],
+            // ],
             'admin-games' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/admin-games',
+                    'route' => '/admin/games',
                     'defaults' => [
                         'controller' => AdminController::class,
                         'action' => 'games',
                     ],
                 ],
             ],
+            'admin-edit-game' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/admin-edit-game/[:id]',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'editGame',
+                    ],
+                ],
+            ],
+            'admin-delete-game' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/admin-delete-game',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'deleteGame',
+                    ],
+                ],
+            ],
             'admin-next-games' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/admin-next-game',
+                    'route' => '/admin/next-game',
                     'defaults' => [
                         'controller' => AdminController::class,
                         'action' => 'nextGame',
@@ -44,7 +65,7 @@ return [
             'admin-users' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/admin-users',
+                    'route' => '/admin/users',
                     'defaults' => [
                         'controller' => AdminController::class,
                         'action' => 'users',

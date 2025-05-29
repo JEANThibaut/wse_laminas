@@ -12,6 +12,16 @@ use Application\Service\Factory\AuthServiceFactory;
 return [
     'router' => [
         'routes' => [
+            'profil-index' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/profil-index',
+                    'defaults' => [
+                        'controller' => ProfilController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
             'profil' => [
                 'type' => Literal::class,
                 'options' => [
@@ -22,6 +32,17 @@ return [
                     ],
                 ],
             ],
+            'arsenal' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/arsenal',
+                    'defaults' => [
+                        'controller' => ProfilController::class,
+                        'action' => 'arsenal',
+                    ],
+                ],
+            ],
+
             'ajax-get-repliques' => [
                 'type' => Literal::class,
                 'options' => [

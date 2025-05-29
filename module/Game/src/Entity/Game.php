@@ -19,7 +19,7 @@ class Game
     /** @ORM\Column(type="datetime") */
     private $date;
 
-    /** @ORM\Column(type="player_max") */
+    /** @ORM\Column(type="string") */
     private $player_max;
 
     /** @ORM\Column(type="integer") */

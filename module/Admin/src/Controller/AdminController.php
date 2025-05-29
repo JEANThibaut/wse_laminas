@@ -4,7 +4,7 @@ namespace Admin\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
-use Game\Form\GameForm;
+use Game\Entity\Game;
 use User\Entity\User;
 
 class AdminController extends AbstractActionController
@@ -22,29 +22,90 @@ class AdminController extends AbstractActionController
     }
 
 
-    public function indexAction()
-    {
-        $this->layout()->setVariable('activeMenu', 'admin-index');
-        $view = new ViewModel();
-        $view->setTemplate('admin/index');
-        return $view;
-
-    }
-
-
     public function gamesAction()
     {
         $currentUser = $this->authService->getIdentity();
-        $form = new GameForm();
+        $request = $this->getRequest();
+        $games = $this->entityManager->getRepository(Game::class)->findAll();
+        if ($request->isPost()) {
+            $data = $request->getPost()->toArray();
+            if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
+                $date = \DateTime::createFromFormat('d/m/Y', $data['date']);
+                $newGame = new Game;
+                $newGame->setDate($date);
+                $newGame->setPlayerMax($data['player_max']);
+                $newGame->setStatus((int)$data['status']);
+                $this->entityManager->persist($newGame);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage('La partie a bien été ajoutée.');
+                return $this->redirect()->toRoute('admin-games');
+            }
+        }
         $view = new ViewModel([
-            'form' => $form,
-            'currentUser'=>$currentUser,
+            "games"=>$games,
         ]);
-        $this->layout()->setVariable('activeMenu', 'game');
         $view->setTemplate('admin/games');
-        $view->setTerminal(true); 
         return $view;
     }
+
+
+    public function editGameAction()
+    {
+        $id = (int) $this->params()->fromRoute('id');
+        $game = $this->entityManager->getRepository(Game::class)->find($id);
+
+        if (!$game) {
+            $this->flashMessenger()->addErrorMessage('Partie introuvable.');
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost()->toArray();
+
+            if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
+                $date = \DateTime::createFromFormat('d/m/Y', $data['date']);
+                if ($date) {
+                    $game->setDate($date);
+                    $game->setPlayerMax($data['player_max']);
+                    $game->setStatus((int) $data['status']);
+                    $this->entityManager->flush();
+
+                    $this->flashMessenger()->addSuccessMessage('La partie a bien été modifiée.');
+                    return $this->redirect()->toRoute('admin-games');
+                } else {
+                    $this->flashMessenger()->addErrorMessage('Format de date invalide.');
+                }
+            }
+        }
+
+        $view = new ViewModel([
+            "game"=>$game,
+        ]);
+        $view->setTemplate('admin/edit-game');
+        return $view;
+    }
+
+    public function deleteGameAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $id =  $request->getPost('id');
+            $game = $this->entityManager->getRepository(Game::class)->find($id);
+            if ($game) {
+                $this->entityManager->remove($game);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage('Partie supprimée avec succès.');
+            } else {
+                $this->flashMessenger()->addErrorMessage('Partie introuvable.');
+            }
+        }
+
+        return $this->redirect()->toRoute('admin-games');
+    }
+
+
+
 
 
     public function nextGameAction()
@@ -61,7 +122,7 @@ class AdminController extends AbstractActionController
                 $data = $form->getData();
                 dump($data);
 
-                // return $this->redirect()->toRoute('admin-games',);
+                // return $this->redirect()->toRoute('home',);
             }
         }
 
@@ -72,7 +133,6 @@ class AdminController extends AbstractActionController
         ]);
         $this->layout()->setVariable('activeMenu', 'game');
         $view->setTemplate('admin/next-game');
-        $view->setTerminal(true); 
         return $view;
     }
 
@@ -88,7 +148,7 @@ class AdminController extends AbstractActionController
         ]);
         $this->layout()->setVariable('activeMenu', 'game');
         $view->setTemplate('admin/users');
-        $view->setTerminal(true); 
+        // $view->setTerminal(true); 
         return $view;
     }
   

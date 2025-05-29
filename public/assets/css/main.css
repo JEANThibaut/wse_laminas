@@ -15,11 +15,12 @@
 .logo {
     position: relative;
     display: inline-block;
+	background-color: rgba(128, 128, 128, 0.4);
 }
 
 .logo img {
     display: block;
-    max-height: 50px; /* Ajuste selon ton besoin */
+    max-height: 50px; 
     transition: opacity 0.3s ease-in-out;
 	transition: opacity 0.3s ease-out;
 }
@@ -28,7 +29,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centre parfaitement */
+    transform: translate(-50%, -50%); 
     opacity: 0;
 }
 
@@ -38,6 +39,7 @@
 
 .logo:hover img.logo-default {
     opacity: 0;
+	
 }
 
 

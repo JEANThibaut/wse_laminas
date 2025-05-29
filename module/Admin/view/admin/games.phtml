@@ -1,57 +1,57 @@
-<div>
-
 <h4>Ajouter une partie</h4>
 
+<form method="post">
+    <div class="row">
+        <div class="form-group col-sm-3">
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" class="form-control datepicker" placeholder="JJ/MM/AAAA" required>
+        </div>
 
-<?php
-$form->prepare();
-echo $this->form()->openTag($form);
-?>
+        <div class="form-group col-sm-3">
+            <label for="player_max">Joueurs max</label>
+            <input type="number" name="player_max" id="player_max" class="form-control" required>
+        </div>
 
-<div class="row">
+        <div class="form-group col-sm-3">
+            <label for="status">Statut</label>
+            <select name="status" id="status" class="form-select" required>
+                <option value="1">Ouverte</option>
+                <option value="0">Fermée</option>
+            </select>
+        </div>
 
-    <div class="form-group col-sm-2">
-        <?= $this->formLabel($form->get('date')) ?>
-        <?= $this->formElement($form->get('date')) ?>
-        <?= $this->formElementErrors($form->get('date')) ?>
+        <div class="form-group col-sm-3 d-flex align-items-end mt-5">
+            <button type="submit" class="btn btn-primary w-50">Valider</button>
+        </div>
     </div>
+</form>
 
-    <div class="form-group col-sm-4">
-        <?= $this->formLabel($form->get('player_max')) ?>
-        <?= $this->formElement($form->get('player_max')) ?>
-        <?= $this->formElementErrors($form->get('player_max')) ?>
-    </div>
-
-    <div class="form-group col-sm-4 mb-3">
-        <?= $this->formLabel($form->get('status')) ?>
-        <?= $this->formElement($form->get('status')) ?>
-        <?= $this->formElementErrors($form->get('status')) ?>
-    </div>
-
-    <div class="form-group col-sm-6">
-        <?= $this->formElement($form->get('submit')) ?>
-    </div>
-</div>
-
-<?php echo $this->form()->closeTag(); ?>
-
-
-
-<hr>
-<h4>Les parties</h4>
-
-<table id="repliqueTable" class="table table-bordered table-striped">
-<thead>
-    <tr>
-        <th>Date</th>
-        <th>Player MAx</th>
-        <th>Satus</th>
-        <th></th>
-    </tr>
-</thead>
-<tbody></tbody>
+<table id="gamesTable" class="table table-bordered table-striped mt-5">
+    <thead>
+        <tr>
+            
+            <th>Date</th>
+            <th>Joueurs max</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($games as $game): ?>
+            <tr>
+                <td><?= $game->getDate()->format('d/m/Y') ?></td>
+                <td><?= $this->escapeHtml($game->getPlayerMax()) ?></td>
+                <td><?= $game->getStatus() ? 'Actif' : 'Inactif' ?></td>
+                <td>
+                    <a href="<?= $this->url('admin-edit-game', ['id' => $game->getIdgame()]) ?>" class="btn btn-sm btn-warning">
+                        Modifier
+                    </a>
+                    <form method="post" action="<?= $this->url('admin-delete-game') ?>" style="display: inline;" onsubmit="return confirm('Confirmer la suppression ?');">
+                        <input type="hidden" name="id" value="<?= $game->getIdgame() ?>">
+                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
 </table>
-
-
-
-<script src="js/pages/admin-game-index.js"></script>
