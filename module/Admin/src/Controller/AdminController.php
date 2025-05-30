@@ -30,14 +30,13 @@ class AdminController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
             if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
-                $date = \DateTime::createFromFormat('d/m/Y', $data['date']);
-                $newGame = new Game;
-                $newGame->setDate($date);
-                $newGame->setPlayerMax($data['player_max']);
-                $newGame->setStatus((int)$data['status']);
-                $this->entityManager->persist($newGame);
-                $this->entityManager->flush();
-                $this->flashMessenger()->addSuccessMessage('La partie a bien été ajoutée.');
+
+                $newGame = $this->gameManager->addGame($data);
+                if($newGame){
+                    $this->flashMessenger()->addSuccessMessage('La partie a bien été ajoutée.');
+                    return $this->redirect()->toRoute('admin-games');
+                }
+                $this->flashMessenger()->addErrorMessage('Une erreur est survenu.');
                 return $this->redirect()->toRoute('admin-games');
             }
         }
@@ -66,13 +65,14 @@ class AdminController extends AbstractActionController
             if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
                 $date = \DateTime::createFromFormat('d/m/Y', $data['date']);
                 if ($date) {
-                    $game->setDate($date);
-                    $game->setPlayerMax($data['player_max']);
-                    $game->setStatus((int) $data['status']);
-                    $this->entityManager->flush();
+                    $game = $this->gameManager->editGame($game, $data);
+                    if($game){
+                        $this->flashMessenger()->addSuccessMessage('La partie a bien été modifiée.');
+                        return $this->redirect()->toRoute('admin-games');
+                    }else{
+                          $this->flashMessenger()->addErrorMessage('Une erreur est survenu.');
+                    }
 
-                    $this->flashMessenger()->addSuccessMessage('La partie a bien été modifiée.');
-                    return $this->redirect()->toRoute('admin-games');
                 } else {
                     $this->flashMessenger()->addErrorMessage('Format de date invalide.');
                 }
@@ -93,8 +93,7 @@ class AdminController extends AbstractActionController
             $id =  $request->getPost('id');
             $game = $this->entityManager->getRepository(Game::class)->find($id);
             if ($game) {
-                $this->entityManager->remove($game);
-                $this->entityManager->flush();
+                $delete = $this->gameManager->deleteGame($game);
                 $this->flashMessenger()->addSuccessMessage('Partie supprimée avec succès.');
             } else {
                 $this->flashMessenger()->addErrorMessage('Partie introuvable.');

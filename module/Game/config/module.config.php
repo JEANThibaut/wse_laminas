@@ -12,16 +12,26 @@ use Application\Service\Factory\AuthServiceFactory;
 return [
     'router' => [
         'routes' => [
-            // 'admin-games' => [
-            //     'type' => Literal::class,
-            //     'options' => [
-            //         'route' => '/admin-games',
-            //         'defaults' => [
-            //             'controller' => GameController::class,
-            //             'action' => 'adminGames',
-            //         ],
-            //     ],
-            // ],
+            'register-in-game' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/register-in-game',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'registerInGame',
+                    ],
+                ],
+            ],
+            'unregister-in-game' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/unregister-in-game',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'unregisterInGame',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [

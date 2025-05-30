@@ -1,2 +1,30 @@
 
 <h3>Accueil</h3>
+
+
+<div class='card p-3'>
+    <?php if($game):?>
+     <h3>La partie du <?php echo $game->getDate()->format("d/m/Y"); ?> est ouverte !</h3>
+        <?php if($this->currentUser):?>
+            <?php if($this->register): ?>
+
+                <p>Vous êtes inscrit à la partie</p>
+            <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
+                <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
+                <button type="submit" class="btn btn-warning" onclick="return confirm('Confirmer la désinscription ?')">
+                    Se désinscrire
+                </button>
+            </form>
+             <?php else: ?>   
+            <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                S'inscrire
+            </a>
+            <?php endif; ?>      
+        <?php else: ?>
+            <a href="<?= $this->url('login')?>" class="btn btn-warning">
+                Se connecter
+            </a>        
+        <?php endif ?>
+    <?php endif ?>
+    
+</div>

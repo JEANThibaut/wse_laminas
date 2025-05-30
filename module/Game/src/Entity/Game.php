@@ -4,7 +4,7 @@ namespace Game\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Game\Repository\GameRepository")
  * @ORM\Table(name="game")
  */
 class Game
@@ -19,7 +19,7 @@ class Game
     /** @ORM\Column(type="datetime") */
     private $date;
 
-    /** @ORM\Column(type="string") */
+    /** @ORM\Column(type="integer") */
     private $player_max;
 
     /** @ORM\Column(type="integer") */

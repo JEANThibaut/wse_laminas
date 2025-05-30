@@ -1,14 +1,18 @@
 <?php
-
 namespace Application\Controller\Factory;
 
-use Psr\Container\ContainerInterface;
 use Application\Controller\IndexController;
-
-class IndexControllerFactory
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Doctrine\ORM\EntityManager;
+use Application\Service\AuthService;
+class IndexControllerFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new IndexController(); 
+        $authService = $container->get(AuthService::class);
+        $entityManager = $container->get(EntityManager::class);
+
+        return new IndexController($authService, $entityManager);
     }
 }

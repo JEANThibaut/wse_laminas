@@ -15,7 +15,7 @@ class GameControllerFactory implements FactoryInterface
     {
         $authService = $container->get(AuthService::class);
         $entityManager = $container->get(EntityManager::class);
-        $repliqueManager = $container->get(GameManager::class);
-        return new GameController($entityManager,$authService,$repliqueManager);
+        $gameManager = $container->get(GameManager::class);
+        return new GameController($entityManager,$authService,$gameManager);
     }
 }

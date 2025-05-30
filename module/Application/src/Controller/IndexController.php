@@ -4,13 +4,37 @@ namespace Application\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
-
+use Game\Entity\Game;
 class IndexController extends AbstractActionController
 {
-    public function indexAction(): ViewModel
+    private $authService;
+    private $entityManager;
+
+    public function __construct($authService, $entityManager)
     {
-        return new ViewModel();
+        $this->entityManager = $entityManager;
+        $this->authService = $authService;
     }
 
+
+       public function indexAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        $game = $this->entityManager->getRepository(Game::class)->findNextGame();
+        $isRegister = false;
+        if($game && $currentUser){
+            $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser);
+          if($register){
+            $isRegister = true;
+          }
+        }
+ 
+        return new ViewModel([
+            'game' => $game,
+            'isRegister'=> $isRegister,
+            'currentUser'=>$currentUser,
+            'register'=>$register ?? null,
+        ]);
+    }
 
 }
