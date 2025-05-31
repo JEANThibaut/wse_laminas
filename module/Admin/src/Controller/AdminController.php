@@ -43,6 +43,7 @@ class AdminController extends AbstractActionController
         $view = new ViewModel([
             "games"=>$games,
         ]);
+        $this->layout()->setVariable('activeMenu', 'admin-games');
         $view->setTemplate('admin/games');
         return $view;
     }
@@ -145,7 +146,7 @@ class AdminController extends AbstractActionController
             'currentUser'=>$currentUser,
             'users'=>$users
         ]);
-        $this->layout()->setVariable('activeMenu', 'game');
+        $this->layout()->setVariable('activeMenu', 'admin-users');
         $view->setTemplate('admin/users');
         // $view->setTerminal(true); 
         return $view;

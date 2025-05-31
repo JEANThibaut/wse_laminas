@@ -7,6 +7,9 @@ namespace Application;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\View\Model\ViewModel;
+use Laminas\Session\Config\SessionConfig;
+use Laminas\Session\SessionManager;
+use Laminas\Session\Container;
 
 class Module
 {
@@ -21,6 +24,17 @@ class Module
     public function onBootstrap(MvcEvent $e): void
     {
         $application = $e->getApplication();
+        $sessionConfig = new SessionConfig();
+        $sessionConfig->setOptions([
+            'cookie_lifetime' => 604800, // 7 jours
+            'gc_maxlifetime'  => 604800,
+        ]);
+
+        $sessionManager = new SessionManager($sessionConfig);
+        $sessionManager->start();
+        Container::setDefaultManager($sessionManager);
+
+
         $eventManager = $application->getEventManager();
     
         $eventManager->attach(MvcEvent::EVENT_RENDER, function (MvcEvent $e) {

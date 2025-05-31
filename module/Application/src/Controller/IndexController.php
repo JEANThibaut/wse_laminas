@@ -22,6 +22,7 @@ class IndexController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
         $isRegister = false;
+         $this->layout()->setVariable('activeMenu', 'home');
         if($game && $currentUser){
             $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser);
           if($register){

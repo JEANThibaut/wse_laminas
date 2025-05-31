@@ -94,4 +94,18 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+
+    'session_config' => [
+        'cookie_lifetime' => 315360000, // 10 ans (en secondes)
+        'gc_maxlifetime'  => 315360000, // 10 ans aussi
+        'use_cookies'     => true,
+        'use_only_cookies' => true,
+        'cookie_httponly' => true,
+    ],
+    'session_manager' => [
+        'validators' => [],
+    ],
+    'session_storage' => [
+        'type' => \Laminas\Session\Storage\SessionArrayStorage::class,
+    ],
 ];

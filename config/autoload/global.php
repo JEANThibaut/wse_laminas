@@ -13,6 +13,14 @@
  */
 
 return [
+
+    'session_config' => [
+        'cookie_lifetime' => 60 * 60 * 24 * 30, // 30 jours
+        'gc_maxlifetime'  => 60 * 60 * 24 * 30,
+    ],
+
+    'session_manager' => [],
+    'session_storage' => [],
     'doctrine' => [
         'connection' => [
             'orm_default' => [
@@ -27,4 +35,13 @@ return [
             ],
         ],
     ],
+
 ];
+
+
+// $servername = "localhost";
+// // $username = "api_wse";
+// $username ="intr1140_api_wse"; 
+// $password = "Api_WSE!27*";
+// $dbname = "intr1140_wolf_soft_eure";
+

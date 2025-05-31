@@ -43,26 +43,26 @@ class GameController extends AbstractActionController
       return $this->redirect()->toRoute('home');
     }
 
+    
+    
     public function unregisterInGameAction(){
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $currentUser = $this->authService->getIdentity();
+            $id = $this->params()->fromPost('id');
+            $register = $this->entityManager->getRepository(Register::class)->findOneBy(['idregister'=>$id]);
+            if($register){
+                $this->entityManager->remove($register);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage('Désinscription réussie.');
+            }
+            else{
+                $this->flashMessenger()->addSuccessMessage('Une erreur est survenue.');
+            }
+        }
             
-    $request = $this->getRequest();
 
-    if ($request->isPost()) {
-        $currentUser = $this->authService->getIdentity();
-        $id = $this->params()->fromPost('id');
-        $register = $this->entityManager->getRepository(Register::class)->findOneBy(['idregister'=>$id]);
-        if($register){
-            $this->entityManager->remove($register);
-            $this->entityManager->flush();
-            $this->flashMessenger()->addSuccessMessage('Désinscription réussie.');
+        return $this->redirect()->toRoute('home');
         }
-        else{
-            $this->flashMessenger()->addSuccessMessage('Une erreur est survenue.');
-        }
-    }
-        
-
-      return $this->redirect()->toRoute('home');
-    }
   
 }

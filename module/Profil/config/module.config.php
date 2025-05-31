@@ -32,6 +32,16 @@ return [
                     ],
                 ],
             ],
+            'profil-edit' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/profil-edit/[:id]',
+                    'defaults' => [
+                        'controller' => ProfilController::class,
+                        'action' => 'profilEdit',
+                    ],
+                ],
+            ],
             'arsenal' => [
                 'type' => Literal::class,
                 'options' => [

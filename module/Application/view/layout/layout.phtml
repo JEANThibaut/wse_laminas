@@ -1,4 +1,5 @@
 <?php $activeMenu = $this->layout()->getVariable('activeMenu') ?? ''; ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,12 +9,9 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Custom CSS -->
-    <?= $this->headLink()
-        ->prependStylesheet($this->basePath('assets/css/custom.css')) ?>
-        
+
     <!-- Datepicker CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -21,63 +19,11 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
-    <style>
-        /* Fade-in animation */
-        .fade-in {
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
+        <?= $this->headLink()->prependStylesheet($this->basePath('assets/css/custom.css')) ?>
 
-        /* Logo hover switch */
-        .logo-hover {
-            display: none;
-        }
-        a.logo:hover .logo-default {
-            display: none;
-        }
-        a.logo:hover .logo-hover {
-            display: inline;
-        }
-
-        /* Offcanvas sizing fix */
-        .offcanvas {
-            max-width: 85vw;
-            overflow-x: hidden;
-        }
-
-        .nav-link.active {
-            font-weight: bold;
-            background-color: #e9ecef;
-            border-radius: 5px;
-        }
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-            body {
-
-                background-image: url('/images/bg.jpg');
-                background-size: cover;           
-                background-repeat: no-repeat;     
-                background-position: 75% center;   
-            }
-            .fade-in {
-            opacity: 0;
-            animation: fadeInAnimation 1s ease-in forwards;
-        }
-
-        @keyframes fadeInAnimation {
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
+
+
 
 <body>
 <div id="wrapper" class="fade-in">
@@ -101,14 +47,14 @@
 
     <!-- Offcanvas Sidebar -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
-        <div class="offcanvas-header">
+        <div class="offcanvas-header bg-dark">
             <h5 class="offcanvas-title"></h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
         </div>
-      <div class="offcanvas-body d-flex flex-column justify-content-between">
+      <div class="offcanvas-body bg-dark d-flex  flex-column justify-content-between p-0">
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === '') ? 'active' : '' ?>" href="<?= $this->url('home') ?>">Accueil</a>
+            <a class="nav-link <?= ($activeMenu === 'home') ? 'active' : '' ?>" href="<?= $this->url('home') ?>">Accueil</a>
         </li>
 
         <li class="nav-item">
@@ -143,10 +89,10 @@
                 <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">Prochain aménagement</a>
             </li>            
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-users') ?>">Users</a>
+                <a class="nav-link <?= ($activeMenu === 'admin-users') ? 'active' : '' ?>" href="<?= $this->url('admin-users') ?>">Users</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-games') ?>">Les parties</a>
+                <a class="nav-link <?= ($activeMenu === 'admin-games') ? 'active' : '' ?>" href="<?= $this->url('admin-games') ?>">Les parties</a>
             </li>
         <?php endif; ?>
     </ul>
@@ -169,7 +115,7 @@
     </div>
 
     <!-- Main content -->
-    <main class="container mt-4 fade-in">
+    <main class="container mt-4 fade-in ">
         <?= $this->content ?>
     </main>
 
@@ -180,6 +126,27 @@
 
 </div> <!-- end #wrapper -->
 
+
+
+
+
+<!-- Flash messages -->
+<div class="container mt-3 position-absolute start-50 translate-middle-x" style="z-index: 9999; top: 20px;">
+    <?php foreach ($this->flashMessenger()->getMessages() as $message): ?>
+        <div class="alertGlobal alert alert-info"><?= $this->escapeHtml($message) ?></div>
+    <?php endforeach; ?>
+    <?php foreach ($this->flashMessenger()->getErrorMessages() as $message): ?>
+        <div class="alertGlobal alert alert-danger"><?= $this->escapeHtml($message) ?></div>
+    <?php endforeach; ?>
+    <?php foreach ($this->flashMessenger()->getSuccessMessages() as $message): ?>
+        <div class="alertGlobal alert alert-success"><?= $this->escapeHtml($message) ?></div>
+    <?php endforeach; ?>
+    <?php foreach ($this->flashMessenger()->getWarningMessages() as $message): ?>
+        <div class="alertGlobal alert alert-warning"><?= $this->escapeHtml($message) ?></div>
+    <?php endforeach; ?>
+</div>
+
+
 <!-- Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -187,42 +154,39 @@
 <?= $this->inlineScript()
     ->prependFile($this->basePath('assets/js/custom.js')) ?>
 
-<!-- Auto-hide flash messages -->
 <script>
+    // Auto-hide des alertes flash
     setTimeout(() => {
-        document.querySelectorAll('.alert').forEach(el => {
+        document.querySelectorAll('.alertGlobal').forEach(el => {
             el.style.transition = 'opacity 0.5s';
             el.style.opacity = '0';
             setTimeout(() => el.remove(), 500);
         });
     }, 4000);
 
+
+
 document.addEventListener('DOMContentLoaded', function () {
-    flatpickr('.datepicker', {
-        dateFormat: 'd/m/Y',
-        locale: 'fr'
-    });
+    console.log("Initialisation datepicker...");
+
+    const dateFields = document.querySelectorAll('.datepicker');
+    console.log("Nb champs datepicker trouvés :", dateFields.length);
+
+    if (dateFields.length > 0) {
+        dateFields.forEach(input => {
+            console.log("Champ date visible: ", input.offsetParent !== null);
+            flatpickr(input, {
+                dateFormat: "d/m/Y",
+                locale: "fr",
+                disableMobile: true
+            });
+        });
+    } else {
+        console.warn("Aucun champ datepicker trouvé.");
+    }
 });
+
 </script>
 
-
 </body>
-<body>
-
-<!-- Flash messages -->
-<div class="container mt-3 position-absolute start-50 translate-middle-x" style="z-index: 9999; top: 20px;">
-    <?php foreach ($this->flashMessenger()->getMessages() as $message): ?>
-        <div class="alert alert-info"><?= $this->escapeHtml($message) ?></div>
-    <?php endforeach; ?>
-    <?php foreach ($this->flashMessenger()->getErrorMessages() as $message): ?>
-        <div class="alert alert-danger"><?= $this->escapeHtml($message) ?></div>
-    <?php endforeach; ?>
-    <?php foreach ($this->flashMessenger()->getSuccessMessages() as $message): ?>
-        <div class="alert alert-success"><?= $this->escapeHtml($message) ?></div>
-    <?php endforeach; ?>
-    <?php foreach ($this->flashMessenger()->getWarningMessages() as $message): ?>
-        <div class="alert alert-warning"><?= $this->escapeHtml($message) ?></div>
-    <?php endforeach; ?>
-</div>
-
 </html>

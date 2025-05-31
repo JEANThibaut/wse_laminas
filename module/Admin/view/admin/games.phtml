@@ -1,57 +1,98 @@
-<h4>Ajouter une partie</h4>
 
-<form method="post">
-    <div class="row">
-        <div class="form-group col-sm-3">
-            <label for="date">Date</label>
-            <input type="date" name="date" id="date" class="form-control datepicker" placeholder="JJ/MM/AAAA" required>
-        </div>
 
-        <div class="form-group col-sm-3">
+<div class='card'>
+
+    <h4>Ajouter une partie</h4>
+
+    <form method="post">
+        <div class="row">
+            <div class="form-group col-sm-3">
+                <label for="date">Date</label>
+                <input type="text" name="date" id="date" class="form-control datepicker" placeholder="JJ/MM/AAAA" required>
+            </div>
+
+            <div class="form-group col-6">
             <label for="player_max">Joueurs max</label>
-            <input type="number" name="player_max" id="player_max" class="form-control" required>
+            <input type="number" name="player_max" id="player_max" class="form-control" list="player_max_list" min="0" required>
+            <datalist id="player_max_list">
+                <?php for ($i = 10; $i <= 40; $i += 5): ?>
+                <option value="<?= $i ?>"></option>
+                <?php endfor; ?>
+            </datalist>
+            </div>
+
+            <div class="form-group col-6">
+                <label for="status">Statut</label>
+                <select name="status" id="status" class="form-select" required>
+                    <option value="1">Ouverte</option>
+                    <option value="0">Fermée</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-3 justify-content-center">
+        <div class="col-6">
+            <button type="submit" class="btn btn-primary w-100">Valider</button>
+        </div>
         </div>
 
-        <div class="form-group col-sm-3">
-            <label for="status">Statut</label>
-            <select name="status" id="status" class="form-select" required>
-                <option value="1">Ouverte</option>
-                <option value="0">Fermée</option>
-            </select>
-        </div>
 
-        <div class="form-group col-sm-3 d-flex align-items-end mt-5">
-            <button type="submit" class="btn btn-primary w-50">Valider</button>
+    </form>
+    <hr>
+    <h4>Toutes les parties</h4>
+
+    <table id="gamesTable" class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>J max</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($games as $game): ?>
+                <tr>
+                    <td><?= $game->getDate()->format('d/m/Y') ?></td>
+                    <td><?= $this->escapeHtml($game->getPlayerMax()) ?></td>
+                    <td><?= $game->getStatus() ? 'Actif' : 'Inactif' ?></td>
+                <td>
+                    <div class="d-flex justify-content-between" style="gap: 0.5rem;">
+                        <a href="<?= $this->url('admin-edit-game', ['id' => $game->getIdgame()]) ?>" class="btn btn-sm btn-warning">
+                            <i class="fa-solid fa-edit"></i>
+                        </a>
+                        <form method="post" action="<?= $this->url('admin-delete-game') ?>" class="delete-form">
+                            <input type="hidden" name="id" value="<?= $game->getIdgame() ?>">
+                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $game->getIdgame() ?>">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form method="post" id="confirmDeleteForm">
+            <div class="modal-header">
+            <h5 class="modal-title">Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+            Êtes-vous sûr de vouloir supprimer cette partie ?
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-danger">Confirmer</button>
+            </div>
+        </form>
         </div>
     </div>
-</form>
+    </div>
+</div>
 
-<table id="gamesTable" class="table table-bordered table-striped mt-5">
-    <thead>
-        <tr>
-            
-            <th>Date</th>
-            <th>Joueurs max</th>
-            <th>Statut</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($games as $game): ?>
-            <tr>
-                <td><?= $game->getDate()->format('d/m/Y') ?></td>
-                <td><?= $this->escapeHtml($game->getPlayerMax()) ?></td>
-                <td><?= $game->getStatus() ? 'Actif' : 'Inactif' ?></td>
-                <td>
-                    <a href="<?= $this->url('admin-edit-game', ['id' => $game->getIdgame()]) ?>" class="btn btn-sm btn-warning">
-                        Modifier
-                    </a>
-                    <form method="post" action="<?= $this->url('admin-delete-game') ?>" style="display: inline;" onsubmit="return confirm('Confirmer la suppression ?');">
-                        <input type="hidden" name="id" value="<?= $game->getIdgame() ?>">
-                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+<script src="/js/pages/admin/games.js"></script>

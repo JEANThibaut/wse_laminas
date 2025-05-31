@@ -30,7 +30,7 @@ class ProfilController extends AbstractActionController
             'form' => $form,
             'currentUser'=>$currentUser,
         ]);
-        $this->layout()->setVariable('activeMenu', 'profil');
+        $this->layout()->setVariable('activeMenu', 'profil-index');
         $view->setTemplate('profil/profil');
         return $view;
 
@@ -53,7 +53,21 @@ class ProfilController extends AbstractActionController
 
     }
 
-    
+        public function profilEditAction()
+        {
+
+            $currentUser = $this->authService->getIdentity();
+            $view = new ViewModel([
+            
+                'currentUser'=>$currentUser,
+            ]);
+            $this->layout()->setVariable('activeMenu', 'profil');
+            $view->setTemplate('profil/profil-edit');
+         
+            return $view;
+
+        }
+        
     public function arsenalAction()
     {
 
@@ -63,7 +77,7 @@ class ProfilController extends AbstractActionController
             'form' => $form,
             'currentUser'=>$currentUser,
         ]);
-        $this->layout()->setVariable('activeMenu', 'profil');
+        $this->layout()->setVariable('activeMenu', 'arsenal');
         $view->setTemplate('profil/arsenal');
         // $view->setTerminal(true); 
         return $view;

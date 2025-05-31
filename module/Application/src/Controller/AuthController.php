@@ -16,30 +16,33 @@ class AuthController extends AbstractActionController
         $this->authService = $authService;
     }
 
+
+
     public function loginAction()
     {
-        $form = new LoginForm();
         $message = null;
 
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
-            $form->setData($data);
 
-            if ($form->isValid()) {
-                $email = $data['email'];
-                $password = $data['password'];
+            $email = trim($data['email'] ?? '');
+            $password = $data['password'] ?? '';
 
+            if (filter_var($email, FILTER_VALIDATE_EMAIL) && !empty($password)) {
                 if ($this->authService->login($email, $password)) {
                     $this->flashMessenger()->addSuccessMessage("Connexion réussie.");
                     return $this->redirect()->toRoute('home');
                 } else {
                     $message = "Identifiants incorrects.";
                 }
+            } else {
+                $message = "Veuillez remplir tous les champs correctement.";
             }
         }
+
         $this->layout()->setVariable('activeMenu', 'login');
+
         return new ViewModel([
-            'form'    => $form,
             'message' => $message,
         ]);
     }
