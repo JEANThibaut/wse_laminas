@@ -1,43 +1,45 @@
 
-
-<div class='card'>
-
-  
-    <?php if($game):?>
-        <h4>Prochaine partie du <?php echo $game->getDate()->format("d/m/Y"); ?> </h4>
-        <hr>
-        <div class='row'>
-        <div class="col-12 text-center">
-            <?php if($this->currentUser):?>
-                <?php if($this->register): ?>
-                  <div class='alert alert-success'>
-                    <p>Vous êtes déjà inscrit</p>
-                </div>
-                <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
-                    <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#unregisterModal">
-                    Se désinscrire
-                </button>
-                </form>
-                <?php else: ?>   
-                <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
-                    S'inscrire
-                </a>
-                <?php endif; ?>      
-            <?php else: ?>
-                <a href="<?= $this->url('login')?>" class="btn btn-warning">
-                    Se connecter
-                </a>        
-            <?php endif ?>
-            </div>
-        </div>
-    <?php endif ?>
-    
-</div>
-<div class='card'>
-    <h4>Les dernières actus ! </h4>
-    <hr>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A inventore possimus modi praesentium aliquam. Enim deserunt officiis quibusdam minus aut nam, omnis odit excepturi mollitia voluptas culpa totam exercitationem ab.</P>
+<div class='row justify-content-around'>
+  <div class='card col-md-6 col-sm-12'>
+      <?php if($game):?>
+          <h4>Prochaine partie du <?php echo $game->getDate()->format("d/m/Y"); ?> </h4>
+          <hr>
+          <div class='row'>
+          <div class="col-12 text-center">
+              <?php if($this->currentUser):?>
+                  <?php if($this->register): ?>
+                    <div class='alert alert-success'>
+                      <p>Vous êtes déjà inscrit</p>
+                  </div>
+                  <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
+                      <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
+                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#unregisterModal">
+                      Se désinscrire
+                  </button>
+                  </form>
+                  <?php else: ?>   
+                  <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                      S'inscrire
+                  </a>
+                  <?php endif; ?>      
+              <?php else: ?>
+                  <a href="<?= $this->url('login')?>" class="btn btn-warning">
+                      Se connecter
+                  </a>        
+              <?php endif ?>
+              </div>
+          </div>
+      <?php else :?> 
+        <h4>La prochaine partie n'est pas encore en ligne</h4>
+        <p>Vous serez informés dès l'ouverture des inscriptions! </p>   
+      <?php endif ?>
+      
+  </div>
+  <div class='card col-md-6 col-sm-12'>
+      <h4>Les dernières actus ! </h4>
+      <hr>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A inventore possimus modi praesentium aliquam. Enim deserunt officiis quibusdam minus aut nam, omnis odit excepturi mollitia voluptas culpa totam exercitationem ab.</P>
+  </div>
 </div>
 
 

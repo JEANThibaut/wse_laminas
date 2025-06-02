@@ -30,7 +30,7 @@ class ProfilController extends AbstractActionController
             'form' => $form,
             'currentUser'=>$currentUser,
         ]);
-        $this->layout()->setVariable('activeMenu', 'profil-index');
+        $this->layout()->setVariable('activeMenu', 'profil');
         $view->setTemplate('profil/profil');
         return $view;
 

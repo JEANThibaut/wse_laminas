@@ -2,9 +2,13 @@
   border-radius: 0 !important;
    border: none !important;
    padding: 20px;
-   margin: 10px;
-}
+   margin-bottom: 15px;
 
+}   
+.container {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 .btn {
   border-radius: 0 !important;
     border: none !important;
@@ -27,114 +31,99 @@ hr{
 }
 
 
-        body, html, .container, .main-wrapper {
-            overflow: visible !important;
-        }
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+body, html, .container, .main-wrapper {
+    overflow: visible !important;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
+body {
+    background-image: url('/images/bg.jpg');
+    background-size: cover;           
+    background-repeat: no-repeat;     
+    background-position: 75% center ;   
+}
+    
+.modal-backdrop.show {
+    z-index: 1050 !important;
+    display: none !important;
+}
 
-            background-image: url('/images/bg.jpg');
-            background-size: cover;           
-            background-repeat: no-repeat;     
-            background-position: 75% center ;   
-        }
-            
-     .modal-backdrop.show {
-            z-index: 1050 !important;
-            display: none !important;
-        }
+.modal.show {
+    z-index: 1060 !important;
+    display: block !important;
+}
 
-        .modal.show {
-            z-index: 1060 !important;
-            display: block !important;
-        }
+.modal {
+    position: fixed !important;
+}
 
-        .modal {
-            position: fixed !important;
-        }
+/* Fade-in animation */
+.fade-in {
+    animation: fadeIn 1s ease-in;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
 
-        /* Fade-in animation */
-        .fade-in {
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
+/* Logo hover switch */
+.logo-hover {
+    display: none;
+}
+a.logo:hover .logo-default {
+    display: none;
+}
+a.logo:hover .logo-hover {
+    display: inline;
+}
 
-        /* Logo hover switch */
-        .logo-hover {
-            display: none;
-        }
-        a.logo:hover .logo-default {
-            display: none;
-        }
-        a.logo:hover .logo-hover {
-            display: inline;
-        }
+/* Offcanvas sizing fix */
+.offcanvas {
+    max-width: 85vw;
+    overflow-x: hidden;
+}
+.offcanvas-body h4 {
+    margin-left: 10px;
+    margin-bottom:25px;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+}
+.offcanvas-body hr {
+    color: white;
+}
+.nav-item{
+    border-radius:0;
+}
 
-        /* Offcanvas sizing fix */
-        .offcanvas {
-            max-width: 85vw;
-            overflow-x: hidden;
-        }
-        .offcanvas-body h4 {
-            margin-left: 10px;
-            margin-bottom:25px;
-            color: white;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-            text-decoration-thickness: 2px;
-        }
-        .offcanvas-body hr {
-            color: white;
-        }
-        .nav-item{
-            border-radius:0;
-        }
+.nav-link {
+    font-weight: bold;
+    color:white;
+}
 
-        .nav-link {
-            font-weight: bold;
-            color:white;
-        }
+.nav-link.active {
+    font-weight: bold;
+    color:black;
+    background-color:rgb(214, 214, 214);
+    /* border-radius: 5px; */
+}
 
-        .nav-link.active {
-            font-weight: bold;
-            color:black;
-            background-color:rgb(214, 214, 214);
-            /* border-radius: 5px; */
-        }
+.fade-in {
+    opacity: 0;
+    animation: fadeInAnimation 1s ease-in forwards;
+}
 
-        .fade-in {
-            opacity: 0;
-            animation: fadeInAnimation 1s ease-in forwards;
-        }
-
-        @keyframes fadeInAnimation {
-            to {
-                opacity: 1;
-            }
-        }
+@keyframes fadeInAnimation {
+    to {
+        opacity: 1;
+    }
+}
 
 .btn-close {
-    filter: invert(1);
+filter: invert(1);
 }
-
-/* input,
-select,
-textarea {
-  border: none !important;
-  box-shadow: none !important; 
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none !important;
-  box-shadow: none !important;
-} */
