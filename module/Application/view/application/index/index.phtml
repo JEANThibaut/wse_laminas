@@ -1,38 +1,81 @@
 
 
 <div class='card'>
-
-  
     <?php if($game):?>
-        <h4>Prochaine partie du <?php echo $game->getDate()->format("d/m/Y"); ?> </h4>
+
+        	<?php if($isComplete && !$isRegister) : ?>
+            <h4>La prochaine partie est complète!</h4>
+            <hr>
+            <div class='row'>
+              <div class="col-12 text-center">
+                  <p>Vous pouvez vous inscrire en file d'attente <br> et recevoir un message si une place se libère </p>
+              </div>
+                <div class="col-12 text-center">
+                  <a href="<?= $this->url('register-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                    S'inscrire en file d'attente
+                  </a>
+              </div>  
+            </div>
+
+            <?php else :?>
+                <?php if($isComplete): ?>
+                    <h4>La prochaine partie est complète!</h4>
+                <?php else : ?>    
+                    <h4>Prochaine partie du <?php echo $game->getDate()->format("d/m/Y"); ?> </h4>
+                <?php endif;?>
+          <hr>
+          <div class='row'>
+            <div class="col-12 text-center">
+              <?php if($this->currentUser):?>
+                  <?php if($this->register): ?>
+                    <div class='alert alert-success'>
+                      <p>Vous êtes déjà inscrit</p>
+                  </div>
+                  <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
+                      <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
+                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#unregisterModal">
+                      Se désinscrire
+                  </button>
+                  </form>
+                  <?php else: ?>   
+
+
+                <div class='row'>
+                  <div class="col-12 text-center">
+                      <p>Les inscriptions sont ouvertes ! </p>
+                  </div>
+                    <div class="col-12 text-center">
+                      <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                          S'inscrire
+                      </a>
+                  </div>  
+                </div>
+                    
+            
+                  <?php endif; ?>      
+              <?php else: ?>
+                  <a href="<?= $this->url('login')?>" class="btn btn-warning">
+                      Se connecter
+                  </a>        
+              <?php endif ?>
+            </div>
+          </div>
+            
+            <?php endif ?>
+
+
+
+
+    <?php else: ?>    
+        <h4>La prochaine partie n'est pas encore ouverte!</h4>
         <hr>
         <div class='row'>
-        <div class="col-12 text-center">
-            <?php if($this->currentUser):?>
-                <?php if($this->register): ?>
-                  <div class='alert alert-success'>
-                    <p>Vous êtes déjà inscrit</p>
-                </div>
-                <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
-                    <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#unregisterModal">
-                    Se désinscrire
-                </button>
-                </form>
-                <?php else: ?>   
-                <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
-                    S'inscrire
-                </a>
-                <?php endif; ?>      
-            <?php else: ?>
-                <a href="<?= $this->url('login')?>" class="btn btn-warning">
-                    Se connecter
-                </a>        
-            <?php endif ?>
-            </div>
+          <div class="col-12 text-center">
+               <p>Elle sera mises en ligne d'ici peu, restez connecter et suivez nous sur les réseaux pour être tenu informer ! </p>
+          </div>
         </div>
     <?php endif ?>
-    
+
 </div>
 <div class='card'>
     <h4>Les dernières actus ! </h4>

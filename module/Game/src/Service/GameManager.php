@@ -3,6 +3,7 @@ namespace Game\Service;
 
 use Game\Entity\Game;
 use Game\Entity\Register;
+use Game\Entity\WaitingList;
 use Doctrine\ORM\EntityManager;
 
 class GameManager
@@ -68,4 +69,18 @@ class GameManager
 
     return true;
 }
+
+        public function registerInWaitingList($currentUser,$game, $count){
+            
+            $newWaitingList = new WaitingList;
+            $newWaitingList->setGameId($game->getIdGame());
+            $newWaitingList->setUserId($currentUser->getIdUser());
+            $newWaitingList->setEmailSend(0);
+            $newWaitingList->setIsValidate(0);
+            $newWaitingList->setOrderList($count +1);
+            $this->entityManager->persist($newWaitingList);
+            $this->entityManager->flush();
+
+        }
+
 }

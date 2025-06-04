@@ -32,6 +32,16 @@ return [
                     ],
                 ],
             ],
+            'register-in-waiting-list' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/register-in-waiting-list',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'registerInWaitingList',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [

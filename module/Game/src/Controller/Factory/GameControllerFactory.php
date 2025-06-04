@@ -3,6 +3,7 @@ namespace Game\Controller\Factory;
 
 use Game\Controller\GameController;
 use Game\Service\GameManager;
+use Game\Service\WaitingListManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\EntityManager;

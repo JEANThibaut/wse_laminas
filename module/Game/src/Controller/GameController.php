@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\Register;
+use Game\Entity\WaitingList;
 use Game\Form\GameForm;
 
 class GameController extends AbstractActionController
@@ -15,11 +16,13 @@ class GameController extends AbstractActionController
     private $entityManager;
     private $gameManager;
 
+
     public function __construct($entityManager, $authService, $gameManager)
     {
         $this->entityManager = $entityManager;
         $this->authService=$authService;
         $this->gameManager = $gameManager;
+
     }
 
 
@@ -63,6 +66,20 @@ class GameController extends AbstractActionController
             
 
         return $this->redirect()->toRoute('home');
-        }
+    }
+
+
+    public function registerInWaitingListAction(){
+        $currentUser = $this->authService->getIdentity();
+        $id = (int) $this->params()->fromQuery('id'); 
+        $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findBy(['game_id'=>$id]);
+         $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);
+        $count = count($waitingList);
+        $newWaitingList = $this->gameManager->registerInWaitingList($currentUser,$game, $count);
+
+       
+      return $this->redirect()->toRoute('home');
+    }
+
   
 }
