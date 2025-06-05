@@ -113,7 +113,7 @@ class AdminController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
 
-        $form = new GameForm();
+        // $form = new GameForm();
 
         if ($request->isPost()) {
             $form->setData($request->getPost());
@@ -121,14 +121,13 @@ class AdminController extends AbstractActionController
             if ($form->isValid()) {
                 $data = $form->getData();
                 dump($data);
-
                 // return $this->redirect()->toRoute('home',);
             }
         }
 
 
         $view = new ViewModel([
-            'form' => $form,
+            // 'form' => $form,
             'currentUser'=>$currentUser,
         ]);
         $this->layout()->setVariable('activeMenu', 'game');

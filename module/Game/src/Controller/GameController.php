@@ -81,5 +81,23 @@ class GameController extends AbstractActionController
       return $this->redirect()->toRoute('home');
     }
 
+
+    
+    public function unregisterInWaitingListAction(){
+        $currentUser = $this->authService->getIdentity();
+        $id = (int) $this->params()->fromQuery('id'); 
+        $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game_id'=>$id, 'user_id'=>$currentUser->getIdUser()]);
+  
+        if($waitingList != null){
+            $this->entityManager->remove($waitingList);
+            $this->entityManager->flush();
+        }
+        // $count = count($waitingList);
+        // $newWaitingList = $this->gameManager->registerInWaitingList($currentUser,$game, $count);
+
+       
+      return $this->redirect()->toRoute('home');
+    }
+
   
 }

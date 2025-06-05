@@ -42,6 +42,16 @@ return [
                     ],
                 ],
             ],
+            'unregister-in-waiting-list' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/unregister-in-waiting-list',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'unregisterInWaitingList',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [

@@ -47,40 +47,39 @@ class GameManager
     }
 
    public function registerInGame($game, $currentUser)
-{
-    $existing = $this->entityManager->getRepository(Register::class)->findOneBy([
-        'user_id' => $currentUser->getIdUser(),
-        'game_id' => $game->getIdgame()
-    ]);
+    {
+        $existing = $this->entityManager->getRepository(Register::class)->findOneBy([
+            'user_id' => $currentUser->getIdUser(),
+            'game_id' => $game->getIdgame()
+        ]);
 
-    if ($existing) {
-        return false; 
+        if ($existing) {
+            return false; 
+        }
+
+        $register = new Register();
+        $register->setUserId($currentUser->getIdUser());
+        $register->setGameId($game->getIdgame());
+        $register->setPresence(1); 
+        $register->setPaid(0);   
+        $register->setMember($currentUser->getIsMember());
+        $this->entityManager->persist($register);
+        $this->entityManager->flush();
+
+        return true;
     }
 
-    $register = new Register();
-    $register->setUserId($currentUser->getIdUser());
-    $register->setGameId($game->getIdgame());
-    $register->setPresence(1); 
-    $register->setPaid(0);   
-    $register->setMember($currentUser->getIsMember());
+    public function registerInWaitingList($currentUser,$game, $count){
+        
+        $newWaitingList = new WaitingList;
+        $newWaitingList->setGameId($game->getIdGame());
+        $newWaitingList->setUserId($currentUser->getIdUser());
+        $newWaitingList->setEmailSend(0);
+        $newWaitingList->setIsValidate(0);
+        $newWaitingList->setOrderList($count +1);
+        $this->entityManager->persist($newWaitingList);
+        $this->entityManager->flush();
 
-    $this->entityManager->persist($register);
-    $this->entityManager->flush();
-
-    return true;
-}
-
-        public function registerInWaitingList($currentUser,$game, $count){
-            
-            $newWaitingList = new WaitingList;
-            $newWaitingList->setGameId($game->getIdGame());
-            $newWaitingList->setUserId($currentUser->getIdUser());
-            $newWaitingList->setEmailSend(0);
-            $newWaitingList->setIsValidate(0);
-            $newWaitingList->setOrderList($count +1);
-            $this->entityManager->persist($newWaitingList);
-            $this->entityManager->flush();
-
-        }
+    }
 
 }

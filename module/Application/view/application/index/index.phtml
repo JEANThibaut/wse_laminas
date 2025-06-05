@@ -4,18 +4,37 @@
     <?php if($game):?>
 
         	<?php if($isComplete && !$isRegister) : ?>
-            <h4>La prochaine partie est complète!</h4>
-            <hr>
-            <div class='row'>
-              <div class="col-12 text-center">
-                  <p>Vous pouvez vous inscrire en file d'attente <br> et recevoir un message si une place se libère </p>
-              </div>
-                <div class="col-12 text-center">
-                  <a href="<?= $this->url('register-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
-                    S'inscrire en file d'attente
-                  </a>
-              </div>  
-            </div>
+
+
+                  <h4>La prochaine partie est complète!</h4>
+                  <hr>
+              <?php if(!$isInWaitingList) : ?>
+                
+                  <div class='row'>
+                    <div class="col-12 text-center">
+                        <p>Vous pouvez vous inscrire en file d'attente <br> et recevoir un message si une place se libère </p>
+                    </div>
+                      <div class="col-12 text-center">
+                        <a href="<?= $this->url('register-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                          S'inscrire en file d'attente
+                        </a>
+                    </div>  
+                  </div>
+                  <?php else : ?>
+                                      <div class='row'>
+                    <div class="col-12 text-center">
+                      <div class='alert alert-success'>
+                          <p>Vous êtes inscrit en liste d'attente</p>
+                      </div>                   
+                    </div>
+                      <div class="col-12 text-center">
+                        <a href="<?= $this->url('unregister-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                          Se désinscrire
+                        </a>
+                    </div>  
+                  </div>
+              <?php endif ?>
+
 
             <?php else :?>
                 <?php if($isComplete): ?>
