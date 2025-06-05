@@ -25,5 +25,6 @@ return [
     'User',
     'Profil',
     'Game',
-    'Admin'
+    'Admin',
+    'Photo'
 ];
