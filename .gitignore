@@ -7,3 +7,4 @@ data/cache/*
 !data/cache/.gitkeep
 phpunit.xml
 config/autoload/global.php
+/public/photos

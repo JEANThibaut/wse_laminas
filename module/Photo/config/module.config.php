@@ -11,19 +11,30 @@ use Application\Service\Factory\AuthServiceFactory;
 
 return [
    'router' => [
-    'routes' => [
-        'photo-index' => [
-            'type' => 'Literal',
-            'options' => [
-                'route'    => '/photo-index',
-                'defaults' => [
-                    'controller' => Controller\PhotoController::class,
-                    'action'     => 'index',
+        'routes' => [
+            'photo-index' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route'    => '/photo-index',
+                    'defaults' => [
+                        'controller' => Controller\PhotoController::class,
+                        'action'     => 'index',
+                    ],
                 ],
             ],
+            'photos-view' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/photos-view[/:date]',
+                    'defaults' => [
+                        'controller' => Controller\PhotoController::class,
+                        'action'     => 'photosView',
+                    ],
+                ],
+            ]
         ],
     ],
-],
+
     'controllers' => [
         'factories' => [
             Controller\PhotoController::class => Controller\Factory\PhotoControllerFactory::class, 

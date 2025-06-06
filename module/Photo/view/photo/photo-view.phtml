@@ -1,0 +1,61 @@
+<div id="scroll-gallery">
+    <?php foreach ($this->images as $index => $url): ?>
+        <div class="photo-slide" data-index="<?= $index ?>">
+            <img data-src="<?= htmlentities($url) ?>" class="lazy-img" alt="photo <?= $index ?>">
+        </div>
+    <?php endforeach; ?>
+</div>
+
+<style>
+
+#scroll-gallery {
+    height: calc(100vh);
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+.photo-slide {
+
+    height: 70vh;
+    scroll-snap-align: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+   margin:0
+}
+
+.photo-slide img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+}
+
+
+</style>
+
+<script>
+    const slides = document.querySelectorAll('.photo-slide');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const index = parseInt(entry.target.dataset.index);
+                [index - 1, index, index + 1].forEach(i => {
+                    const slide = document.querySelector(`.photo-slide[data-index="${i}"] img`);
+                    if (slide && !slide.src) {
+                        slide.src = slide.dataset.src;
+                        slide.onload = () => slide.style.opacity = '1';
+                    }
+                });
+            }
+        });
+    }, {
+        root: document.querySelector('#scroll-gallery'),
+        threshold: 0.6,
+    });
+
+    slides.forEach(slide => observer.observe(slide));
+</script>

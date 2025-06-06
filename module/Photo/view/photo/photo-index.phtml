@@ -1,1 +1,15 @@
-<h1>PHOTOS</h1>
+<div class="container ms">
+    <h2>Galerie photo</h2>
+    <?php if (empty($this->dates)): ?>
+        <p>Aucune galerie disponible.</p>
+    <?php else: ?>
+        <?php foreach ($this->dates as $date): ?>
+            <div class="my-2">
+               <a href="<?= $this->url('photos-view', ['date' => $date]) ?>" class="btn btn-outline-primary">
+
+                    Voir la galerie
+                </a>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
