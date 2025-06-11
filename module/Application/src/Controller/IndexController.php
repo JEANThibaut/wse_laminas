@@ -25,6 +25,7 @@ class IndexController extends AbstractActionController
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
         $isRegister = false;
          $isInWaitingList = false;
+         $isComplete = false;
          $this->layout()->setVariable('activeMenu', 'home');
         if($game && $currentUser){
             $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser);
@@ -33,8 +34,9 @@ class IndexController extends AbstractActionController
           if($register){
             $isRegister = true;
           }
+            $isComplete = count($countRegister) >= $game->getPlayerMax();
         }
-        $isComplete = count($countRegister) >= $game->getPlayerMax();
+
        
         return new ViewModel([
             'game' => $game,
