@@ -1,37 +1,56 @@
 <div id="scroll-gallery">
     <?php foreach ($this->images as $index => $url): ?>
         <div class="photo-slide" data-index="<?= $index ?>">
-            <img data-src="<?= htmlentities($url) ?>" class="lazy-img" alt="photo <?= $index ?>">
+            <div class="photo-content text-center">
+
+                <img data-src="<?= htmlentities($url) ?>" class="lazy-img img-fluid rounded shadow" alt="photo <?= $index ?>">
+                        <a href="<?= htmlentities($url) ?>" download class="btn btn-outline-light ">
+                    <i class="fas fa-download"></i> Télécharger
+                </a>
+          
+            </div>
         </div>
     <?php endforeach; ?>
 </div>
 
+
 <style>
 
+
+
 #scroll-gallery {
-    height: calc(100vh);
+    height: 100vh;
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
 }
 
 .photo-slide {
-
-    height: 70vh;
+    height: 75vh; 
     scroll-snap-align: start;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: transparent;
-   margin:0;
-   margin-top:10px;
+    padding: 0 1rem;
+    box-sizing: border-box;
 }
 
-.photo-slide img {
-    max-height: 100%;
+.photo-content {
+    width: 100%;
+    /* max-width: 800px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.photo-content img {
+    max-height: 70vh;
     max-width: 100%;
     object-fit: contain;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
     border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 
