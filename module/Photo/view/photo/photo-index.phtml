@@ -3,13 +3,32 @@
     <?php if (empty($this->dates)): ?>
         <p>Aucune galerie disponible.</p>
     <?php else: ?>
-        <?php foreach ($this->dates as $date): ?>
-            <div class="my-2">
-               <a href="<?= $this->url('photos-view', ['date' => $date]) ?>" class="btn btn-outline-primary">
-
-                    Voir la galerie
-                </a>
+<?php foreach ($this->dates as $date): ?>
+    <a href="<?= $this->url('photos-view', ['date' => $date]) ?>" class="text-decoration-none text-reset">
+        <div class="card my-3 shadow-sm clickable-card">
+            <div class="card-body">
+                <h5 class="card-title mb-1">Partie du
+                     <?php echo  str_replace('-',"/",$date) ?>
+                </h5>
+      
             </div>
-        <?php endforeach; ?>
+        </div>
+    </a>
+<?php endforeach; ?>
+
     <?php endif; ?>
 </div>
+
+
+<style>
+    .clickable-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.clickable-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    background-color: #f8f9fa;
+}
+</style>
