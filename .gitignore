@@ -8,3 +8,5 @@ data/cache/*
 phpunit.xml
 config/autoload/global.php
 /public/photos
+
+config/autoload/global.php
