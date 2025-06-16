@@ -30,9 +30,18 @@ public function findNextGame()
 
 public function findRegister($game, $currentUser){
         return $this->_em->getRepository(Register::class)->findOneBy([
-        'game_id' => $game->getIdgame(),
-        'user_id' => $currentUser->getIduser()
+        'game' => $game->getIdGame(),
+        'user' => $currentUser
     ]);
+}
+
+public function findUsersByGameId(int $gameId): array
+{
+    return $this->createQueryBuilder('r')
+        ->where('r.game_id = :gameId')
+        ->setParameter('gameId', $gameId)
+        ->getQuery()
+        ->getResult();
 }
 
 }

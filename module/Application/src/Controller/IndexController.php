@@ -23,14 +23,15 @@ class IndexController extends AbstractActionController
     {
         $currentUser = $this->authService->getIdentity();
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
+        
         $isRegister = false;
-         $isInWaitingList = false;
-         $isComplete = false;
-         $this->layout()->setVariable('activeMenu', 'home');
+        $isInWaitingList = false;
+        $isComplete = false;
+        $this->layout()->setVariable('activeMenu', 'home');
         if($game && $currentUser){
-            $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser);
-            $countRegister = $this->entityManager->getRepository(Register::class)->findBy(['game_id'=>$game->getIdgame(),]);
-            $isInWaitingList = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game_id'=>$game->getIdgame(),'user_id'=>$currentUser->getIdUser()]);
+            $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser->getIdUser());
+            $countRegister = $this->entityManager->getRepository(Register::class)->findBy(['game'=>$game->getIdGame(),]);
+            // $isInWaitingList = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game'=>$game->getIdGame(),'user'=>$currentUser->getIdUser()]);
           if($register){
             $isRegister = true;
           }
@@ -44,7 +45,7 @@ class IndexController extends AbstractActionController
             'currentUser'=>$currentUser,
             'register'=>$register ?? null,
             'isComplete'=>$isComplete,
-            'isInWaitingList'=>$isInWaitingList,
+            // 'isInWaitingList'=>$isInWaitingList,
         ]);
     }
 }

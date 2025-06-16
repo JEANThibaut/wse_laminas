@@ -30,14 +30,15 @@ hr{
     margin-top:0;
 }
 
-
+/* 
 body, html, .container, .main-wrapper {
     overflow: visible !important;
-}
+} */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden; 
 }
 
 body {
@@ -126,4 +127,18 @@ a.logo:hover .logo-hover {
 
 .btn-close {
 filter: invert(1);
+}
+
+
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+main.container-fluid {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+    -webkit-overflow-scrolling: touch;
 }

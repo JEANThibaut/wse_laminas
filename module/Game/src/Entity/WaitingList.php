@@ -18,14 +18,17 @@ class WaitingList
     protected $idwaiting;
 
     /**
-     * @ORM\Column(name="game_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="Game\Entity\Game")
+     * @ORM\JoinColumn(name="game_id", referencedColumnName="idgame", nullable=false)
      */
-    protected $game_id;
+    private $game;
 
     /**
-     * @ORM\Column(name="user_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="User\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="iduser", nullable=false)
      */
-    protected $user_id;
+    private $user;
+
 
     /**
      * @ORM\Column(name="is_validate", type="integer")
@@ -52,25 +55,28 @@ class WaitingList
         $this->idwaiting = $idwaiting;
     }
 
-    public function getGameId()
+    public function getUser()
     {
-        return $this->game_id;
+        return $this->user;
     }
 
-    public function setGameId($game_id)
+    public function setUser($user)
     {
-        $this->game_id = $game_id;
+        $this->user = $user;
+        return $this;
     }
 
-    public function getUserId()
+    public function getGame()
     {
-        return $this->user_id;
+        return $this->game;
     }
 
-    public function setUserId($user_id)
+    public function setGame($game)
     {
-        $this->user_id = $user_id;
+        $this->game = $game;
+        return $this;
     }
+
 
     public function getIsValidate()
     {
