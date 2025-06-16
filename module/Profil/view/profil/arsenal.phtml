@@ -1,59 +1,80 @@
 
-    <h3>Mon Arsenal</h3>
 
-    <table id="repliqueTable" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Puissance</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<style>
+    .no-arrow-select {
+    appearance: none;         /* Standard */
+    -webkit-appearance: none; /* Safari / Chrome */
+    -moz-appearance: none;    /* Firefox */
+    background-image: none;   /* Masque la flèche */
+    padding-right: 1.5rem;
+}
 
-    
-<h4>Ajouter une réplique</h4>
+</style>
+<div class="card p-3">
+    <h3 class="mb-4">Mon Arsenal</h3>
 
-<?php
-   $form->setAttribute('id', 'repliqueForm');
-   echo $this->form()->openTag($form);
-    $form->prepare();
-?>
+    <?php foreach ($repliques as $replique): ?>
+        <form method="post" action="<?= $this->url('update-replique') ?>" class="mb-2">
+            <input type="hidden" name="replique-id" value="<?= $replique->getIdreplique() ?>">
+
+            <div class="row align-items-center g-2">
+                <div class="col-5">
+                    <input type="text" name="nom_replique" value="<?= htmlentities($replique->getNomReplique()) ?>" class="form-control form-control-sm" placeholder="Nom" required>
+                </div>
+
+                <div class="col-3">
+                    <select name="type_replique" class="form-select form-select-sm no-arrow-select" required>
+                        <?php
+                            $types = ['AEG', 'GBBR', 'Pistolet', 'Sniper', 'Autre'];
+                            foreach ($types as $type) {
+                                $selected = $type === $replique->getTypeReplique() ? 'selected' : '';
+                                echo "<option value=\"$type\" $selected>$type</option>";
+                            }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-2">
+                    <input type="number" name="puissance" value="<?= htmlentities($replique->getPuissance()) ?>" min="0" step="0.01" class="form-control form-control-sm" placeholder="Puissance" required>
+                </div>
+
+                <div class="col-2 text-end">
+                    <button type="submit" class="btn btn-warning btn-sm w-100">Éditer</button>
+                </div>
+            </div>
+        </form>
+    <?php endforeach; ?>
+</div>
+
+<div class='card'>
+    <h4 class='mb-1'>Ajouter une réplique</h4>
+
+    <form method="post" action="update-replique" id="repliqueForm">
+        <div class="row">
+            <div class="form-group col-12 mb-3">
+                <input type="text" class="form-control" id="nom_replique" name="nom_replique" required placeholder="Nom de de la réplique">
+            </div>
+
+            <div class="form-group col-5">
+                <select class="form-control" id="type_replique" name="type_replique" required>
+                    <option value="">-- Type --</option>
+                    <option value="AEG">AEG</option>
+                    <option value="GBBR">GBBR</option>
+                    <option value="Pistolet">Pistolet</option>
+                    <option value="Sniper">Sniper</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div class="form-group col-5">
+                <input type="number" class="form-control" id="puissance" name="puissance" required min="0" step="0.01" placeholder="Puissance(j)">
+            </div>
+        </div>
+            <input type='hidden' name="replique-id" value="-1">        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-warning">Ajouter</button>
+        </div>
+    </form>
+</div>
 
 
-<div class='row'>
-    <div class="form-group col-sm-5">
-        <?php
-        echo $this->formLabel($form->get('nom_replique'));
-        echo $this->formElement($form->get('nom_replique'));
-        echo $this->formElementErrors($form->get('nom_replique'));
-        ?>
-    </div>
-
-    <div class="form-group col-sm-3">
-        <?php
-        echo $this->formLabel($form->get('type_replique'));
-        echo $this->formElement($form->get('type_replique'));
-        echo $this->formElementErrors($form->get('type_replique'));
-        ?>
-    </div>
-
-    <div class="form-group col-sm-3">
-        <?php
-        echo $this->formLabel($form->get('puissance'));
-        echo $this->formElement($form->get('puissance'));
-        echo $this->formElementErrors($form->get('puissance'));
-        ?>
-    </div>
-
-    
-    <div class="form-group mt-3">
-        <?php echo $this->formElement($form->get('submit')); ?>
-    </div>
 
 
-
-
-<?php echo $this->form()->closeTag(); ?>

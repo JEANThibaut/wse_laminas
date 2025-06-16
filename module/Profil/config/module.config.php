@@ -52,38 +52,16 @@ return [
                     ],
                 ],
             ],
-
-            'ajax-get-repliques' => [
+            'update-replique' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/ajax-get-repliques',
+                    'route' => '/update-replique',
                     'defaults' => [
-                        'controller' => AjaxController::class,
-                        'action' => 'ajaxGetRepliques',
+                        'controller' => ProfilController::class,
+                        'action' => 'updateReplique',
                     ],
                 ],
             ],
-            'ajax-add-replique' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/ajax-add-replique',
-                    'defaults' => [
-                        'controller' => AjaxController::class,
-                        'action' => 'ajaxAddReplique',
-                    ],
-                ],
-            ],
-            'ajax-delete-replique' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/ajax-delete-replique',
-                    'defaults' => [
-                        'controller' => AjaxController::class,
-                        'action' => 'ajaxDeleteReplique',
-                    ],
-                ],
-            ],
-    
         ],
     ],
     'controllers' => [
