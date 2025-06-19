@@ -70,16 +70,14 @@ class ProfilController extends AbstractActionController
         
     public function arsenalAction()
     {
-
         $currentUser = $this->authService->getIdentity();
-        $form = new \Profil\Form\RepliqueForm();
+        $repliques = $this->entityManager->getRepository(Replique::class)->findBy(['iduser'=>$currentUser->getIdUser()]);
         $view = new ViewModel([
-            'form' => $form,
             'currentUser'=>$currentUser,
+            'repliques'=>$repliques,
         ]);
         $this->layout()->setVariable('activeMenu', 'arsenal');
         $view->setTemplate('profil/arsenal');
-        // $view->setTerminal(true); 
         return $view;
 
     }
@@ -89,21 +87,28 @@ class ProfilController extends AbstractActionController
     public function updateRepliqueAction()
     {
         $request = $this->getRequest();
+          $currentUser = $this->authService->getIdentity();
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
-    
-            $data['puissance'] = str_replace(',', '.', $data['puissance']);
-    
-            $replique = $this->repliqueManager->getRepliqueById($data['id']);
+            if($data["replique-id"]=="-1"){
+                $data['puissance'] = str_replace(',', '.', $data['puissance']);
+                $newReplique = $this->repliqueManager->addReplique($data, $currentUser);
+                $this->flashMessenger()->addSuccessMessage('Réplique ajoutée.');
+            }else{
+                $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$data['replique-id']]);
             if ($replique) {
                 $this->repliqueManager->updateReplique($replique, $data);
                 $this->flashMessenger()->addSuccessMessage('Réplique mise à jour.');
             } else {
                 $this->flashMessenger()->addErrorMessage('Réplique introuvable.');
             }
+            }
+           
+            //
+        
         }
     
-        return $this->redirect()->toRoute('profil');
+        return $this->redirect()->toRoute('arsenal');
     }
 
   

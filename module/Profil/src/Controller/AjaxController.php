@@ -23,97 +23,97 @@ class AjaxController extends AbstractActionController
     }
 
     
-    public function ajaxGetRepliquesAction()
-    {
+    // public function ajaxGetRepliquesAction()
+    // {
         
-        $currentUser = $this->authService->getIdentity();
-        $arsenal = $this->entityManager->getRepository(Replique::class)->findBy(['iduser'=>$currentUser->getIduser()]);
-        $data = [];
+    //     $currentUser = $this->authService->getIdentity();
+    //     $arsenal = $this->entityManager->getRepository(Replique::class)->findBy(['iduser'=>$currentUser->getIduser()]);
+    //     $data = [];
     
-        foreach ($arsenal as $replique) {
-            $data[] = [
-                'nom'       => $replique->getNomReplique(),
-                'type'      => $replique->getTypeReplique(),
-                'puissance' => $replique->getPuissance(),
-                'id'        => $replique->getIdreplique()
-            ];
-        }
-        return new JsonModel([
-            'data' => $data,
-        ]);
-    }
-    
-
-    public function ajaxAddRepliqueAction()
-    {
-        $currentUser = $this->authService->getIdentity();
-        $request = $this->getRequest();
-        if (!$request->isXmlHttpRequest() || !$request->isPost()) {
-            return new JsonModel([
-                'success' => false,
-                'message' => 'Requête non autorisée'
-            ]);
-        }
-    
-        $form = new RepliqueForm;
-        $data = $request->getPost()->toArray();
-    
-        if (isset($data['puissance'])) {
-            $data['puissance'] = str_replace(',', '.', $data['puissance']);
-        }
-    
-        $form->setData($data);
-    
-        if ($form->isValid()) {
-            $replique = $this->repliqueManager->addReplique($form->getData(),$currentUser);
-    
-            return new JsonModel([
-                'success' => true,
-                'id' => $replique->getIdreplique(),
-                'nom' => $replique->getNomReplique(),
-                'type' => $replique->getTypeReplique(),
-                'puissance' => $replique->getPuissance(),
-            ]);
-        }
-    
-        return new JsonModel([
-            'success' => false,
-            'errors' => $form->getMessages()
-        ]);
-    }
+    //     foreach ($arsenal as $replique) {
+    //         $data[] = [
+    //             'nom'       => $replique->getNomReplique(),
+    //             'type'      => $replique->getTypeReplique(),
+    //             'puissance' => $replique->getPuissance(),
+    //             'id'        => $replique->getIdreplique()
+    //         ];
+    //     }
+    //     return new JsonModel([
+    //         'data' => $data,
+    //     ]);
+    // }
     
 
-    public function ajaxDeleteRepliqueAction()
-    {
-        $request = $this->getRequest();
+    // public function ajaxAddRepliqueAction()
+    // {
+    //     $currentUser = $this->authService->getIdentity();
+    //     $request = $this->getRequest();
+    //     if (!$request->isXmlHttpRequest() || !$request->isPost()) {
+    //         return new JsonModel([
+    //             'success' => false,
+    //             'message' => 'Requête non autorisée'
+    //         ]);
+    //     }
     
-        if (!$request->isXmlHttpRequest() || !$request->isPost()) {
-            return new JsonModel([
-                'success' => false,
-                'message' => 'Requête non autorisée'
-            ]);
-        }
+    //     $form = new RepliqueForm;
+    //     $data = $request->getPost()->toArray();
     
-        $idreplique = $request->getPost('idreplique');
-        if (empty($idreplique)) {
-            return new JsonModel([
-                'success' => false,
-                'message' => 'ID manquant'
-            ]);
-        }
-        $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$idreplique]);
-        if ($replique) {
-            $this->repliqueManager->deleteReplique($replique);
-            return new JsonModel([
-                'success' => true,
-                'message' => 'Réplique supprimée'
-            ]);
-        }
+    //     if (isset($data['puissance'])) {
+    //         $data['puissance'] = str_replace(',', '.', $data['puissance']);
+    //     }
     
-        return new JsonModel([
-            'success' => false,
-            'message' => 'Réplique introuvable'
-        ]);
-    }
+    //     $form->setData($data);
+    
+    //     if ($form->isValid()) {
+    //         $replique = $this->repliqueManager->addReplique($form->getData(),$currentUser);
+    
+    //         return new JsonModel([
+    //             'success' => true,
+    //             'id' => $replique->getIdreplique(),
+    //             'nom' => $replique->getNomReplique(),
+    //             'type' => $replique->getTypeReplique(),
+    //             'puissance' => $replique->getPuissance(),
+    //         ]);
+    //     }
+    
+    //     return new JsonModel([
+    //         'success' => false,
+    //         'errors' => $form->getMessages()
+    //     ]);
+    // }
+    
+
+    // public function ajaxDeleteRepliqueAction()
+    // {
+    //     $request = $this->getRequest();
+    
+    //     if (!$request->isXmlHttpRequest() || !$request->isPost()) {
+    //         return new JsonModel([
+    //             'success' => false,
+    //             'message' => 'Requête non autorisée'
+    //         ]);
+    //     }
+    
+    //     $idreplique = $request->getPost('idreplique');
+    //     if (empty($idreplique)) {
+    //         return new JsonModel([
+    //             'success' => false,
+    //             'message' => 'ID manquant'
+    //         ]);
+    //     }
+    //     $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$idreplique]);
+    //     if ($replique) {
+    //         $this->repliqueManager->deleteReplique($replique);
+    //         return new JsonModel([
+    //             'success' => true,
+    //             'message' => 'Réplique supprimée'
+    //         ]);
+    //     }
+    
+    //     return new JsonModel([
+    //         'success' => false,
+    //         'message' => 'Réplique introuvable'
+    //     ]);
+    // }
     
 }

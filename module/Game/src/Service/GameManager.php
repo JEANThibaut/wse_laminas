@@ -4,6 +4,7 @@ namespace Game\Service;
 use Game\Entity\Game;
 use Game\Entity\Register;
 use Game\Entity\WaitingList;
+use User\Entity\User;
 use Doctrine\ORM\EntityManager;
 
 class GameManager
@@ -17,7 +18,6 @@ class GameManager
 
     public function addGame(array $data)
     {
-
            $date = \DateTime::createFromFormat('d/m/Y', $data['date']);
             $newGame = new Game;
             $newGame->setDate($date);
@@ -48,9 +48,11 @@ class GameManager
 
    public function registerInGame($game, $currentUser)
     {
+         $user = $this->entityManager->getRepository(User::class)->find($currentUser->getIdUser());
+
         $existing = $this->entityManager->getRepository(Register::class)->findOneBy([
-            'user_id' => $currentUser->getIdUser(),
-            'game_id' => $game->getIdgame()
+            'user' => $user,
+            'game' => $game
         ]);
 
         if ($existing) {
@@ -58,11 +60,10 @@ class GameManager
         }
 
         $register = new Register();
-        $register->setUserId($currentUser->getIdUser());
-        $register->setGameId($game->getIdgame());
-        $register->setPresence(1); 
+        $register->setUser($user);
+        $register->setGame($game);
         $register->setPaid(0);   
-        $register->setMember($currentUser->getIsMember());
+        $register->setMember($user->getIsMember());
         $this->entityManager->persist($register);
         $this->entityManager->flush();
 

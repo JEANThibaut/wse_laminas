@@ -16,14 +16,18 @@ class Register
      */
     private $idregister;
 
-    /** @ORM\Column(type="integer") */
-    private $user_id;
+    /**
+     * @ORM\ManyToOne(targetEntity="User\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="iduser", nullable=false)
+     */
+    private $user;
 
-    /** @ORM\Column(type="integer") */
-    private $game_id;
+    /**
+     * @ORM\ManyToOne(targetEntity="Game\Entity\Game")
+     * @ORM\JoinColumn(name="game_id", referencedColumnName="idgame", nullable=false)
+     */
+    private $game;
 
-    /** @ORM\Column(type="integer") */
-    private $presence;
 
     /** @ORM\Column(type="integer") */
     private $paid;
@@ -35,36 +39,25 @@ public function getIdregister()
     return $this->idregister;
 }
 
-public function getUserId()
+public function getUser()
 {
-    return $this->user_id;
+    return $this->user;
 }
 
-public function setUserId($user_id)
+public function setUser($user)
 {
-    $this->user_id = $user_id;
+    $this->user = $user;
     return $this;
 }
 
-public function getGameId()
+public function getGame()
 {
-    return $this->game_id;
+    return $this->game;
 }
 
-public function setGameId($game_id)
+public function setGame($game)
 {
-    $this->game_id = $game_id;
-    return $this;
-}
-
-public function getPresence()
-{
-    return $this->presence;
-}
-
-public function setPresence($presence)
-{
-    $this->presence = $presence;
+    $this->game = $game;
     return $this;
 }
 

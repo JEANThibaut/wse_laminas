@@ -5,6 +5,7 @@ namespace Admin\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
+use Game\Entity\Register;
 use User\Entity\User;
 
 class AdminController extends AbstractActionController
@@ -113,22 +114,28 @@ class AdminController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
 
-        // $form = new GameForm();
-
+        $nextGame= $this->entityManager->getRepository(Game::class)->findNextGame();
+        $registers =  $this->entityManager->getRepository(Register::class)->findBy(['game' => $nextGame, 'member'=>0]);
         if ($request->isPost()) {
-            $form->setData($request->getPost());
-        
-            if ($form->isValid()) {
-                $data = $form->getData();
-                dump($data);
-                // return $this->redirect()->toRoute('home',);
+            $data = $this->params()->fromPost();
+            $registerId = $data['register_id'] ?? null;
+            $action = $data['action'] ?? null;
+
+            if ($registerId && in_array($action, ['validate', 'cancel'])) {
+                $register = $this->entityManager->getRepository(Register::class)->find($registerId);
+
+                if ($register) {
+                    $register->setPaid($action === 'validate' ? 1 : 0);
+                    $this->entityManager->flush();
+                }
             }
+
+            return $this->redirect()->toRoute('admin-next-games');
         }
 
-
         $view = new ViewModel([
-            // 'form' => $form,
             'currentUser'=>$currentUser,
+            'registers'=>$registers
         ]);
         $this->layout()->setVariable('activeMenu', 'game');
         $view->setTemplate('admin/next-game');

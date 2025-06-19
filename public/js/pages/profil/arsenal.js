@@ -33,6 +33,7 @@ function initArsenalTab() {
     }
 
     function bindAddReplique() {
+        console.log("Add bouton");
         const form = document.getElementById('repliqueForm');
         if (!form) return;
         form.addEventListener('submit', handleAddReplique);
