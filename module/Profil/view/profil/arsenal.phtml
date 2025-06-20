@@ -35,7 +35,11 @@
 .fake-select-icon:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
-
+.type-image {
+    display: block;
+    max-height: 100%;
+    pointer-events: none;
+}
 
 </style>
 <div class="card p-3">
@@ -53,7 +57,7 @@
                 <div class="col-3 position-relative" style="height: 40px;">
                     <select name="type_replique" class="real-select" required>
                         <?php
-                            $types = ['AEG', 'GBBR', 'Pistolet', 'Sniper', 'Autre'];
+                            $types = ['Pistolet', 'Machine gun', "Fusil d'assault", 'Sniper', 'Fusil à pompe','Autre'];
                             foreach ($types as $type) {
                                 $selected = $type === $replique->getTypeReplique() ? 'selected' : '';
                                 echo "<option value=\"$type\" $selected>$type</option>";
@@ -62,7 +66,7 @@
                     </select>
 
                     <div class="fake-select-icon position-absolute top-50 start-50 translate-middle">
-                        <i class="fas fa-gun"></i>
+                        <img class="type-image" src="" alt="type" style="height: 28px;">
                     </div>
                 </div>
 
@@ -91,10 +95,11 @@
             <div class="form-group col-5">
                 <select class="form-control" id="type_replique" name="type_replique" required>
                     <option value="">-- Type --</option>
-                    <option value="AEG">AEG</option>
-                    <option value="GBBR">GBBR</option>
-                    <option value="Pistolet">Pistolet</option>
-                    <option value="Sniper">Sniper</option>
+                    <option value="pistol">Pistolet</option>
+                    <option value="machinegun">Machine gun</option>
+                    <option value="rifle">Fusil d'assault</option>
+                    <option value="sniper">Sniper</option>
+                    <option value="shotgun">Fusil à pompe</option>
                     <option value="Autre">Autre</option>
                 </select>
             </div>
@@ -102,32 +107,41 @@
                 <input type="number" class="form-control" id="puissance" name="puissance" required min="0" step="0.01" placeholder="Puissance(j)">
             </div>
         </div>
-            <input type='hidden' name="replique-id" value="-1">        <div class="form-group mt-3">
+            <input type='hidden' name="replique-id" value="-1"><div class="form-group mt-3">
             <button type="submit" class="btn btn-warning">Ajouter</button>
         </div>
     </form>
 </div>
 
 <script>
-
-
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.real-select').forEach(select => {
-        select.addEventListener('change', () => {
-            const icon = select.parentElement.querySelector('.fake-select-icon i');
-            switch (select.value) {
-                case 'AEG': icon.className = 'fas fa-bolt'; break;
-                case 'GBBR': icon.className = 'fas fa-fire'; break;
-                case 'Sniper': icon.className = 'fas fa-crosshairs'; break;
-                default: icon.className = 'fas fa-gun'; break;
-            }
-        });
 
-        // Initialisation de l'icône selon la valeur actuelle
-        const event = new Event('change');
-        select.dispatchEvent(event);
+
+const typeImageMap = {
+    "pistolet": "pistol.png",
+    "machine gun": "machinegun.png",
+    "fusil d'assault": "assault-rifle.png",
+    "sniper": "sniper.png",
+    "fusil à pompe": "shotgun.png",
+    "autre": "knife.png"
+};
+    document.querySelectorAll('.real-select').forEach(select => {
+        const wrapper = select.parentElement;
+        const img = wrapper.querySelector('.type-image');
+
+        const updateImage = () => {
+             const type = select.value.toLowerCase();
+             
+            let image = typeImageMap[type];
+            img.src = `/images/arsenal/${image}`;
+            img.alt = type;
+        };
+
+        select.addEventListener('change', updateImage);
+        updateImage();
     });
 });
+
 
 </script>
     
