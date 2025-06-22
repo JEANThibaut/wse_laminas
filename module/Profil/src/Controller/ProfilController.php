@@ -25,9 +25,9 @@ class ProfilController extends AbstractActionController
     {
 
         $currentUser = $this->authService->getIdentity();
-        $form = new \Profil\Form\RepliqueForm();
+        // $form = new \Profil\Form\RepliqueForm();
         $view = new ViewModel([
-            'form' => $form,
+            // 'form' => $form,
             'currentUser'=>$currentUser,
         ]);
         $this->layout()->setVariable('activeMenu', 'profil');
@@ -41,9 +41,9 @@ class ProfilController extends AbstractActionController
     {
 
         $currentUser = $this->authService->getIdentity();
-        $form = new \Profil\Form\RepliqueForm();
+        // $form = new \Profil\Form\RepliqueForm();
         $view = new ViewModel([
-            'form' => $form,
+            // 'form' => $form,
             'currentUser'=>$currentUser,
         ]);
         $this->layout()->setVariable('activeMenu', 'profil');

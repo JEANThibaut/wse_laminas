@@ -1,5 +1,5 @@
 <?php $activeMenu = $this->layout()->getVariable('activeMenu') ?? ''; ?>
-
+<?php $isFunny = true; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -53,45 +53,100 @@
       <div class="offcanvas-body bg-dark d-flex  flex-column justify-content-between p-0">
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'home') ? 'active' : '' ?>" href="<?= $this->url('home') ?>">Accueil</a>
+ 
+            <a class="nav-link <?= ($activeMenu === 'home') ? 'active' : '' ?>" href="<?= $this->url('home') ?>">
+                <?php if($isFunny): ?>
+                    <img class=" mb-1" src="/images/icones/home.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Accueil
+            </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'photos') ? 'active' : '' ?>" href="<?= $this->url('photo-index') ?>">Les photos</a>
+
+            <a class="nav-link <?= ($activeMenu === 'photo-index') ? 'active' : '' ?>" href="<?= $this->url('photo-index') ?>">
+                 <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/gallery.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Les photos
+            </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'forum') ? 'active' : '' ?>" href="#">Forum</a>
+            <a class="nav-link <?= ($activeMenu === 'forum') ? 'active' : '' ?>" href="#">
+                <?php if($isFunny): ?>
+                    <img class="" src="/images/icones/forum.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>    
+            Forum</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'faq') ? 'active' : '' ?>" href="#">F.A.Q / Contact</a>
+            <a class="nav-link <?= ($activeMenu === 'faq') ? 'active' : '' ?>" href="#">
+                <?php if($isFunny): ?>
+                    <img class=" mb-1" src="/images/icones/customer-care.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>        
+            F.A.Q / Contact
+            </a>
         </li>
 
         <?php if ($this->currentUser) : ?>
             <hr>
             <h4>Profil</h4>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'profil-index') ? 'active' : '' ?>" href="<?= $this->url('profil-index') ?>">Mon profil</a>
+                <a class="nav-link <?= ($activeMenu === 'profil-index') ? 'active' : '' ?>" href="<?= $this->url('profil-index') ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/verified.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>            
+                Mon profil</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'arsenal') ? 'active' : '' ?>" href="<?= $this->url('arsenal') ?>">Mon Arsenal</a>
+                <a class="nav-link <?= ($activeMenu === 'arsenal') ? 'active' : '' ?>" href="<?= $this->url('arsenal') ?>">
+                    <?php if($isFunny): ?>
+                        <img class="mb-1" src="/images/icones/magazine.png" alt="type" style="height: 20px; margin-right:10px;">
+                    <?php endif ?>         
+                    Mon Arsenal
+                </a>
             </li>
         <?php endif; ?>
         <?php if ($this->currentUser && $this->currentUser->getIsMember()) : ?>
              <hr>
             <h4>Espace membres</h4>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">Prochaine partie</a>
+                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">
+                    <?php if($isFunny): ?>
+                        <img class="mb-1" src="/images/icones/online-game.png" alt="type" style="height: 20px; margin-right:10px;">
+                    <?php endif ?>        
+                    Prochaine partie
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">Prochain aménagement</a>
+                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">
+                    <?php if($isFunny): ?>
+                        <img class="mb-1" src="/images/icones/checklist.png" alt="type" style="height: 20px; margin-right:10px;">
+                    <?php endif ?>            
+                    Prochain aménagement
+                </a>
             </li>            
+
+        <?php endif; ?>
+            <?php if ($this->currentUser && $this->currentUser->getIsAdmin()) : ?>
+            <hr>
+            <h4>Espace Administration</h4>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-users') ? 'active' : '' ?>" href="<?= $this->url('admin-users') ?>">Users</a>
+                <a class="nav-link <?= ($activeMenu === 'admin-users') ? 'active' : '' ?>" href="<?= $this->url('admin-users') ?>">
+                    <?php if($isFunny): ?>
+                        <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                    <?php endif ?>        
+                    Users
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-games') ? 'active' : '' ?>" href="<?= $this->url('admin-games') ?>">Les parties</a>
+                <a class="nav-link <?= ($activeMenu === 'admin-games') ? 'active' : '' ?>" href="<?= $this->url('admin-games') ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/game-development.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>          
+                Les parties
+                </a>
             </li>
         <?php endif; ?>
     </ul>

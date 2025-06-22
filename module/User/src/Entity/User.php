@@ -35,6 +35,9 @@ class User
     private $member;
 
     /** @ORM\Column(type="boolean") */
+    private $admin;
+
+    /** @ORM\Column(type="boolean") */
     private $blacklist;
 
     /** @ORM\Column(type="boolean") */
@@ -116,6 +119,18 @@ class User
     public function setIsMember(bool $member): self
     {
         $this->member = $member;
+        return $this;
+    }
+
+
+    public function getIsAdmin(): bool
+    {
+        return $this->admin;
+    }
+
+    public function setIsAdmin(bool $admin): self
+    {
+        $this->admin = $admin;
         return $this;
     }
 

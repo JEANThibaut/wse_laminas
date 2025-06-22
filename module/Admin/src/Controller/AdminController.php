@@ -125,7 +125,21 @@ class AdminController extends AbstractActionController
                 $register = $this->entityManager->getRepository(Register::class)->find($registerId);
 
                 if ($register) {
+                    // $nextArrived = $this->entityManager->getRepository(Register::class)->getNextArrivedNumber($register,$nextGame->getIdgame());
+                    $nextArrived = $this->entityManager->getRepository(Register::class)->getFirstMissingArrivedNumber($register,$nextGame->getIdgame());
+                    
                     $register->setPaid($action === 'validate' ? 1 : 0);
+                    if($register->getArrivedNumber() == 0){
+
+                    }
+    
+                    if($nextArrived){
+                        $register->setPaid($action === 'validate' ? 1 : 0);
+                        $register->setArrivedNumber($action === 'validate' ? $nextArrived : 0);
+                    }
+                    else{
+                        $register->setArrivedNumber($action === 'validate' ? 0 : 0);
+                    }
                     $this->entityManager->flush();
                 }
             }

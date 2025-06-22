@@ -33,6 +33,8 @@ class Register
     private $paid;
     /** @ORM\Column(type="integer") */
     private $member;
+    /** @ORM\Column(type="integer") */
+    private $arrived_number;
 
 public function getIdregister()
 {
@@ -80,6 +82,17 @@ public function getMember()
 public function setMember($member)
 {
     $this->member = $member;
+    return $this;
+}
+
+public function getArrivedNumber()
+{
+    return $this->arrived_number;
+}
+
+public function setArrivedNumber($arrived_number)
+{
+    $this->arrived_number = $arrived_number;
     return $this;
 }
 
