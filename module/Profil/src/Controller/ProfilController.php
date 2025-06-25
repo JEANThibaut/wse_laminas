@@ -28,12 +28,12 @@ class ProfilController extends AbstractActionController
 
         $currentUser = $this->authService->getIdentity();
         // $form = new \Profil\Form\RepliqueForm();
-        $games = $this->entityManager->getRepository(Register::class)->findBy(['user'=>$currentUser]);
+        $registers = $this->entityManager->getRepository(Register::class)->findBy(['user'=>$currentUser]);
   
         $view = new ViewModel([
             // 'form' => $form,
             'currentUser'=>$currentUser,
-            'games'=>$games,
+            'registers'=>$registers,
         ]);
         $this->layout()->setVariable('activeMenu', 'profil');
         $view->setTemplate('profil/profil');

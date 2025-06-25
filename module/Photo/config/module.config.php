@@ -25,7 +25,7 @@ return [
             'photos-view' => [
                 'type' => 'Segment',
                 'options' => [
-                    'route' => '/photos-view[/:date]',
+                    'route' => '/photos-view[/:type][/:date]',
                     'defaults' => [
                         'controller' => Controller\PhotoController::class,
                         'action'     => 'photosView',

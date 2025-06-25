@@ -33,3 +33,31 @@
             </div>
         </div>
 </div>
+
+<?php if ($registers): ?>
+    <div class='card'>
+        <h4>Mes parties jouées</h4>
+        <?php foreach ($registers as $register): ?>
+            <?php
+                $game = $register->getGame();
+                $dateFolder = $game->getDate()->format('d-m-Y');
+                $photoDir = 'public/photos/games/' . $dateFolder;
+                dump($photoDir);
+                $hasPhotos = is_dir($photoDir) && count(
+                    array_filter(scandir($photoDir), function ($file) use ($photoDir) {
+                        return preg_match('/\.(jpg|jpeg|png|gif)$/i', $file) && is_file($photoDir . '/' . $file);
+                    })
+                ) > 0;
+            ?>
+            <hr>
+            <p>
+                <?= $game->getDate()->format('d/m/Y') ?>
+                <?php if ($hasPhotos): ?>
+                    <a href="<?= $this->url('photos-view', ['date' => $dateFolder, 'type'=>'games']) ?>" class="btn btn-sm btn-secondary ms-2">
+                        Voir les photos
+                    </a>
+                <?php endif; ?>
+            </p>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
