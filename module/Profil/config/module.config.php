@@ -2,6 +2,7 @@
 namespace Profil;
 
 use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Profil\Controller\ProfilController;
 use Profil\Controller\AjaxController;
@@ -33,9 +34,9 @@ return [
                 ],
             ],
             'profil-edit' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route' => '/profil-edit/[:id]',
+                    'route' => '/profil-edit[/:id]',
                     'defaults' => [
                         'controller' => ProfilController::class,
                         'action' => 'profilEdit',
