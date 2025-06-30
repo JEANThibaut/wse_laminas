@@ -42,7 +42,7 @@
                 $game = $register->getGame();
                 $dateFolder = $game->getDate()->format('d-m-Y');
                 $photoDir = 'public/photos/games/' . $dateFolder;
-                dump($photoDir);
+                // dump($photoDir);
                 $hasPhotos = is_dir($photoDir) && count(
                     array_filter(scandir($photoDir), function ($file) use ($photoDir) {
                         return preg_match('/\.(jpg|jpeg|png|gif)$/i', $file) && is_file($photoDir . '/' . $file);

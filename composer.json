@@ -37,7 +37,9 @@
             "Profil\\": "module/Profil/src/",
             "Game\\": "module/Game/src",
             "Admin\\": "module/Admin/src",
-            "Photo\\": "module/Photo/src"
+            "Photo\\": "module/Photo/src",
+            "Annonce\\" : "module/Annonce/src"
+       
         }
     },
     "autoload-dev": {

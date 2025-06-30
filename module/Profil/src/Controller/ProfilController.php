@@ -146,8 +146,10 @@ class ProfilController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage('Réplique ajoutée.');
             }
             elseif ($action === 'delete') {
-                $replique = $this->entityManager->getRepository(Replique::class)->find($data['replique-id']);
+                $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$data['replique-id']]);
+
                 $this->entityManager->remove($replique);
+                $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage('Réplique supprimé.');
             }
         }
