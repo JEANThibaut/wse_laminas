@@ -24,8 +24,16 @@ class AnnonceController extends AbstractActionController
     }
 
     public function annoncesAction(){
-
         
+
+
+        $view = new ViewModel([
+
+        ]);
+
+        $this->layout()->setVariable('activeMenu', 'annonce-index');
+        $view->setTemplate('annonce/annonce-index');
+        return $view;
     }
     
   

@@ -12,10 +12,10 @@ use Application\Service\Factory\AuthServiceFactory;
 return [
     'router' => [
         'routes' => [
-            'annonces' => [
+            'annonce-index' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/annonces',
+                    'route' => '/annonce-index',
                     'defaults' => [
                         'controller' => AnnonceController::class,
                         'action' => 'annonces',
