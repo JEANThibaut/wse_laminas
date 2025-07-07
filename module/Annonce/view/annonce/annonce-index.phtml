@@ -1,1 +1,39 @@
-<h1>Test</h1>
+<div class="card p-3">
+    <h5 class="mb-3 text-center" style='color:red;'>Avertissement</h5>
+
+<p style='font-size:13px; color:red;'>
+    Cette section à pour unique but de mettre en relation les joueurs 
+    souhaitant mettre en ventes du matériel d'airsoft uniquement.
+</p>
+
+<p style='font-size:13px;color:red;'>
+    L'association WolfSoftEure ne peut en aucune mesure être tenue pour responsable de toutes transactions ou prises de contact faites au travers de cet outils.
+</p>
+
+</div>
+
+<div class="card p-3">
+    <h5 class="mb-3 text-center" >Les annonces</h5>
+    <table>
+        <thead>
+            <tr>
+
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($annonces as $annonce): ?>
+                <tr>
+                    <td><?= $this->escapeHtml($annonce->getTitle()) ?></td>
+                    <td><?= $this->escapeHtml($annonce->getDescription()) ?></td>
+                    <td><?= $this->escapeHtml($annonce->getDate()->format('Y-m-d')) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+
+    </div>
+</div>

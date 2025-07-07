@@ -26,8 +26,11 @@ class Annonce
     private $user;
 
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="text") */
     private $title;
+
+    /** @ORM\Column(type="text") */
+    private $description;
 
     public function getIdannonce()
     {
@@ -64,6 +67,17 @@ class Annonce
     public function setTitle( $title): self
     {
         $this->title = $title;
+        return $this;
+    }
+  
+     public function getDescription()
+    {
+        return $this->description;
+    }
+    
+    public function setDescription( $description): self
+    {
+        $this->description = $description;
         return $this;
     }
   
