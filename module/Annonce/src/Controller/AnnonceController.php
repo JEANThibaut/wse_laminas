@@ -23,7 +23,7 @@ class AnnonceController extends AbstractActionController
 
     }
 
-    public function annoncesAction(){
+    public function annoncesIndexAction(){
         $page = (int)$this->params()->fromQuery('page', 1);
         $search = $this->params()->fromQuery('search', '');
         $annonces = $this->entityManager->getRepository(Annonce::class)->fetchPaginated($page, 10, $search);
@@ -36,6 +36,21 @@ class AnnonceController extends AbstractActionController
 
         $this->layout()->setVariable('activeMenu', 'annonce-index');
         $view->setTemplate('annonce/annonce-index');
+        return $view;
+    }
+
+    public function getAnnonceAction(){
+
+        $currentUser = $this->authService->getIdentity();
+        $annonceId = (int) $this->params()->fromRoute('id');
+        $annonce = $this->entityManager->getRepository(Annonce::class)->findOneBy(['idannonce'=>$annonceId]);
+        dump($annonce);
+        $view = new ViewModel([
+            'annonce' => $annonce,
+        ]);
+
+        $this->layout()->setVariable('activeMenu', 'annonce-index');
+        $view->setTemplate('annonce/get-annonce');
         return $view;
     }
 

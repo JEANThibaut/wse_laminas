@@ -11,6 +11,7 @@ class AnnonceRepository extends EntityRepository
 {
     $qb = $this->createQueryBuilder('a')
         ->orderBy('a.date', 'DESC')
+        ->andWhere('a.validate = 1')
         ->setFirstResult(($page - 1) * $perPage)
         ->setMaxResults($perPage);
 

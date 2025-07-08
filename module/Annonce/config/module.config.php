@@ -2,6 +2,7 @@
 namespace Annonce;
 
 use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Annonce\Controller\AnnonceController;
 use Annonce\Controller\AjaxController;
@@ -18,7 +19,17 @@ return [
                     'route' => '/annonce-index',
                     'defaults' => [
                         'controller' => AnnonceController::class,
-                        'action' => 'annonces',
+                        'action' => 'annoncesIndex',
+                    ],
+                ],
+            ],
+             'get-annonce' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/get-annonce[/:id]',
+                    'defaults' => [
+                        'controller' => AnnonceController::class,
+                        'action' => 'getAnnonce',
                     ],
                 ],
             ],
