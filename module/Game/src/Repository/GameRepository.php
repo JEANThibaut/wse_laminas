@@ -44,4 +44,47 @@ public function findUsersByGameId(int $gameId): array
         ->getResult();
 }
 
+public function getNextArrivedNumber($excludedRegister, $gameId)
+{
+    return $this->createQueryBuilder('r')
+        ->select('MAX(r.arrived_number)')
+        ->where('r.game = :gameId')
+        ->andWhere('r != :excludedRegister')
+        ->setParameters([
+            'gameId' => $gameId,
+            'excludedRegister' => $excludedRegister,
+        ])
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+public function getFirstMissingArrivedNumber($excludedRegister, $gameId): int
+{
+    $results = $this->createQueryBuilder('r')
+        ->select('r.arrived_number')
+        ->where('r.game = :gameId')
+        ->andWhere('r != :excludedRegister')
+        ->andWhere('r.arrived_number > 0')
+        ->orderBy('r.arrived_number', 'ASC')
+        ->setParameters([
+            'gameId' => $gameId,
+            'excludedRegister' => $excludedRegister,
+        ])
+        ->getQuery()
+        ->getArrayResult();
+
+    $usedNumbers = array_column($results, 'arrived_number');
+
+    $expected = 1;
+    foreach ($usedNumbers as $num) {
+        if ($num != $expected) {
+            return $expected;
+        }
+        $expected++;
+    }
+
+    return $expected; 
+}
+
+
 }

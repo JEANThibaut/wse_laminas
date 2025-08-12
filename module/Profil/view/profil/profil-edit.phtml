@@ -1,26 +1,40 @@
+<form method="post" action="<?= $this->url('profil-edit', ['id' => $user->getIdUser()]) ?>" class="card p-3">
+    <h4 class="mb-3">Éditer le profil</h4>
 
-<div class='card'>
-    <div class='row'>
-        <div class="col-6" >
-            <h5><?php echo $currentUser->getLastName();?></h5>
-            <h5><?php echo $currentUser->getFirstName();?></h5>
-            <h6><?php echo $currentUser->getNickname();?></h6>
-           
-            <p><?php echo $currentUser->getBirthdate()->format("d/m/Y");?></p>
-            <p><?php echo $currentUser->getEmail();?></p>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="lastname" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="lastname" name="lastname"
+                   value="<?= htmlentities($user->getLastName()) ?>" required>
         </div>
-            <div class="col-6"> 
-            <div>
-                <button class="btn btn-warning mb-3 mt-3" onclick="window.location.href='<?= $this->url('logout') ?>'">Se déconnecter</button>
-            </div>   
-        </div>       
-    </div>         
-       <div class='row'>
-            <div class="col-6">
-                <div>
-                    <button class="btn btn-warning mb-3 mt-3" onclick="window.location.href='<?= $this->url('logout') ?>'">Réinitialiser Mot de passe</button>
-                </div>
-            
-            </div>
+
+        <div class="col-md-6">
+            <label for="firstname" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="firstname" name="firstname"
+                   value="<?= htmlentities($user->getFirstName()) ?>" required>
         </div>
-</div>
+
+        <div class="col-md-6">
+            <label for="nickname" class="form-label">Pseudo</label>
+            <input type="text" class="form-control" id="nickname" name="nickname"
+                   value="<?= htmlentities($user->getNickname() ?? '') ?>
+">
+        </div>
+
+        <div class="col-md-6">
+            <label for="birthdate" class="form-label">Date de naissance</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate"
+                   value="<?= $user->getBirthdate() ? $user->getBirthdate()->format('Y-m-d') : '' ?>" required>
+        </div>
+
+        <div class="col-12">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email"
+                   value="<?= htmlentities($user->getEmail()) ?>" required>
+        </div>
+    </div>
+
+    <div class="mt-4 text-end">
+        <button type="submit" class="btn btn-warning">Sauvegarder</button>
+    </div>
+</form>

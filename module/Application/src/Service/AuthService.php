@@ -41,4 +41,8 @@ class AuthService
     {
         return $this->authenticationService->getIdentity();
     }
+    public function getStorage()
+{
+    return $this->authenticationService->getStorage();
+}
 }

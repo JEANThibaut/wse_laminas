@@ -1,0 +1,60 @@
+<style>
+    /* Enlever tous les arrondis */
+    .modal-content, 
+    .modal-header, 
+    .modal-footer, 
+    .modal-body {
+        border-radius: 0 !important;
+    }
+
+  #avertissementModal {
+    backdrop-filter: blur(2px);
+}
+
+</style>
+
+
+
+        <?php foreach ($annonces as $annonce): ?>
+            <div class="card p-3">
+            <a href="/get-annonce/<?php echo $annonce->getIdannonce(); ?>" class="text-decoration-none text-dark">
+                <div class="d-flex justify-content-between p-2 mb-2">
+                    <div><?php echo $annonce->getTitle(); ?></div>
+                    <div><?php echo $annonce->getDate()->format('Y-m-d'); ?></div>
+                </div>
+            </a>
+            </div>
+        <?php endforeach; ?>
+
+
+
+<div class="modal fade" id="avertissementModal" tabindex="-1" aria-labelledby="avertissementModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger" id="avertissementModalLabel">Avertissement</h5>
+      </div>
+      <div class="modal-body" style="font-size: 13px;">
+        <p>
+          Cette section a pour unique but de mettre en relation les joueurs
+          souhaitant mettre en vente du matériel d'airsoft uniquement.
+        </p>
+        <p>
+          L'association WolfSoftEure ne peut en aucune mesure être tenue responsable de toutes transactions ou prises de contact faites au travers de cet outil.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">J'ai compris</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script pour afficher automatiquement la modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var avertissementModal = new bootstrap.Modal(document.getElementById('avertissementModal'));
+        avertissementModal.show();
+    });
+</script>
+

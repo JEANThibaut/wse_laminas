@@ -5,6 +5,8 @@ namespace Profil\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Profil\Entity\Replique;
+use User\Entity\User;
+use Game\Entity\Register;
 
 class ProfilController extends AbstractActionController
 {
@@ -25,10 +27,13 @@ class ProfilController extends AbstractActionController
     {
 
         $currentUser = $this->authService->getIdentity();
-        $form = new \Profil\Form\RepliqueForm();
+        // $form = new \Profil\Form\RepliqueForm();
+        $registers = $this->entityManager->getRepository(Register::class)->findBy(['user'=>$currentUser]);
+  
         $view = new ViewModel([
-            'form' => $form,
+            // 'form' => $form,
             'currentUser'=>$currentUser,
+            'registers'=>$registers,
         ]);
         $this->layout()->setVariable('activeMenu', 'profil');
         $view->setTemplate('profil/profil');
@@ -37,36 +42,72 @@ class ProfilController extends AbstractActionController
     }
 
 
-    public function profilAction()
+    // public function profilAction()
+    // {
+
+    //     $currentUser = $this->authService->getIdentity();
+   
+    //     // $form = new \Profil\Form\RepliqueForm();
+    //     $view = new ViewModel([
+    //         // 'form' => $form,
+    //         'currentUser'=>$currentUser,
+    //     ]);
+    //     $this->layout()->setVariable('activeMenu', 'profil');
+    //     $view->setTemplate('profil/profil');
+    //     $view->setTerminal(true); 
+    //     return $view;
+
+    // }
+
+    public function profilEditAction()
     {
-
+        $request = $this->getRequest();
         $currentUser = $this->authService->getIdentity();
-        $form = new \Profil\Form\RepliqueForm();
+
+        $userId = (int) $this->params()->fromRoute('id');
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+
+
+        if (!$user) {
+            return $this->notFoundAction();
+        }
+
+        if (!$currentUser->getIsAdmin() && $currentUser->getIdUser() !== $user->getIdUser()) {
+            $this->flashMessenger()->addErrorMessage("Accès refusé.");
+            return $this->redirect()->toRoute('home');
+        }
+
+        if ($request->isPost()) {
+            $data = $request->getPost()->toArray();
+
+            $user->setFirstName($data['firstname']);
+            $user->setLastName($data['lastname']);
+            $user->setNickname($data['nickname']);
+            $user->setEmail($data['email']);
+            $user->setBirthdate(new \DateTime($data['birthdate']));
+
+            $this->entityManager->flush();
+
+            // ✅ Si l'utilisateur modifié est celui connecté → on met à jour la session
+            if ($currentUser->getIdUser() === $user->getIdUser()) {
+                $this->authService->getStorage()->write($user);
+            }
+
+            $this->flashMessenger()->addSuccessMessage("Profil mis à jour.");
+            return $this->redirect()->toRoute('profil-index');
+        }
+
         $view = new ViewModel([
-            'form' => $form,
-            'currentUser'=>$currentUser,
+            'user' => $user  // ici on affiche le profil de l'utilisateur ciblé
         ]);
         $this->layout()->setVariable('activeMenu', 'profil');
-        $view->setTemplate('profil/profil');
-        $view->setTerminal(true); 
-        return $view;
+        $view->setTemplate('profil/profil-edit');
 
+        return $view;
     }
 
-        public function profilEditAction()
-        {
 
-            $currentUser = $this->authService->getIdentity();
-            $view = new ViewModel([
-            
-                'currentUser'=>$currentUser,
-            ]);
-            $this->layout()->setVariable('activeMenu', 'profil');
-            $view->setTemplate('profil/profil-edit');
-         
-            return $view;
-
-        }
+    
         
     public function arsenalAction()
     {
@@ -87,29 +128,34 @@ class ProfilController extends AbstractActionController
     public function updateRepliqueAction()
     {
         $request = $this->getRequest();
-          $currentUser = $this->authService->getIdentity();
+        $currentUser = $this->authService->getIdentity();
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
-            if($data["replique-id"]=="-1"){
-                $data['puissance'] = str_replace(',', '.', $data['puissance']);
+            $action = $request->getPost('action');
+            $data['puissance'] = str_replace(',', '.', $data['puissance']);
+            if ($action === 'edit') {
+                $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$data['replique-id']]);
+                if ($replique) {
+                    $this->repliqueManager->updateReplique($replique, $data);
+                    $this->flashMessenger()->addSuccessMessage('Réplique mise à jour.');
+                } 
+            }
+            elseif($action === 'add'){
+                
                 $newReplique = $this->repliqueManager->addReplique($data, $currentUser);
                 $this->flashMessenger()->addSuccessMessage('Réplique ajoutée.');
-            }else{
+            }
+            elseif ($action === 'delete') {
                 $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$data['replique-id']]);
-            if ($replique) {
-                $this->repliqueManager->updateReplique($replique, $data);
-                $this->flashMessenger()->addSuccessMessage('Réplique mise à jour.');
-            } else {
-                $this->flashMessenger()->addErrorMessage('Réplique introuvable.');
+
+                $this->entityManager->remove($replique);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage('Réplique supprimé.');
             }
-            }
-           
-            //
-        
         }
-    
         return $this->redirect()->toRoute('arsenal');
     }
+
 
   
 

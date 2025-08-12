@@ -21,56 +21,112 @@ class PhotoController extends AbstractActionController
 
     // public function indexAction()
     // {
-
     //     $currentUser = $this->authService->getIdentity();
-    //     $view = new ViewModel([
-    //         'currentUser'=>$currentUser,
-    //     ]);
-    //     $this->layout()->setVariable('activeMenu', 'photos');
-    //     $view->setTemplate('photo/photo-index');
-    //     return $view;
 
+    //     $photoBaseDir = 'public/photos'; // chemin relatif depuis la racine du projet
+    //     $photoWebPath = '/photos'; // pour les URLs
+
+    //     $dates = [];
+
+    //     if (is_dir($photoBaseDir)) {
+    //         foreach (scandir($photoBaseDir) as $folder) {
+    //             if ($folder === '.' || $folder === '..') {
+    //                 continue;
+    //             }
+
+    //             $fullPath = $photoBaseDir . '/' . $folder;
+    //             if (is_dir($fullPath)) {
+    //                 $files = array_filter(scandir($fullPath), function ($f) use ($fullPath) {
+    //                     return preg_match('/\.(jpg|jpeg|png|gif)$/i', $f) && is_file($fullPath . '/' . $f);
+    //                 });
+    //                 if (!empty($files)) {
+    //                     $dates[] = $folder;
+    //                 }
+    //             }
+    //         }
+
+    //         sort($dates);
+    //     }
+
+        // $view = new ViewModel([
+        //     'currentUser' => $currentUser,
+        //     'dates'       => $dates,
+        //     'photoWebPath' => $photoWebPath,
+        // ]);
+
+        // $this->layout()->setVariable('activeMenu', 'photo-index');
+        // $view->setTemplate('photo/photo-index');
+        // return $view;
     // }
-
 
     public function indexAction()
 {
     $currentUser = $this->authService->getIdentity();
 
-    $photoBaseDir = 'public/photos'; // chemin relatif depuis la racine du projet
-    $photoWebPath = '/photos'; // pour les URLs
+    $photoBaseDir = 'public/photos';
+    $photoWebPath = '/photos';
 
-    $dates = [];
+    $photosByType = [];
 
     if (is_dir($photoBaseDir)) {
-        foreach (scandir($photoBaseDir) as $folder) {
-            if ($folder === '.' || $folder === '..') {
+        foreach (scandir($photoBaseDir) as $typeFolder) {
+            if ($typeFolder === '.' || $typeFolder === '..') {
                 continue;
             }
 
-            $fullPath = $photoBaseDir . '/' . $folder;
-            if (is_dir($fullPath)) {
-                $files = array_filter(scandir($fullPath), function ($f) use ($fullPath) {
-                    return preg_match('/\.(jpg|jpeg|png|gif)$/i', $f) && is_file($fullPath . '/' . $f);
-                });
-                if (!empty($files)) {
-                    $dates[] = $folder;
+            $typePath = $photoBaseDir . '/' . $typeFolder;
+            if (!is_dir($typePath)) {
+                continue;
+            }
+
+            $dates = [];
+
+            foreach (scandir($typePath) as $dateFolder) {
+                if ($dateFolder === '.' || $dateFolder === '..') {
+                    continue;
+                }
+
+                $fullPath = $typePath . '/' . $dateFolder;
+                if (is_dir($fullPath)) {
+                    $files = array_filter(scandir($fullPath), function ($f) use ($fullPath) {
+                        return preg_match('/\.(jpg|jpeg|png|gif)$/i', $f) && is_file($fullPath . '/' . $f);
+                    });
+
+                    if (!empty($files)) {
+                        $dates[] = $dateFolder;
+                    }
                 }
             }
+
+            if (!empty($dates)) {
+                sort($dates);
+                $photosByType[$typeFolder] = $dates;
+            }
         }
-
-        sort($dates);
     }
+    $preferredOrder = ['games', 'actu'];
 
-    $view = new ViewModel([
-        'currentUser' => $currentUser,
-        'dates'       => $dates,
-        'photoWebPath' => $photoWebPath,
-    ]);
+        // Trie le tableau $photosByType selon $preferredOrder
+        uksort($photosByType, function ($a, $b) use ($preferredOrder) {
+            $indexA = array_search($a, $preferredOrder);
+            $indexB = array_search($b, $preferredOrder);
 
-    $this->layout()->setVariable('activeMenu', 'photo-index');
-    $view->setTemplate('photo/photo-index');
-    return $view;
+            $indexA = $indexA !== false ? $indexA : 999;
+            $indexB = $indexB !== false ? $indexB : 999;
+
+            return $indexA <=> $indexB ?: strcmp($a, $b); // fallback alphabetic if equal
+        });
+
+           $view = new ViewModel([
+            'currentUser'   => $currentUser,
+            'photosByType'  => $photosByType,
+            'photoWebPath'  => $photoWebPath,
+        ]);
+
+        $this->layout()->setVariable('activeMenu', 'photo-index');
+        $view->setTemplate('photo/photo-index');
+        return $view;
+
 }
 
 
@@ -79,10 +135,11 @@ public function photosViewAction()
 {
     $currentUser = $this->authService->getIdentity();
     $date = $this->params()->fromRoute('date');
+    $type = $this->params()->fromRoute('type');
     $images = [];
 
-    $baseDir = 'public/photos/' . $date;
-    $webPath = '/photos/' . $date;
+    $baseDir = 'public/photos/'.$type.'/'. $date;
+    $webPath = '/photos/'.$type.'/' . $date;
     if ($date && is_dir($baseDir)) {
         foreach (scandir($baseDir) as $file) {
             if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $file)) {

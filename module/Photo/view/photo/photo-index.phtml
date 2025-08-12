@@ -1,21 +1,42 @@
-<div class="container ms">
-    <h2>Galerie photo</h2>
-    <?php if (empty($this->dates)): ?>
-        <p>Aucune galerie disponible.</p>
-    <?php else: ?>
-<?php foreach ($this->dates as $date): ?>
-    <a href="<?= $this->url('photos-view', ['date' => $date]) ?>" class="text-decoration-none text-reset">
-        <div class="card my-3 shadow-sm clickable-card">
-            <div class="card-body">
-                <h5 class="card-title mb-1">Partie du
-                     <?php echo  str_replace('-',"/",$date) ?>
-                </h5>
-      
-            </div>
-        </div>
-    </a>
-<?php endforeach; ?>
 
+
+<div class="card p-3">
+    <h3 class="mb-3">Galeries photos</h3>
+</div>
+<div>
+    <?php if (!empty($photosByType)): ?>
+        <?php foreach ($photosByType as $type => $dates): ?>
+            <?php $typeText="";?>
+            <?php $titleType=""; ?>
+            <?php 
+                if($type==='games'){
+                    $typeText="Les parties";
+                    $titleType="Partie du";
+                }
+                elseif($type=='actus'){
+                    $typeText="Les actualités";
+                    $titleType="Actualité du";
+                }
+            ?>
+            <div class="mb-4">
+                <h5 class="text-capitalize border-bottom pb-2 text-white"><?= htmlspecialchars($typeText) ?></h5>
+                <div class="row g-2">
+                    <?php foreach ($dates as $date): ?>
+                        <a href="<?= $this->url('photos-view', ['date' => $date,'type'=>$type]) ?>" class="text-decoration-none text-reset">
+                            <div class="card my-1 shadow-sm clickable-card">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1"><?php echo $titleType ; ?>
+                                        <?php echo  str_replace('-',"/",$date) ?>
+                                    </h5>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>Aucune galerie disponible.</p>
     <?php endif; ?>
 </div>
 
