@@ -11,6 +11,7 @@ class AuthControllerFactory
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $authService = $container->get(AuthService::class);
-        return new AuthController($authService);
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        return new AuthController($authService, $entityManager);
     }
 }

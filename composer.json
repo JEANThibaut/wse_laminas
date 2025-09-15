@@ -19,7 +19,8 @@
         "laminas/laminas-mvc": "^3.7.0",
         "laminas/laminas-mvc-plugin-flashmessenger": "^1.11",
         "laminas/laminas-session": "^2.24",
-        "laminas/laminas-skeleton-installer": "^1.3.0"
+        "laminas/laminas-skeleton-installer": "^1.3.0",
+        "phpmailer/phpmailer": "^6.10"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",

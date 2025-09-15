@@ -40,13 +40,23 @@ return [
                     ],
                 ],
             ],
-                        'register' => [
+            'register' => [
                 'type'    => Literal::class,
                 'options' => [
                     'route'    => '/register',
                     'defaults' => [
                         'controller' => Controller\AuthController::class,
                         'action'     => 'register',
+                    ],
+                ],
+            ],
+            'reset-password' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/reset-password',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'resetPassword',
                     ],
                 ],
             ],

@@ -15,7 +15,9 @@
                 <label for="password">Mot de passe</label>
                 <input type="password" class="form-control" name="password" id="password" placeholder="Mot de passe" required>
             </div>
-
+            <div class="form-group mt-3">
+                <a href="<?= $this->url('reset-password') ?>">Mot de passe oublié ?</a>
+            </div>
             <button type="submit" class="btn btn-warning mt-4 w-50">Se connecter</button>
         </form>
 
