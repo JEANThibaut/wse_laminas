@@ -5,6 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\AuthController;
 use Application\Service\AuthService;
 use Psr\Container\ContainerInterface;
+use Application\Service\UserManager;
 
 class AuthControllerFactory
 {
@@ -12,6 +13,7 @@ class AuthControllerFactory
     {
         $authService = $container->get(AuthService::class);
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        return new AuthController($authService, $entityManager);
+        $userManager = $container->get(UserManager::class);
+        return new AuthController($authService, $entityManager, $userManager);
     }
 }
