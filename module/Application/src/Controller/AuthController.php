@@ -149,8 +149,8 @@ class AuthController extends AbstractActionController
     
             }
         }
-          return new ViewModel(
-            
-          );
+        return new ViewModel(
+        
+        );
     }
 }
