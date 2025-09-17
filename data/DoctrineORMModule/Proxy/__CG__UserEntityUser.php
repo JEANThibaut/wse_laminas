@@ -67,10 +67,10 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname'];
+            return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'resetToken'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname'];
+        return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'resetToken'];
     }
 
     /**
@@ -439,6 +439,28 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'isInRoles', [$role]);
 
         return parent::isInRoles($role);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResetToken(): ?string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getResetToken', []);
+
+        return parent::getResetToken();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setResetToken(?string $resetToken): \User\Entity\User
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setResetToken', [$resetToken]);
+
+        return parent::setResetToken($resetToken);
     }
 
 }

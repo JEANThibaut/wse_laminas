@@ -49,6 +49,9 @@ class User
     /** @ORM\Column(type="string", nullable=true) */
     private $nickname;
 
+    /** @ORM\Column(type="string", nullable=true) */
+    private $resetToken;
+
     public function getIdUser(): ?int
     {
         return $this->iduser;
@@ -192,6 +195,16 @@ class User
         return is_array($roles) && in_array($role, $roles, true);
     }
     
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+        return $this;
+    }
 
     // public function hasAnyRole(array $rolesToCheck): bool
     // {
