@@ -60,6 +60,16 @@ return [
                     ],
                 ],
             ],
+            'faq' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/faq',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'faq',
+                    ],
+                ],
+            ],
         ],
     ],
 
