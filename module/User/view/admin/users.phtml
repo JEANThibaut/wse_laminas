@@ -10,10 +10,11 @@
     </thead>
     <tbody>
     <?php foreach ($users as $user): ?>
-      <tr onclick="window.location='<?= $this->url('admin-edit-user', ['iduser' => $user->getIdUser()]) ?>'">
+      <tr>
         <td><?= $this->escapeHtml($user->getLastname()) ?></td>
         <td><?= $this->escapeHtml($user->getFirstname()) ?></td>
-        <td><a href="<?= $this->url('admin-edit-user', ['iduser' => $user->getIdUser()]) ?>" class="btn btn-sm btn-warning">
+        <td>
+          <a href="<?= $this->url('admin-edit-user', ['iduser' => $user->getIdUser()]) ?>" class="btn btn-sm btn-warning">
             <i class="fa-solid fa-edit"></i>
           </a>
         </td>

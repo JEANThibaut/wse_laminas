@@ -8,12 +8,13 @@ use Profil\Controller\AjaxController;
 use Profil\Service\RepliqueManager;
 use Application\Service\AuthService;
 use Application\Service\Factory\AuthServiceFactory;
+use Laminas\Router\Http\Segment;
 
 return [
    'router' => [
         'routes' => [
             'photo-index' => [
-                'type' => 'Literal',
+                'type' => Literal::class,
                 'options' => [
                     'route'    => '/photo-index',
                     'defaults' => [
@@ -23,7 +24,7 @@ return [
                 ],
             ],
             'photos-view' => [
-                'type' => 'Segment',
+                'type' => Segment::class,
                 'options' => [
                     'route' => '/photos-view[/:type][/:date]',
                     'defaults' => [

@@ -63,6 +63,20 @@ return [
                     ],
                 ],
             ],
+
+
+            // 'admin-edit-user' => [
+            //     'type' => Segment::class,
+            //     'options' => [
+            //         'route' => '/admin/edit-user/[:iduser]',
+            //         'defaults' => [
+            //             'controller' => ProfilController::class,
+            //             'action' => 'editUser',
+            //         ],
+            //     ],
+            // ],
+
+
         ],
     ],
     'controllers' => [
@@ -84,6 +98,7 @@ return [
     'service_manager' => [
         'factories' => [
             Application\Service\AuthService::class =>  Application\Service\Factory\AuthServiceFactory::class,
+            Service\UserManager::class => Service\Factory\UserManagerFactory::class,
             Service\RepliqueManager::class => Service\Factory\RepliqueManagerFactory::class,
         ],
     ],
@@ -91,18 +106,18 @@ return [
     //     'profil' => __DIR__ . '/../view',
     // ],
     'doctrine' => [
-    'driver' => [
-        'Profil_entity' => [
-            'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
-            'cache' => 'array',
-            'paths' => [__DIR__ . '/../src/Entity'],
-        ],
-        'orm_default' => [
-            'drivers' => [
-                'Profil\Entity' => 'Profil_entity',
+        'driver' => [
+            'Profil_entity' => [
+                'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src/Entity'],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    'Profil\Entity' => 'Profil_entity',
+                ],
             ],
         ],
     ],
-],
 ];
 

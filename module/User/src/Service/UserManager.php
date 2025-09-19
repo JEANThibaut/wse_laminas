@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Service;
+namespace User\Service;
 
-use User\Entity\User; 
+use User\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Laminas\Crypt\Password\Bcrypt;
 

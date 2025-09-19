@@ -85,7 +85,6 @@ return [
 
     'service_manager' => [
         'factories' => [
-            Service\UserManager::class => Service\Factory\UserManagerFactory::class,
             Service\AuthService::class => Service\Factory\AuthServiceFactory::class,
             // Configuration d'AuthenticationService avec storage en session
             AuthenticationService::class => function ($container) {

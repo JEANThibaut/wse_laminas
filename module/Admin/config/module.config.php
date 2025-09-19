@@ -62,36 +62,6 @@ return [
                     ],
                 ],
             ],
-            'admin-users' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/admin/users',
-                    'defaults' => [
-                        'controller' => AdminController::class,
-                        'action' => 'users',
-                    ],
-                ],
-            ],
-            'admin-get-users' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/admin-get-users',
-                    'defaults' => [
-                        'controller' => AjaxController::class,
-                        'action' => 'getUsers',
-                    ],
-                ],
-            ],
-            'admin-edit-user' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/admin/edit-user/[:iduser]',
-                    'defaults' => [
-                        'controller' => AdminController::class,
-                        'action' => 'editUser',
-                    ],
-                ],
-            ],
         ],
     ],
     'controllers' => [

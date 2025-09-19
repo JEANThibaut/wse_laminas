@@ -5,7 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\AuthController;
 use Application\Service\AuthService;
 use Psr\Container\ContainerInterface;
-use Application\Service\UserManager;
+use User\Service\UserManager;
 
 class AuthControllerFactory
 {

@@ -4,8 +4,7 @@ namespace Admin\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-
-
+use User\Entity\User;
 
 class AjaxController extends AbstractActionController
 {
@@ -21,7 +20,7 @@ class AjaxController extends AbstractActionController
 
     public function getUsersAction()
     {
-        $users = $this->entityManager->getRepository(\User\Entity\User::class)->findAll();
+        $users = $this->entityManager->getRepository(User::class)->findAll();
     
         $data = [];
         foreach ($users as $user) {
