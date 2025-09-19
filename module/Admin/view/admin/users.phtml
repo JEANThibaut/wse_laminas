@@ -1,58 +1,24 @@
-<h3>Utilisateurs</h3>
-<table id="userTable" class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Nom</th>
-      <th>Prénom</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<style>
-/* Corriger le layout en ligne */
-.dt-layout-row {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* Ajuster la taille du select */
-.dt-length select,
-#dt-length-0 {
-  font-size: 14px;
-  padding: 6px 10px;
-  height: 38px;
-  width: 100px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-}
-
-/* Ajuster la taille de l'input */
-.dt-search input,
-#dt-search-0 {
-  font-size: 14px;
-  padding: 6px 10px;
-  height: 38px;
-  width: 220px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-}
-
-/* Pour que les labels ne cassent pas la ligne */
-.dt-length label,
-.dt-search label {
-  margin-right: 8px;
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-.dt-length label,
-.dt-search label {
-  display: none !important;
-}
-
-</style>
+<div class='card'>
+  <h3>Utilisateurs</h3>
+  <table id="userTable" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($users as $user): ?>
+      <tr onclick="window.location='<?= $this->url('admin-edit-user', ['iduser' => $user->getIdUser()]) ?>'">
+        <td><?= $this->escapeHtml($user->getLastname()) ?></td>
+        <td><?= $this->escapeHtml($user->getFirstname()) ?></td>
+        <td><a href="<?= $this->url('admin-edit-user', ['iduser' => $user->getIdUser()]) ?>" class="btn btn-sm btn-warning">
+            <i class="fa-solid fa-edit"></i>
+          </a>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>

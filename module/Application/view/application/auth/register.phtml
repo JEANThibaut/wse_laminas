@@ -1,49 +1,73 @@
-<h2>Inscription</h2>
+<?php if ($this->message): ?>
+    <div class="alert alert-danger"><?= $this->escapeHtml($this->message) ?></div>
+<?php endif; ?>
 
-<?= $this->form()->openTag($form) ?>
+<div class='card'>
+    <h4>Inscription</h4>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12">
+            <form method="post" action="">
+                <div class="form-group mt-3">
+                    <input type="text" class="form-control" name="lastname" id="lastname" placeholder="Nom" required>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="text" class="form-control" name="firstname" id="firstname" placeholder="Prénom" required>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="text" class="form-control" name="nickname" id="nickname" placeholder="Pseudo" >
+                </div>
+                <div class="form-group mt-3">
+                        <label for="birthday_day" class="form-label">Date de naissance</label>
 
-<div class="row">
-
-    <div class='col-6'>
-        <?= $this->formLabel($form->get('lastname')) ?>
-        <?= $this->formElement($form->get('lastname')) ?>
+                    <div class="row">
+                        <div class="col-4">
+                            <select name="birthday_day" class="form-control" required>
+                                <option value="">Jour</option>
+                                <?php for ($d = 1; $d <= 31; $d++): ?>
+                                    <option value="<?= $d ?>"><?= $d ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <select name="birthday_month" class="form-control" required>
+                                <option value="">Mois</option>
+                                <?php for ($m = 1; $m <= 12; $m++): ?>
+                                    <option value="<?= $m ?>"><?= $m ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <select name="birthday_year" class="form-control" required>
+                                <option value="">Année</option>
+                                <?php for ($y = date('Y'); $y >= 1950; $y--): ?>
+                                    <option value="<?= $y ?>"><?= $y ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Mot de passe" required>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirmer le mot de passe" required>
+                </div>
+                <button type="submit" class="btn btn-warning mt-4 w-50">S'inscrire</button>
+            </form>
+        </div>
     </div>
-
-    <div class='col-6'>
-        <?= $this->formLabel($form->get('firstname')) ?>
-        <?= $this->formElement($form->get('firstname')) ?>
-    </div>
-
 </div>
-<div class="row">
-    <div  class='col-6'>
-        <?= $this->formLabel($form->get('nickname')) ?>
-        <?= $this->formElement($form->get('nickname')) ?>
-    </div>
 
-    <div >
-        <?= $this->formLabel($form->get('birthday')) ?>
-        <?= $this->formElement($form->get('birthday')) ?>
+<div class='card'>
+    <h4>Déjà inscrit ?</h4>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 text-center">
+            <a href="<?= $this->url('login') ?>" class="btn btn-warning mt-3 w-50">Se connecter</a>
+        </div>
     </div>
 </div>
 
 
-    <div>
-        <?= $this->formLabel($form->get('email')) ?>
-        <?= $this->formElement($form->get('email')) ?>
-    </div>
-
-    <div>
-        <?= $this->formLabel($form->get('password')) ?>
-        <?= $this->formElement($form->get('password')) ?>
-    </div>
-
-    <div>
-        <?= $this->formLabel($form->get('confirm_password')) ?>
-        <?= $this->formElement($form->get('confirm_password')) ?>
-    </div>
-
-    <div style="margin-top:20px; margin-bottom:20px;">
-        <?= $this->formElement($form->get('submit')) ?>
-    </div>
-<?= $this->form()->closeTag() ?>

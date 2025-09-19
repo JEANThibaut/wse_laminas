@@ -7,16 +7,19 @@ use Laminas\View\Model\ViewModel;
 use Application\Form\LoginForm;
 use Application\Service\AuthService;
 use User\Entity\User;
+use Application\Form\RegisterForm;
 
 class AuthController extends AbstractActionController
 {
     private AuthService $authService;
     private $entityManager;
-
-    public function __construct(AuthService $authService, $entityManager)
+    private $userManager;
+    public function __construct(AuthService $authService, $entityManager, $userManager)
     {
+
         $this->authService = $authService;
         $this->entityManager = $entityManager;
+        $this->userManager = $userManager;
     }
 
 
@@ -95,5 +98,59 @@ class AuthController extends AbstractActionController
             }
         }
         return new ViewModel();
+    }
+
+
+     public function registerAction()
+    {   
+        // $form = new RegisterForm();
+        if ($this->getRequest()->isPost()) {
+            $data = $this->params()->fromPost();
+         
+            // dump($data);
+            $mail = trim($data['email'] ?? '');
+            $firstname = trim($data['firstname'] ?? '');
+            $lastname = trim($data['lastname'] ?? '');
+            $nickname = trim($data['nickname'] ?? '');
+            $password = trim($data['password'] ?? '');
+            $confirmPassword = trim($data['confirm_password'] ?? '');
+            $birthday_day = trim($data['birthday_day'] ?? '');
+            $birthday_month = trim($data['birthday_month'] ?? '');
+            $birthday_year = trim($data['birthday_year'] ?? '');
+            $birthday = sprintf('%04d-%02d-%02d', $birthday_year, $birthday_month, $birthday_day);
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $mail]);
+
+        
+            if ($user) {
+                $this->flashMessenger()->addErrorMessage("Cette adresse email est déjà utilisée.");
+            }
+            elseif($password !== $confirmPassword) {
+                $this->flashMessenger()->addErrorMessage("Les mots de passe ne correspondent pas.");
+            }
+            else{
+                $newUser = $this->userManager->addUser([
+                    'email' => $mail,
+                    'firstname' => $firstname,
+                    'lastname' => $lastname,
+                    'nickname' => $nickname,
+                    'password' => $password,
+                    'birthday' => $birthday,
+                ]);
+                if(!$newUser) {
+                    $this->flashMessenger()->addErrorMessage("Erreur lors de la création de l'utilisateur.");
+                }
+                // Connexion automatique
+                if ($this->authService->login($mail, $password)) {
+                    $this->flashMessenger()->addSuccessMessage("Inscription et connexion réussies.");
+                    return $this->redirect()->toRoute('home');
+                } else {
+                    $message = "Inscription réussie mais connexion impossible.";
+                }
+    
+            }
+        }
+        return new ViewModel(
+        
+        );
     }
 }

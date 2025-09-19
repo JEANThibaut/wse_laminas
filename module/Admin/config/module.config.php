@@ -35,7 +35,7 @@ return [
             'admin-edit-game' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/admin/admin-edit-game/[:id]',
+                    'route' => '/admin/edit-game/[:id]',
                     'defaults' => [
                         'controller' => AdminController::class,
                         'action' => 'editGame',
@@ -79,6 +79,16 @@ return [
                     'defaults' => [
                         'controller' => AjaxController::class,
                         'action' => 'getUsers',
+                    ],
+                ],
+            ],
+            'admin-edit-user' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/edit-user/[:iduser]',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'editUser',
                     ],
                 ],
             ],

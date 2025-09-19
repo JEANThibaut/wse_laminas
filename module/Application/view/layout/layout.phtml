@@ -70,7 +70,7 @@
                 Les photos
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item d-none">
             <a class="nav-link <?= ($activeMenu === 'annonce-index') ? 'active' : '' ?>" href="<?= $this->url('annonce-index') ?>">
                 <?php if($isFunny): ?>
                     <img class="" src="/images/icones/payment-method.png" alt="type" style="height: 20px; margin-right:10px;">
@@ -78,7 +78,7 @@
             Petites annonces</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'forum') ? 'active' : '' ?>" href="#">
+            <a class="nav-link <?= ($activeMenu === 'forum') ? 'active' : '' ?>" href="/forum">
                 <?php if($isFunny): ?>
                     <img class="" src="/images/icones/forum.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>    
@@ -86,7 +86,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'faq') ? 'active' : '' ?>" href="#">
+            <a class="nav-link <?= ($activeMenu === 'faq') ? 'active' : '' ?>" href="/faq">
                 <?php if($isFunny): ?>
                     <img class=" mb-1" src="/images/icones/customer-care.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>        

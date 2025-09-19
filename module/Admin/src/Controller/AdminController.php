@@ -27,7 +27,7 @@ class AdminController extends AbstractActionController
     {
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
-        $games = $this->entityManager->getRepository(Game::class)->findAll();
+        $games = $this->entityManager->getRepository(Game::class)->findBy([], ['date' => 'DESC']);
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
             if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
@@ -59,6 +59,10 @@ class AdminController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage('Partie introuvable.');
             return $this->redirect()->toRoute('admin-games');
         }
+        $registers = $this->entityManager->getRepository(Register::class)->findBy(
+            ['game' => $game->getIdGame()],
+        );
+        $players = $registers;
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -83,6 +87,7 @@ class AdminController extends AbstractActionController
 
         $view = new ViewModel([
             "game"=>$game,
+            'players'=>$players
         ]);
         $view->setTemplate('admin/edit-game');
         return $view;
@@ -169,6 +174,22 @@ class AdminController extends AbstractActionController
         $this->layout()->setVariable('activeMenu', 'admin-users');
         $view->setTemplate('admin/users');
         // $view->setTerminal(true); 
+        return $view;
+    }
+
+    public function editUserAction()
+    {        
+        $currentUser = $this->authService->getIdentity();
+        $request = $this->getRequest();
+        $params = $this->params()->fromRoute();
+        $iduser = (int) $params['iduser'];
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
+        $view = new ViewModel([
+            'currentUser'=>$currentUser,
+            'user'=>$user
+        ]);
+        $this->layout()->setVariable('activeMenu', 'admin-users');
+        $view->setTemplate('admin/edit-user');
         return $view;
     }
   

@@ -48,4 +48,10 @@ class IndexController extends AbstractActionController
             // 'isInWaitingList'=>$isInWaitingList,
         ]);
     }
+
+    public function faqAction()
+    {
+        $this->layout()->setVariable('activeMenu', 'faq');
+        return new ViewModel();
+    }
 }

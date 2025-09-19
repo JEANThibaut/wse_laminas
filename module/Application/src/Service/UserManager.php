@@ -31,6 +31,7 @@ class UserManager
         $user->setPassword($newHashedPassword);
         $user->setRoles('["user"]');
         $user->setIsMember(0);
+        $user->setIsAdmin(0);
         $user->setIsBlacklist(0);
         $user->setIsActive(1);
         $this->entityManager->persist($user);
