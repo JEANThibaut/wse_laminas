@@ -60,13 +60,13 @@
         <div class='d-flex justify-content-between mt-5 '>
             <div class="form-group ">
                 <button type="submit" class="btn btn-warning">Enregistrer</button>
-                <a href="<?= $this->url('admin-games') ?>" class="btn btn-secondary">Annuler</a>    
+                <a href="<?= $this->url('admin-users') ?>" class="btn btn-secondary">Annuler</a>    
             </div>
         </form>
             <div class="form-group">
                 <form method="post" action="<?= $this->url('admin-delete-user');?>" class="delete-form ">
-                    <input type="hidden" name="iduser" value="<?= $user->getIduser()?>">
-                    <button type="button" class="btn btn-danger btn-delete" data-id="<?= $user->getIduser() ?>">
+                    <input type="hidden" name="iduser" value="<?= $user->getIdUser()?>">
+                    <button type="button" class="btn btn-danger btn-delete" data-iduser="<?= $user->getIdUser() ?>">
                             Supprimer
                     </button>
                 </form>

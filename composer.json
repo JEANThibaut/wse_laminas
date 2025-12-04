@@ -39,8 +39,8 @@
             "Game\\": "module/Game/src",
             "Admin\\": "module/Admin/src",
             "Photo\\": "module/Photo/src",
-            "Annonce\\" : "module/Annonce/src"
-       
+            "Annonce\\" : "module/Annonce/src",
+            "Forum\\" : "module/Forum/src"
         }
     },
     "autoload-dev": {

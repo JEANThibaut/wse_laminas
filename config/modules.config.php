@@ -27,5 +27,6 @@ return [
     'Game',
     'Admin',
     'Photo',
-    'Annonce'
+    'Annonce',
+    'Forum',
 ];

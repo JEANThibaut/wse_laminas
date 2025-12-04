@@ -42,28 +42,11 @@ class ProfilController extends AbstractActionController
     }
 
 
-    // public function profilAction()
-    // {
-
-    //     $currentUser = $this->authService->getIdentity();
-   
-    //     // $form = new \Profil\Form\RepliqueForm();
-    //     $view = new ViewModel([
-    //         // 'form' => $form,
-    //         'currentUser'=>$currentUser,
-    //     ]);
-    //     $this->layout()->setVariable('activeMenu', 'profil');
-    //     $view->setTemplate('profil/profil');
-    //     $view->setTerminal(true); 
-    //     return $view;
-
-    // }
 
     public function profilEditAction()
     {
         $request = $this->getRequest();
         $currentUser = $this->authService->getIdentity();
-
         $userId = (int) $this->params()->fromRoute('id');
         $user = $this->entityManager->getRepository(User::class)->find($userId);
 
@@ -107,7 +90,6 @@ class ProfilController extends AbstractActionController
     }
 
 
-    
         
     public function arsenalAction()
     {
@@ -122,7 +104,6 @@ class ProfilController extends AbstractActionController
         return $view;
 
     }
-
 
 
     public function updateRepliqueAction()

@@ -65,17 +65,7 @@ return [
             ],
 
 
-            // 'admin-edit-user' => [
-            //     'type' => Segment::class,
-            //     'options' => [
-            //         'route' => '/admin/edit-user/[:iduser]',
-            //         'defaults' => [
-            //             'controller' => ProfilController::class,
-            //             'action' => 'editUser',
-            //         ],
-            //     ],
-            // ],
-
+    
 
         ],
     ],

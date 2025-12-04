@@ -12,12 +12,12 @@ function initDeleteButtons(){
         button.addEventListener('click', function () {
             const form = this.closest('form');
             confirmForm.action = form.action;
-            confirmForm.querySelector('input[name="id"]')?.remove(); 
+            confirmForm.querySelector('input[name="iduser"]')?.remove();
 
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
-            hiddenInput.name = 'id';
-            hiddenInput.value = this.dataset.id;
+            hiddenInput.name = 'iduser';
+            hiddenInput.value = this.dataset.iduser;
             confirmForm.appendChild(hiddenInput);
 
             modal.show();

@@ -25,7 +25,7 @@ class UserController extends AbstractActionController
     public function usersAction()
     {
         $currentUser = $this->authService->getIdentity();
-        $users = $this->entityManager->getRepository(User::class)->findAll();
+        $users = $this->entityManager->getRepository(User::class)->findBy([], ['lastname' => 'ASC']);
         $view = new ViewModel([
             
             'currentUser'=>$currentUser,
@@ -82,9 +82,10 @@ class UserController extends AbstractActionController
             return $this->redirect()->toRoute('admin-users');
         }   
         $iduser = (int) $this->params()->fromPost('iduser');
+
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
         if($user){
-            $user->isActive = 0;
+            $user->setIsActive(0);
             $this->entityManager->flush();
             $this->flashMessenger()->addSuccessMessage('Utilisateur supprimé avec succès.');
         }else{
