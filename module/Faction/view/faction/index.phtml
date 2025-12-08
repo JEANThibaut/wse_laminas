@@ -1,0 +1,76 @@
+<div class="faction-content">
+    <div class="faction-title">
+        <div class="title-3d">
+            <div class="title-card" data-rotate="1">
+                <div class="title-mask front" data-logo="<?php echo $faction->getIcon() ?>" role="img" aria-label="Factions" title="Factions"></div>
+                <div class="title-mask back" data-logo="<?php echo $faction->getIcon() ?>" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <!-- <div class='subtitle'></div> -->
+    </div>
+
+    <div class="hud-cards">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title"><?php if (isset($faction) && $faction) echo $this->escapeHtml($faction->getFactionName()); ?></div>
+                    <div class="card-sub">Compte : <?php echo $faction->getBankAccount() ?> $</div>
+                </div>
+                <div class="hud-chip"></div>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text">Description des tâches en cours ?</p>
+            </div>
+
+            <div class="card-footer">
+                <button class="faction-btn">Compte</button>
+                <!-- <button class="faction-btn">Action 2</button> -->
+            </div>
+        </div>
+
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">États d'avancement</div>
+                    <div class="card-sub"></div>
+                </div>
+                <div class="hud-chip"></div>
+            </div>
+
+            <div class="card-body">
+                    <?php foreach ($objectifs as $objectif):
+                        $e = (float) $objectif->getEchelle();
+                        $a = (float) $objectif->getAvance();
+                        $unit = (string) $objectif->getUnit();
+                    ?>
+                        <div class="progress-bar"
+                             data-label="<?php echo $this->escapeHtmlAttr($objectif->getLabel()); ?>"
+                             data-avance="<?php echo $a; ?>"
+                             data-echelle="<?php echo $e; ?>"
+                             data-unit="<?php echo $this->escapeHtmlAttr($unit); ?>">
+                            <div class="progress-fill"></div>
+                        </div>
+                    <?php endforeach; ?>
+            </div>
+            <div class="card-footer">
+                <button class="faction-btn">Détails</button>
+                <button class="faction-btn">Action 2</button>
+            </div>
+        </div>
+                <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Neon Collective</div>
+                    <div class="card-sub">Territory: Dockyard • Strength: 62%</div>
+                </div>
+                <div class="hud-chip">Standby</div>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text">Known for: covert trades, data smuggling, limited public presence.</p>
+            </div>
+        </div>
+    </div>
+</div>

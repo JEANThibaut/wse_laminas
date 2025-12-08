@@ -28,5 +28,5 @@ return [
     'Admin',
     'Photo',
     'Annonce',
-    'Forum',
+    'Faction',
 ];

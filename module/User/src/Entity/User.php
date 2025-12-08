@@ -52,6 +52,10 @@ class User
     /** @ORM\Column(type="string", nullable=true) */
     private $resetToken;
 
+    
+    /** @ORM\Column(type="integer", nullable=true) */
+    private $faction;
+
     public function getIdUser(): ?int
     {
         return $this->iduser;
@@ -218,5 +222,16 @@ class User
     
     //     return (bool) array_intersect($roles, $rolesToCheck);
     // }
+
+    public function getFaction(): ?int
+    {
+        return $this->faction;
+    }
+    public function setFaction(?int $faction): self
+    {
+        $this->faction = $faction;
+        return $this;
+    }
+
 
 }
