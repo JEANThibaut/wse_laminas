@@ -204,8 +204,8 @@ function initializeProgressBars() {
 function handleProgressBarClick(event) {
   var bar = event.currentTarget;
   var label = bar.dataset.label || 'Objectif';
-  console.log('Progress bar clicked:', label);
-  openPopup(label);
+  var description = bar.dataset.description || '';
+  openPopup(label, description);
 }
 
 function addProgressBarClickListeners() {
@@ -247,7 +247,7 @@ function createPopupHeader(title) {
   return header;
 }
 
-function createPopupContent() {
+function createPopupContent(description) {
   var content = createElement('div', 'popup-content');
   
   var cardsContainer = createElement('div', 'hud-cards');
@@ -257,23 +257,23 @@ function createPopupContent() {
   var headerDiv1 = createElement('div', '');
   var cardTitle1 = createElement('div', 'card-title');
   cardTitle1.textContent = 'Détails';
-  var cardSub1 = createElement('div', 'card-sub');
-  cardSub1.textContent = 'Information';
+  // var cardSub1 = createElement('div', 'card-sub');
+  // cardSub1.textContent = 'Information';
   headerDiv1.appendChild(cardTitle1);
-  headerDiv1.appendChild(cardSub1);
+  // headerDiv1.appendChild(cardSub1);
   var chip1 = createElement('div', 'hud-chip');
   header1.appendChild(headerDiv1);
   header1.appendChild(chip1);
   
   var body1 = createElement('div', 'card-body');
   var text1 = createElement('p', 'card-text');
-  text1.textContent = 'Contenu de la popup avec les mêmes cards HUD.';
+  text1.textContent = description;
   body1.appendChild(text1);
   
   var footer1 = createElement('div', 'card-footer');
-  var btn1 = createElement('button', 'faction-btn');
-  btn1.textContent = 'Action';
-  footer1.appendChild(btn1);
+  // var btn1 = createElement('button', 'faction-btn');
+  // btn1.textContent = 'Action';
+  // footer1.appendChild(btn1);
   
   card1.appendChild(header1);
   card1.appendChild(body1);
@@ -285,7 +285,7 @@ function createPopupContent() {
   return content;
 }
 
-function openPopup(title) {
+function openPopup(title, description) {
   var existingOverlay = document.querySelector('.popup-overlay');
   if (existingOverlay) {
     closePopup();
@@ -294,7 +294,7 @@ function openPopup(title) {
   var overlay = createPopupOverlay();
   var container = createPopupContainer();
   var header = createPopupHeader(title);
-  var content = createPopupContent();
+  var content = createPopupContent(description);
   
   container.appendChild(header);
   container.appendChild(content);

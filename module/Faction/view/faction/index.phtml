@@ -1,4 +1,4 @@
-<div class="faction-content">
+
     <div class="faction-title">
         <div class="title-3d">
             <div class="title-card" data-rotate="1">
@@ -17,7 +17,6 @@
                     <div class="card-title"><?php if (isset($faction) && $faction) echo $this->escapeHtml($faction->getFactionName()); ?></div>
                     <div class="card-sub">Compte : <?php echo $faction->getBankAccount() ?> $</div>
                 </div>
-                <div class="hud-chip"></div>
             </div>
 
             <div class="card-body">
@@ -36,7 +35,6 @@
                     <div class="card-title">États d'avancement</div>
                     <div class="card-sub"></div>
                 </div>
-                <div class="hud-chip"></div>
             </div>
 
             <div class="card-body">
@@ -44,33 +42,44 @@
                         $e = (float) $objectif->getEchelle();
                         $a = (float) $objectif->getAvance();
                         $unit = (string) $objectif->getUnit();
+                        $description = (string) $objectif->getDescription();
                     ?>
                         <div class="progress-bar"
-                             data-label="<?php echo $this->escapeHtmlAttr($objectif->getLabel()); ?>"
-                             data-avance="<?php echo $a; ?>"
-                             data-echelle="<?php echo $e; ?>"
-                             data-unit="<?php echo $this->escapeHtmlAttr($unit); ?>">
+                            data-label="<?php echo $this->escapeHtmlAttr($objectif->getLabel()); ?>"
+                            data-avance="<?php echo $a; ?>"
+                            data-echelle="<?php echo $e; ?>"
+                            data-unit="<?php echo $this->escapeHtmlAttr($unit); ?>"
+                            data-description="<?php echo $this->escapeHtmlAttr($description); ?>">
                             <div class="progress-fill"></div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endforeach; ?> 
             </div>
             <div class="card-footer">
                 <button class="faction-btn">Détails</button>
-                <button class="faction-btn">Action 2</button>
             </div>
         </div>
-                <div class="hud-card-large panel-corners">
+        <div class="hud-card-large panel-corners">
             <div class="card-header">
                 <div>
-                    <div class="card-title">Neon Collective</div>
-                    <div class="card-sub">Territory: Dockyard • Strength: 62%</div>
+                    <div class="card-title"> Evenements en cours</div>
+                    <div class="card-sub">Events : xx</div>
                 </div>
-                <div class="hud-chip">Standby</div>
             </div>
 
             <div class="card-body">
-                <p class="card-text">Known for: covert trades, data smuggling, limited public presence.</p>
+                <p class="card-text">Evenements a venir</p>
             </div>
         </div>
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Options</div>
+                </div>
+            </div>
+                <div class="card-footer">
+                    <a href='/'>  <button class="faction-btn">Retour</button></a>
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>

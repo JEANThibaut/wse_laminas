@@ -112,14 +112,16 @@
                     Mon Arsenal
                 </a>
             </li> -->
-            <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'faction') ? 'active' : '' ?>" href="<?= $this->url('faction') ?>">
-                    <?php if($isFunny): ?>
-                        <img class="mb-1" src="/images/icones/magazine.png" alt="type" style="height: 20px; margin-right:10px;">
-                    <?php endif ?>         
-                    Factions War
-                </a>
-            </li>
+            <?php if ($this->currentUser->getFaction() != null) : ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= ($activeMenu === 'faction') ? 'active' : '' ?>" href="<?= $this->url('faction') ?>">
+                        <?php if($isFunny): ?>
+                            <img class="mb-1" src="/images/icones/magazine.png" alt="type" style="height: 20px; margin-right:10px;">
+                        <?php endif ?>         
+                        Factions War
+                    </a>
+                </li>
+            <?php endif; ?>
         <?php endif; ?>
         <?php if ($this->currentUser && $this->currentUser->getIsMember()) : ?>
              <hr>

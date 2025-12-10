@@ -52,7 +52,33 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
 .card-sub{font-size:0.85rem;color:rgba(191,248,255,0.72)}
 
 .card-body{position:relative;min-height:50px;padding:8px;border-radius:8px;background:transparent;z-index:2}
-.card-dots{position:absolute;inset:0;z-index:1;opacity:0.08;background-image:radial-gradient(circle at 10% 20%, var(--dot-white) 1px, transparent 2px), radial-gradient(circle at 70% 80%, var(--dot-white) 1px, transparent 2px);background-size:120px 120px, 80px 80px;pointer-events:none}
+.card-dots{position:absolute;inset:0;z-index:1;opacity:0.08;background-image:radial-gradient(circle at 10% 20%, var(--dot-white) 1px, transparent 2px), radial-gradient(circle at 70% 80%, var(--dot-white) 1px, transparent 2px);background-size:120px 120px, 80px 80px;pointer-events:none;animation:dots-float 25s ease-in-out infinite}
+
+/* Animation de flottement des particules */
+@keyframes dots-float {
+    0%, 100% {
+        background-position: 0 0, 0 0;
+        opacity: 0.08;
+    }
+    25% {
+        background-position: 30px 20px, -20px 15px;
+        opacity: 0.12;
+    }
+    50% {
+        background-position: 50px 40px, -40px 30px;
+        opacity: 0.08;
+    }
+    75% {
+        background-position: 30px 60px, -20px 45px;
+        opacity: 0.12;
+    }
+}
+
+/* Au survol de la card, accélérer l'animation */
+.hud-card-large:hover .card-dots {
+    animation-duration: 15s;
+    opacity: 0.14;
+}
 
 /* Decorative tick */
 .card-tick{position:absolute;width:6px;height:18px;background:linear-gradient(180deg,var(--neon-1),var(--neon-2));opacity:0.95}
@@ -118,7 +144,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
 
 @keyframes progress-stripes{ from { background-position: 0 0; } to { background-position: 40px 0; } }
 /* Title image container + image (centered, responsive, animation-ready) */
-.faction-title{display:block;text-align:center;margin:0 0 18px 0}
+.faction-title{display:block;text-align:center;margin:0 0 0 0}
 .faction-title-img{display:block;margin:0 auto;max-width:420px;width:60%;height:auto;will-change:transform,opacity;transition:transform .45s ease,opacity .45s ease;color:var(--neon-1)}
 
 @media (max-width:600px){
@@ -202,58 +228,122 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   opacity: 0;
   transition: opacity 0.3s ease;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Effet de grille cyberpunk dans le popup overlay */
+.popup-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(46, 186, 211, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 186, 211, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .popup-overlay.is-visible {
   opacity: 1;
 }
 
-/* Popup container */
+/* Popup container avec le même style que les cards */
 .popup-container {
   position: relative;
   width: 90%;
   max-width: 900px;
   max-height: 85vh;
-  background: linear-gradient(180deg, rgba(0,0,0,0.92), rgba(0,0,0,0.82));
-  border: 1px solid var(--card-border);
+  background: linear-gradient(145deg, 
+    rgba(5, 25, 40, 0.95) 0%, 
+    rgba(0, 15, 25, 0.98) 50%, 
+    rgba(5, 20, 35, 0.95) 100%);
+  border: 1px solid rgba(46, 186, 211, 0.2);
   border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 30px var(--card-inner-glow) inset;
+  box-shadow: 
+    0 20px 60px rgba(0,0,0,0.9), 
+    0 0 30px rgba(46, 186, 211, 0.08) inset,
+    0 0 50px rgba(0, 163, 255, 0.05);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* Popup header */
+/* Bordure interne du popup */
+.popup-container::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 10px;
+  pointer-events: none;
+  background: linear-gradient(145deg, 
+    rgba(46, 186, 211, 0.04) 0%, 
+    rgba(0, 163, 255, 0.01) 50%, 
+    transparent 100%);
+  mix-blend-mode: screen;
+}
+
+.popup-container::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(46, 186, 211, 0.08);
+  box-shadow: 0 0 16px rgba(46, 186, 211, 0.03) inset;
+  pointer-events: none;
+}
+
+/* Popup header amélioré */
 .popup-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--card-border);
-  background: linear-gradient(180deg, rgba(0,200,230,0.06), transparent);
+  border-bottom: 1px solid rgba(46, 186, 211, 0.15);
+  background: linear-gradient(180deg, 
+    rgba(0, 50, 80, 0.12) 0%, 
+    transparent 100%);
+  z-index: 2;
+}
+
+.popup-header::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-1), transparent);
 }
 
 .popup-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--neon-1);
-  text-shadow: 0 0 8px var(--neon-1);
+  text-shadow: 0 0 12px rgba(46, 186, 211, 0.5);
+  letter-spacing: 0.6px;
 }
 
 .popup-close {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--neon-1);
-  border-radius: 6px;
-  background: rgba(0,0,0,0.3);
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--neon-1);
+  border-radius: 8px;
+  background: rgba(0, 20, 30, 0.6);
   color: var(--neon-1);
   font-size: 1.8rem;
   line-height: 1;
@@ -263,45 +353,206 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 8px rgba(46, 186, 211, 0.05);
 }
 
 .popup-close:hover {
-  background: rgba(46,186,211,0.15);
-  box-shadow: 0 0 12px var(--neon-1);
-  transform: scale(1.05);
+  background: rgba(46, 186, 211, 0.15);
+  box-shadow: 
+    0 6px 18px rgba(0,0,0,0.6), 
+    0 0 20px rgba(46, 186, 211, 0.3);
+  transform: translateY(-2px) scale(1.05);
+  border-color: var(--neon-2);
 }
 
 .popup-close:active {
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.95);
 }
 
-/* Popup content */
+/* Popup content avec fond subtil */
 .popup-content {
+  position: relative;
   flex: 1;
   overflow-y: auto;
   padding: 24px;
+  background: linear-gradient(180deg, 
+    rgba(0, 30, 50, 0.05) 0%, 
+    transparent 100%);
+  z-index: 2;
 }
 
 .popup-content .hud-cards {
   gap: 20px;
 }
 
+/* Scrollbar stylisée */
 .popup-content::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .popup-content::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.3);
-  border-radius: 4px;
+  background: rgba(0, 20, 30, 0.5);
+  border-radius: 5px;
+  margin: 4px;
 }
 
 .popup-content::-webkit-scrollbar-thumb {
-  background: var(--neon-1);
-  border-radius: 4px;
+  background: linear-gradient(180deg, var(--neon-1), var(--neon-2));
+  border-radius: 5px;
+  border: 2px solid rgba(0, 20, 30, 0.5);
+  box-shadow: 0 0 10px rgba(46, 186, 211, 0.3);
 }
 
 .popup-content::-webkit-scrollbar-thumb:hover {
-  background: var(--neon-2);
+  background: linear-gradient(180deg, var(--neon-2), var(--neon-1));
+  box-shadow: 0 0 15px rgba(46, 186, 211, 0.5);
+}
+
+/* Animation d'apparition du popup */
+@keyframes popup-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.popup-overlay.is-visible .popup-container {
+  animation: popup-appear 0.3s ease-out;
+}
+
+/* Background de la page principale */
+.faction-content {
+    min-height: 100vh;
+    padding: 0 10px 10px 10px;
+    background: linear-gradient(135deg, 
+        rgba(0, 10, 20, 0.95) 0%, 
+        rgba(0, 20, 35, 0.9) 50%, 
+        rgba(0, 10, 20, 0.95) 100%);
+    position: relative;
+}
+
+/* Effet de grille cyberpunk en arrière-plan */
+.faction-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(46, 186, 211, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(46, 186, 211, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Fond pour le logo rotatif */
+.title-3d::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    max-width: 480px;
+    height: 140px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, 
+        rgba(46, 186, 211, 0.08) 0%, 
+        rgba(0, 163, 255, 0.04) 40%, 
+        transparent 70%);
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: -1;
+}
+
+/* Container pour l'image de fond du logo */
+.title-3d {
+    position: relative;
+    background-image: var(--title-background-image, none);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 20px 0;
+}
+
+/* Amélioration du fond des cards */
+.hud-card-large {
+    background: linear-gradient(145deg, 
+        rgba(5, 25, 40, 0.85) 0%, 
+        rgba(0, 15, 25, 0.9) 50%, 
+        rgba(5, 20, 35, 0.85) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Bordure animée au survol */
+.hud-card-large::before {
+    background: linear-gradient(145deg, 
+        rgba(46, 186, 211, 0.06) 0%, 
+        rgba(0, 163, 255, 0.02) 50%, 
+        transparent 100%);
+}
+
+/* Amélioration du card-body */
+.card-body {
+    background: linear-gradient(180deg, 
+        rgba(0, 50, 80, 0.15) 0%, 
+        rgba(0, 30, 50, 0.08) 100%);
+    border: 1px solid rgba(46, 186, 211, 0.12);
+}
+
+/* Effet de brillance sur les cards */
+.hud-card-large:hover {
+    filter: brightness(1.05);
+    border-color: rgba(46, 186, 211, 0.2);
+    box-shadow: 
+        0 10px 24px rgba(0,0,0,0.6), 
+        0 0 30px rgba(46, 186, 211, 0.15) inset,
+        0 0 40px rgba(0, 163, 255, 0.1);
+}
+
+/* Header de card avec fond subtil */
+.card-header {
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(46, 186, 211, 0.15);
+}
+
+.card-header::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--neon-1), transparent);
+}
+
+/* Chip status avec fond */
+.hud-chip {
+    padding: 4px 12px;
+    background: rgba(0, 20, 30, 0.6);
+    border: 1px solid rgba(46, 186, 211, 0.3);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--neon-1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .faction-content {
+            padding: 0 10px 10px 10px;
+
+    }
+    
+    .title-3d::before {
+        max-width: 320px;
+        height: 100px;
+    }
 }
 
 
