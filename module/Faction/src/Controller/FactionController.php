@@ -40,17 +40,34 @@ class FactionController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $faction = $this->entityManager->getRepository(Faction::class)->findOneBy(['idfaction' => $currentUser->getFaction()]);
         $objectifs = $this->entityManager->getRepository(Objectif::class)->findBy(['idfaction' => $currentUser->getFaction()]);
-
+        if (!$faction) {
+            // Redirect using a literal URL to avoid route name resolution issues
+            return $this->redirect()->toUrl('/faction-register');
+        }
+        
         $view = new ViewModel([
             'currentUser' => $currentUser,
             'faction'     => $faction,
             'objectifs'  => $objectifs
         ]);
 
-        $this->layout()->setVariable('activeMenu', 'Faction-index');
-        $view->setTemplate('faction/index');
+
+        // $this->layout()->setVariable('activeMenu', 'Faction-index');
+        // $view->setTemplate('faction/index');
         return $view;
 
+    }
 
+
+    public function factionRegisterAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        $view = new ViewModel([
+            'currentUser' => $currentUser,
+        ]);
+        // Template file is located at module/Faction/view/faction/faction-register.phtml
+        // Set explicit template to match that location (module folder + template file)
+        $view->setTemplate('faction/faction-register');
+        return $view;
     }
 }

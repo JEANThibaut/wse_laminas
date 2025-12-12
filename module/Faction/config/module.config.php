@@ -17,6 +17,17 @@ return [
                     ],
                 ],
             ],
+            'faction-register' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/faction-register',
+                    'defaults' => [
+                        'controller' => Controller\FactionController::class,
+                        'action' => 'factionRegister',
+                    ],
+                ],
+            ],
+     
         ],
     ],
     'controllers' => [

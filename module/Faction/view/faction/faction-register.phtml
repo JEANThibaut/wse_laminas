@@ -1,0 +1,193 @@
+
+<style>
+  /* Card transition: fade + slight lift */
+  .hud-cards.card-panel {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .28s ease, transform .28s ease;
+    will-change: opacity, transform;
+  }
+  .hud-cards.card-panel.is-showing {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+
+
+    <div class="hud-cards" id="card-1" style="display:block">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Bienvenue dans faction wars !</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Afin de pouvoir participer aux évenements liés aux factions certaines règles importantes sont imposées, merci dans prendre connaissance consencieusement.
+                </p>
+                <br>
+                <p class="card-text">
+                    Cette section s'adresse aux joueurs désireux d'une expérience différente, plus immersives, et qui s'approche plus de l'esprit milsim de l'airsoft.
+                    Afin donc de garder cet esprit, certains types de matériel sont interdits durant les évenements de factions:
+                </p>
+                <br>
+                <p class="card-text">
+                    - Les réplique de poing équipé de chargeur long,  montée sur bouteille ou adaptateur co2 ne sont pas autorisés.<br>
+                    - Pas de chargeur grande capacités à molettes ou électrique (plus de 120 billes), recharger fait partie de l'expérience. <br>
+                    - Merci de privilégié une tenue militaire ou tactique adaptée au rôle que vous souhaitez jouer durant les évenements de factions. <br>
+                    - Pas de drapeaux, insignes ou écusson réels.  <br>
+                    - Pas d'armes de mélée fantaisiste. <br>
+                </p>
+                <br>
+                <p class="card-text">
+                    Ces évenements sont facultatifs et ne remplace en aucun cas le fonctionnement général des parties d'airsoft organisées par le WSE.<br>
+                    Ils sont là pour offrir une expérience de jeu alternative et plus immersive à ceux qui le souhaitent.<br>
+                </p>
+                <br>
+                <p class="card-text">
+                    En participant à ces évenements vous vous engagez à respecter ces règles, sous peine de sanctions pouvant aller jusqu'à l'exclusion des évenements de factions.
+                    Elles sont mises en place pour le bien de tous et pour garantir une expérience de jeu agréable et équitable. <br>
+                    Ces dernières peuvent être amené à évoluer en fonction des retours des joueurs et des besoins des évenements.
+                </p>
+            </div>
+            <br>
+            <div class="card-footer">
+              <button id="btn-card1-next" class="faction-btn" data-show="card-2">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="hud-cards" id="card-2" style="display:none">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Explications!</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Si vous êtes ci c'est que vous avez bien lu et compris les règles énoncées précédemment.<br>
+                    
+                </p>
+
+                
+            </div>
+            <br>
+            <div class="card-footer">
+              <button id="btn-card2-action" class="faction-btn" data-show="card-1">J'ai compris</button>
+              <button id="btn-card2-back" class="faction-btn" data-show="card-1">Retour</button>
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+  // Card switching via data-show attribute. Buttons must have a `data-show="card-id"` targeting card to display.
+
+  function scrollToTopInstant() {
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
+  }
+
+  function showCardById(cardId) {
+    var el = document.getElementById(cardId);
+    if (!el) return;
+    if (el.style.display === 'none' || getComputedStyle(el).display === 'none') {
+      el.style.display = 'block';
+    }
+    requestAnimationFrame(function() {
+      el.classList.add('card-panel');
+      requestAnimationFrame(function() { el.classList.add('is-showing'); });
+    });
+  }
+
+  function hideCardById(cardId) {
+    var el = document.getElementById(cardId);
+    if (!el) return;
+    el.classList.remove('is-showing');
+    var onEnd = function(e) {
+      if (e && e.target !== el) return;
+      el.style.display = 'none';
+      el.removeEventListener('transitionend', onEnd);
+    };
+    el.addEventListener('transitionend', onEnd);
+  }
+
+  function setupDataShowButtons() {
+    // Attach click handlers to any button with data-show attribute
+    var buttons = document.querySelectorAll('button[data-show]');
+    for (var i = 0; i < buttons.length; i++) {
+      (function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var targetId = btn.getAttribute('data-show');
+          if (!targetId) return;
+
+          // determine current panel (closest ancestor with id starting with 'card-')
+          var current = btn.closest('[id^="card-"]');
+          if (current) {
+            hideCardById(current.id);
+          }
+
+          // show target
+          showCardById(targetId);
+
+          // After animation ends on the target panel, scroll to top and focus without causing scroll
+          var targetEl = document.getElementById(targetId);
+          var handled = false;
+          var doAfter = function() {
+            if (handled) return; handled = true;
+            // Scroll to top
+            scrollToTopInstant();
+            // Focus first focusable element, preventing automatic scroll if supported
+            if (!targetEl) return;
+            var focusable = targetEl.querySelector('button, a, input, [tabindex]');
+            if (focusable) {
+              try {
+                if (typeof focusable.focus === 'function') {
+                  focusable.focus({preventScroll: true});
+                } else {
+                  focusable.focus();
+                }
+              } catch (err) {
+                // Older browsers may throw; fallback
+                try { focusable.focus(); } catch (e) {}
+              }
+            }
+          };
+
+          if (targetEl) {
+            // Listen for transitionend (one-time)
+            var onEnd = function(e) {
+              if (e && e.target !== targetEl) return;
+              targetEl.removeEventListener('transitionend', onEnd);
+              doAfter();
+            };
+            targetEl.addEventListener('transitionend', onEnd);
+            // Fallback: if transitionend doesn't fire, run after 700ms
+            setTimeout(doAfter, 700);
+          } else {
+            // No target element found -> just do it
+            setTimeout(doAfter, 0);
+          }
+        });
+      })(buttons[i]);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ensure panels have base class
+    var p1 = document.getElementById('card-1');
+    var p2 = document.getElementById('card-2');
+    if (p1) p1.classList.add('card-panel');
+    if (p2) p2.classList.add('card-panel');
+
+    // Initialize visible state
+    if (p1 && getComputedStyle(p1).display !== 'none') p1.classList.add('is-showing');
+    if (p2 && getComputedStyle(p2).display !== 'none') p2.classList.add('is-showing');
+
+    setupDataShowButtons();
+  });
+</script>
