@@ -2,7 +2,7 @@
         <div class="hud-card-large panel-corners">
             <div class="card-header">
                 <div>
-                    <div class="card-title">Bienvenue dans faction wars !</div>
+                    <div class="card-title">Bienvenue dans la Faction War !</div>
                 </div>
             </div>
             <div class="card-body">
@@ -36,8 +36,16 @@
                 </p>
             </div>
             <br>
+              <button id="btn-card4-back" class="faction-btn-angular btn-full" data-show="card-1">
+                    <img src="/assets/img/CDC_logo.svg" alt="CDC" class="btn-icon"><br>
+                    <span class="btn-text">CDC</span>
+                </button>
             <div class="card-footer">
-              <button id="btn-card1-next" class="faction-btn" data-show="card-2">J'ai compris</button>
+                 <button id="btn-card1-next" class="faction-btn-angular" data-show="card-2">
+                  <span class="btn-text">J'ai compris</span>
+                </button>
+
+                
             </div>
         </div>
     </div>
@@ -47,30 +55,137 @@
         <div class="hud-card-large panel-corners">
             <div class="card-header">
                 <div>
-                    <div class="card-title">Explications!</div>
+                    <div class="card-title">Explications! </div>
+                    <div class="subtitle">1/4</div>
                 </div>
             </div>
             <div class="card-body">
                 <p class="card-text">
-                    Si vous êtes ci c'est que vous avez bien lu et compris les règles énoncées précédemment.<br>
-                    Bienvenue à vous !
-                </p>    
-                <p class="card-text">
-                    Vous êtes actuellement de le HUB des Factions.<br>
-                    Étant un nouveau joueur dans ce mode de jeu alternatif, il est important de bien comprendre les mécanismes et les objectifs liés aux factions.<br>
-                    Chaque faction a ses propres objectifs, missions et rôles à jouer dans le cadre des évenements organisés par le WSE.<br>
-                    En tant que nouveau membre, vous devrez choisir une faction à rejoindre.<br>
-                    Attention cependant, une fois votre choix effectué, il sera impossible de modifier!<br>
-                </p>    
+                    Si vous êtes ici c'est que vous avez bien lu et compris les règles énoncées précédemment !<br>
+                    Voici donc les explications sur ce qu'est la Faction War !
+                </p>
+                <br>
+                <p class="card-text">   
+                    La Faction War est un système de jeu immersif où les joueurs s'affrontent au sein de factions rivales durant des évenements aussi bien public que privé.<br>
+                    Ce système est mises en place pour une durée de plusieurs mois, où les évenements pourront s'enchainer et les différentes factions évolués !<br>
+                    Chaque faction disposera de son propre compte en banque, de ses objectifs à atteindre, et de son influence sur le terrain de jeu.<br>
+                </p>
             </div>
             <br>
             <div class="card-footer">
-              <button id="btn-card2-action" class="faction-btn" data-show="card-1">J'ai compris</button>
-              <button id="btn-card2-back" class="faction-btn" data-show="card-1">Retour</button>
+                <button id="btn-card2-back" class="faction-btn-angular" data-show="card-1"><span class="btn-text">Précedent</span></button>
+                <button id="btn-card2-action" class="faction-btn-angular" data-show="card-3"><span class="btn-text">Suivant</span></button>
             </div>
         </div>
     </div>
 
+
+    
+    <div class="hud-cards" id="card-3" style="display:none">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Votre faction</div>
+                    <div class="subtitle">2/4</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Une fois inscrit dans une faction, vous pourrez participer aux évenements liés à cette dernière.<br>
+                    Vous aurez accès à des objectifs spécifiques à votre faction, et pourrez contribuer à son développement en accomplissant des missions et en participant aux parties privées qui leurs seront dédié.<br>
+                </p>
+                <br>
+                <p class="card-text">   
+                    Certains objectifs seront réalisable lors des parties classiques WSE, mais d'autres nécessiteront des sessions dédiées pour être accomplis.<br>
+                    En participant activement aux évenements de votre faction, vous aiderez à renforcer son influence et à atteindre ses objectifs globaux.<br>
+                  
+                </p>
+                <br>
+     
+            </div>
+            <br>
+            <div class="card-footer">
+                <button id="btn-card4-back" class="faction-btn-angular" data-show="card-2"><span class="btn-text">Précedent</span></button>
+                <button id="btn-card4-action" class="faction-btn-angular" data-show="card-4"><span class="btn-text">Suivant</span></button>
+            </div>
+        </div>
+    </div>
+
+        
+    <div class="hud-cards" id="card-4" style="display:none">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Votre faction</div>
+                     <div class="subtitle">3/4</div>
+                </div>
+            </div>
+            <div class="card-body">
+            <p class="card-text">   
+                Il vous faudra rester informer des évolution des différents objectifs, qui pourront stendre sur plusieurs jours voir semaines, et s'adapter en fonction des résultats obtenus lors des évenements.<br>
+                De plus certains objectifs pourront être complètement dématérialiser et reposer sur des actions en dehors du terrain de jeu, directement sur votre HUB de Faction.<br>
+            </p>
+            <br>
+            </div>
+            <br>
+            <div class="card-footer">
+                <button id="btn-card4-back" class="faction-btn-angular" data-show="card-3"><span class="btn-text">Précedent</span></button>
+                <button id="btn-card4-action" class="faction-btn-angular" data-show="card-5"><span class="btn-text">Suivant</span></button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="hud-cards" id="card-5" style="display:none">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Votre faction</div>
+                     <div class="subtitle">4/4</div>
+                </div>
+            </div>
+            <div class="card-body">
+            <p class="card-text">   
+                Si vous avez bien lu les conditions, que vous êtes prêt à vous engager dans une expérience différente et vous investir pour votre faction, il est temps de la choisir !<br>
+                En cliquant sur le bouton suivant vous serez rediriger vers la sélection des factions.<br>
+            </p>
+            <br>
+            <p class="card-text">   
+                Prenez le temps de lire avant de choisir!! Ce choix est d''efinitf pour toute la durée de la campagne de faction en cours.<br>
+                En aucune circonstance vous ne pourrez changer de faction avant la fin de cette dernière.<br>
+                Choisissez sagement et en connaissance de cause !<br>
+            </p>
+            </div>
+            <br>
+            <div class="card-footer">
+                <button id="btn-card5-back" class="faction-btn-angular" data-show="card-4"><span class="btn-text">Précedent</span></button>
+                <button id="btn-card5-action" class="faction-btn-angular " data-show="card-6"><span class="btn-text">Choisir ma faction</span></button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="hud-cards" id="card-6" style="display:none">
+        <div class="hud-card-large panel-corners">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Les factions</div>
+
+                </div>
+            </div>
+            <div class="card-body">
+                  <button id="btn-card4-back" class="faction-btn-angular btn-full" data-show="card-1">
+                    <img src="/assets/images/factions/cdc_icon.png" alt="CDC" class="btn-icon"><br>
+                    <span class="btn-text">CDC</span>
+                </button>
+            </div>
+            <br>
+            <!-- <div class="card-footer">
+              <button id="btn-card5-action" class="faction-btn" data-show="card-6">Choisir ma faction</button>
+              <button id="btn-card5-back" class="faction-btn" data-show="card-1">Précedent</button>
+            </div> -->
+        </div>
+    </div>
 
 
 
@@ -81,9 +196,29 @@
     try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
   }
 
-  function showCardById(cardId) {
+  // Scroll to top and call callback when detected at top or after timeout
+  function waitForScrollTop(cb) {
+    var start = Date.now();
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0,0); }
+    var maxMs = 900;
+    function check() {
+      var y = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (y <= 2) {
+        if (typeof cb === 'function') cb();
+        return;
+      }
+      if (Date.now() - start > maxMs) {
+        if (typeof cb === 'function') cb();
+        return;
+      }
+      requestAnimationFrame(check);
+    }
+    requestAnimationFrame(check);
+  }
+
+  function showCardById(cardId, cb) {
     var el = document.getElementById(cardId);
-    if (!el) return;
+    if (!el) { if (typeof cb === 'function') cb(); return; }
     if (el.style.display === 'none' || getComputedStyle(el).display === 'none') {
       el.style.display = 'block';
     }
@@ -91,18 +226,35 @@
       el.classList.add('card-panel');
       requestAnimationFrame(function() { el.classList.add('is-showing'); });
     });
+    var onEnd = function(e) {
+      if (e && e.target !== el) return;
+      try { el.removeEventListener('transitionend', onEnd); } catch (err) {}
+      if (typeof cb === 'function') cb();
+    };
+    el.addEventListener('transitionend', onEnd);
+    // fallback
+    setTimeout(function() { try{ el.removeEventListener('transitionend', onEnd); }catch(e){} if (typeof cb === 'function') cb(); }, 800);
   }
 
-  function hideCardById(cardId) {
+  function hideCardById(cardId, cb) {
     var el = document.getElementById(cardId);
-    if (!el) return;
+    if (!el) { if (typeof cb === 'function') cb(); return; }
     el.classList.remove('is-showing');
     var onEnd = function(e) {
       if (e && e.target !== el) return;
       el.style.display = 'none';
-      el.removeEventListener('transitionend', onEnd);
+      try { el.removeEventListener('transitionend', onEnd); } catch (err) {}
+      if (typeof cb === 'function') cb();
     };
     el.addEventListener('transitionend', onEnd);
+    // fallback in case transitionend doesn't fire
+    setTimeout(function() {
+      if (getComputedStyle(el).display !== 'none') {
+        el.style.display = 'none';
+        try { el.removeEventListener('transitionend', onEnd); } catch (e) {}
+        if (typeof cb === 'function') cb();
+      }
+    }, 700);
   }
 
   function setupDataShowButtons() {
@@ -117,50 +269,31 @@
 
           // determine current panel (closest ancestor with id starting with 'card-')
           var current = btn.closest('[id^="card-"]');
-          if (current) {
-            hideCardById(current.id);
-          }
 
-          // show target
-          showCardById(targetId);
-
-          // After animation ends on the target panel, scroll to top and focus without causing scroll
-          var targetEl = document.getElementById(targetId);
-          var handled = false;
-          var doAfter = function() {
-            if (handled) return; handled = true;
-            // Scroll to top
-            scrollToTopInstant();
-            // Focus first focusable element, preventing automatic scroll if supported
-            if (!targetEl) return;
-            var focusable = targetEl.querySelector('button, a, input, [tabindex]');
-            if (focusable) {
-              try {
-                if (typeof focusable.focus === 'function') {
+          var proceedToShow = function() {
+            showCardById(targetId, function() {
+              // focus first focusable element without scrolling
+              var targetEl = document.getElementById(targetId);
+              if (!targetEl) return;
+              var focusable = targetEl.querySelector('button, a, input, [tabindex]');
+              if (focusable) {
+                try {
                   focusable.focus({preventScroll: true});
-                } else {
-                  focusable.focus();
+                } catch (err) {
+                  try { focusable.focus(); } catch (e) {}
                 }
-              } catch (err) {
-                // Older browsers may throw; fallback
-                try { focusable.focus(); } catch (e) {}
               }
-            }
+            });
           };
 
-          if (targetEl) {
-            // Listen for transitionend (one-time)
-            var onEnd = function(e) {
-              if (e && e.target !== targetEl) return;
-              targetEl.removeEventListener('transitionend', onEnd);
-              doAfter();
-            };
-            targetEl.addEventListener('transitionend', onEnd);
-            // Fallback: if transitionend doesn't fire, run after 700ms
-            setTimeout(doAfter, 700);
+          if (current) {
+            // hide current, then scroll, then show target
+            hideCardById(current.id, function() {
+              waitForScrollTop(proceedToShow);
+            });
           } else {
-            // No target element found -> just do it
-            setTimeout(doAfter, 0);
+            // no current panel -> just scroll then show
+            waitForScrollTop(proceedToShow);
           }
         });
       })(buttons[i]);
