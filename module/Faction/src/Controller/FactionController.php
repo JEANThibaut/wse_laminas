@@ -52,8 +52,8 @@ class FactionController extends AbstractActionController
         ]);
 
 
-        // $this->layout()->setVariable('activeMenu', 'Faction-index');
-        // $view->setTemplate('faction/index');
+        $this->layout()->setVariable('activeMenu', 'Faction-index');
+        $view->setTemplate('faction/index');
         return $view;
 
     }

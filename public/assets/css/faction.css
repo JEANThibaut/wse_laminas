@@ -38,6 +38,16 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
 .hud-card-large{position:relative;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.42), rgba(0,0,0,0.12));border:1px solid var(--card-border);box-shadow:0 10px 24px rgba(0,0,0,0.55), 0 0 20px var(--card-inner-glow) inset;overflow:hidden}
 .hud-card-large:before{content:"";position:absolute;inset:8px;border-radius:10px;pointer-events:none;background:linear-gradient(180deg, rgba(0,200,230,0.02), transparent);mix-blend-mode:screen}
 .hud-card-large:after{content:"";position:absolute;top:8px;left:8px;right:8px;bottom:8px;border-radius:10px;border:1px solid var(--card-border);box-shadow:0 0 16px rgba(0,200,230,0.03) inset;pointer-events:none}
+.hud-cards.card-panel {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .28s ease, transform .28s ease;
+  will-change: opacity, transform;
+}
+.hud-cards.card-panel.is-showing {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* Card decorative frame / corners */
 .card-frame{position:absolute;inset:0;border-radius:12px;pointer-events:none;border:2px solid var(--card-border);box-shadow:0 0 0 3px var(--card-inner-glow) inset}
