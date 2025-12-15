@@ -214,6 +214,124 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
   box-shadow: 0 0 10px var(--neon-2), 0 0 30px rgba(0,163,255,0.12);
 }
 
+/* Angular variant of faction button
+   - Keeps base `.faction-btn` properties but removes rounded corners
+   - Beveled (chamfered) top-right corner with visible diagonal line
+   - Decorative diagonal stripes in bottom-right
+*/
+.faction-btn-angular{
+  /* inherit styles but enforce angular visuals */
+  border-radius: 0;
+  /* default padding: no left offset unless header class applied */
+  padding: 12px 24px 12px 18px;
+  position: relative;
+  overflow: hidden; /* Ensure stripes don't spill */
+  background: rgba(0, 10, 20, 0.6);
+  border: 1px solid var(--neon-1);
+  /* disable glow but keep bevel */
+  box-shadow: 0 0 10px rgba(46,186,211,0.1) inset;
+  text-align: left;
+  display: inline-block;
+  /* Bevel top-right: 20px cut */
+  -webkit-clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0% 100%);
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0% 100%);
+  transition: all 0.2s ease;
+  /* Text glow */
+  text-shadow: 0 0 5px rgba(46,186,211,0.6);
+  min-width: 140px;
+}
+
+.faction-btn-angular:hover{
+  background: rgba(46,186,211,0.25);
+  box-shadow: 0 0 25px rgba(46,186,211,0.3) inset, 0 0 15px rgba(46,186,211,0.4);
+  text-shadow: 0 0 12px var(--neon-1), 0 0 20px rgba(46,186,211,0.8);
+  border-color: rgba(255,255,255,0.9);
+}
+
+.faction-btn-angular:active{
+  background: rgba(46,186,211,0.4);
+  box-shadow: 0 0 35px rgba(46,186,211,0.5) inset, 0 0 25px rgba(46,186,211,0.6);
+  transform: translateY(1px);
+}
+
+/* Diagonal stripes in bottom-left (decorative) */
+.faction-btn-angular::before{
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(46,186,211,0.6) 4px,
+    rgba(46,186,211,0.6) 6px
+  );
+  mask-image: linear-gradient(to right, black, transparent);
+  -webkit-mask-image: linear-gradient(to right, black, transparent);
+  pointer-events: none;
+  z-index: 0;
+  /* Glow for stripes */
+  filter: drop-shadow(0 0 2px rgba(46,186,211,0.5));
+}
+
+/* The visible bevel line at top-right */
+.faction-btn-angular::after{
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  /* Create a diagonal line using gradient */
+  background: linear-gradient(225deg, transparent 13px, var(--neon-1) 13px, var(--neon-1) 15px, transparent 15px);
+  pointer-events: none;
+  z-index: 2;
+  /* Ensure it sits exactly on the cut */
+  transform-origin: top right;
+  /* Glow for bevel line */
+  filter: drop-shadow(0 0 4px var(--neon-1));
+}
+
+/* Ensure focus does not cause unexpected scroll; visual focus ring */
+.faction-btn-angular:focus{
+  outline: none;
+  /* no glow on focus; subtle border color change */
+  box-shadow: none;
+  border-color: var(--neon-2);
+}
+
+/* Utility: force button to take full available width */
+.btn-full{
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Optional header block for angular buttons
+   Usage: include a child `<div class="angulaire-header">...</div>` inside
+   a `.faction-btn-angular` button when you need a top-left logo/header.
+   If you don't include the div, no extra padding or square will appear.
+*/
+
+
+.faction-btn-angular  img{
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  display: block;
+}
+
+/* label inside button — allow shifting only when header is present */
+.faction-btn-angular .btn-text{
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 0;
+  color: var(--accent-text);
+}
+
 /* Blink helper - apply via JS on click by toggling class 'is-blinking' */
 .faction-btn.is-blinking{
   animation: faction-btn-blink .38s ease-in-out 1;
