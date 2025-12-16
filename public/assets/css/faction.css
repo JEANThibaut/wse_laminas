@@ -318,10 +318,13 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
 
 
 .faction-btn-angular  img{
-  width: 36px;
+  /* width: 36px; */
   height: 36px;
   object-fit: cover;
   display: block;
+  filter: drop-shadow(0px 100px 0 var(--neon-1));
+  transform: translateY(-100px);
+  
 }
 
 /* label inside button — allow shifting only when header is present */
@@ -681,6 +684,16 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
         max-width: 320px;
         height: 100px;
     }
+}
+
+/* Ensure popup headers never receive the global title background image
+   (prevents --title-background-image or face backgrounds from appearing
+   inside popup headers). This neutralizes the 3D title visuals specifically
+   for popup headers without touching other instances on the page. */
+.popup-header .title-3d {
+  --title-background-image: none !important;
+  background-image: none !important;
+
 }
 
 

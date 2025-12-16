@@ -5,6 +5,73 @@ var logoImages = {
   cgs: '/assets/img/CGS_logo.png'
 };
 
+// --- Title3D helpers (reusable) ---------------------------------
+// Use these helpers to show a rotating/masked logo wherever you place
+// the `.title-3d` HTML structure.
+function setTitle3DLogo(title3dEl, logoUrl) {
+  if (!title3dEl) return;
+  try {
+    // CSS variable used by styles (if your CSS supports it)
+    title3dEl.style.setProperty('--title-background-image', logoUrl ? "url('" + logoUrl + "')" : '');
+  } catch (e) {}
+
+  // Apply as background on faces when mask is not supported.
+  var supportsMask = false;
+  try { supportsMask = ('maskImage' in document.body.style) || ('webkitMaskImage' in document.body.style); } catch (e) { supportsMask = false; }
+  var faces = title3dEl.querySelectorAll('.title-mask');
+  for (var i = 0; i < faces.length; i++) {
+    var face = faces[i];
+    if (supportsMask) {
+      // prefer mask usage; we still keep dataset for potential server-side keys
+      face.style.backgroundImage = 'none';
+      face.style.webkitMaskImage = logoUrl ? 'url(' + logoUrl + ')' : '';
+      face.style.maskImage = logoUrl ? 'url(' + logoUrl + ')' : '';
+      face.style.webkitMaskRepeat = 'no-repeat';
+      face.style.maskRepeat = 'no-repeat';
+      face.style.webkitMaskPosition = 'center';
+      face.style.maskPosition = 'center';
+      face.style.webkitMaskSize = 'contain';
+      face.style.maskSize = 'contain';
+    } else {
+      face.style.backgroundImage = logoUrl ? 'url(' + logoUrl + ')' : 'none';
+      face.style.backgroundRepeat = 'no-repeat';
+      face.style.backgroundPosition = 'center';
+      face.style.backgroundSize = 'contain';
+    }
+  }
+}
+
+function startTitle3DRotation(titleCardEl) {
+  if (!titleCardEl) return;
+  titleCardEl.classList.add('is-rotating');
+}
+
+function stopTitle3DRotation(titleCardEl) {
+  if (!titleCardEl) return;
+  titleCardEl.classList.remove('is-rotating');
+}
+
+function initTitle3DBlocks() {
+  var blocks = document.querySelectorAll('.title-3d');
+  for (var i = 0; i < blocks.length; i++) {
+    var block = blocks[i];
+    var card = block.querySelector('.title-card');
+    var front = block.querySelector('.title-mask.front');
+    var logoKeyOrUrl = front && front.dataset && front.dataset.logo ? front.dataset.logo : '';
+    var logoUrl = '';
+    if (logoKeyOrUrl) {
+      var keyLower = logoKeyOrUrl.toString().toLowerCase();
+      logoUrl = logoImages[keyLower] || logoKeyOrUrl;
+    }
+    if (!logoUrl && card && card.dataset && card.dataset.rotate === '1') {
+      logoUrl = logoImages.cdc;
+    }
+    if (logoUrl) setTitle3DLogo(block, logoUrl);
+    if (card && card.dataset && card.dataset.rotate === '1') startTitle3DRotation(card);
+  }
+}
+// ------------------------------------------------------------------
+
 function createElement(tagName, className) {
   var element = document.createElement(tagName);
   if (className) {
@@ -204,8 +271,8 @@ function initializeProgressBars() {
 function handleProgressBarClick(event) {
   var bar = event.currentTarget;
   var label = bar.dataset.label || 'Objectif';
-  var description = bar.dataset.description || '';
-  openPopup(label, description);
+  console.log('Progress bar clicked:', label);
+  openPopup(label);
 }
 
 function addProgressBarClickListeners() {
@@ -247,7 +314,7 @@ function createPopupHeader(title) {
   return header;
 }
 
-function createPopupContent(description) {
+function createPopupContent() {
   var content = createElement('div', 'popup-content');
   
   var cardsContainer = createElement('div', 'hud-cards');
@@ -257,23 +324,23 @@ function createPopupContent(description) {
   var headerDiv1 = createElement('div', '');
   var cardTitle1 = createElement('div', 'card-title');
   cardTitle1.textContent = 'Détails';
-  // var cardSub1 = createElement('div', 'card-sub');
-  // cardSub1.textContent = 'Information';
+  var cardSub1 = createElement('div', 'card-sub');
+  cardSub1.textContent = 'Information';
   headerDiv1.appendChild(cardTitle1);
-  // headerDiv1.appendChild(cardSub1);
+  headerDiv1.appendChild(cardSub1);
   var chip1 = createElement('div', 'hud-chip');
   header1.appendChild(headerDiv1);
   header1.appendChild(chip1);
   
   var body1 = createElement('div', 'card-body');
   var text1 = createElement('p', 'card-text');
-  text1.textContent = description;
+  text1.textContent = 'Contenu de la popup avec les mêmes cards HUD.';
   body1.appendChild(text1);
   
   var footer1 = createElement('div', 'card-footer');
-  // var btn1 = createElement('button', 'faction-btn');
-  // btn1.textContent = 'Action';
-  // footer1.appendChild(btn1);
+  var btn1 = createElement('button', 'faction-btn');
+  btn1.textContent = 'Action';
+  footer1.appendChild(btn1);
   
   card1.appendChild(header1);
   card1.appendChild(body1);
@@ -285,7 +352,7 @@ function createPopupContent(description) {
   return content;
 }
 
-function openPopup(title, description) {
+function openPopup(title) {
   var existingOverlay = document.querySelector('.popup-overlay');
   if (existingOverlay) {
     closePopup();
@@ -294,7 +361,7 @@ function openPopup(title, description) {
   var overlay = createPopupOverlay();
   var container = createPopupContainer();
   var header = createPopupHeader(title);
-  var content = createPopupContent(description);
+  var content = createPopupContent();
   
   container.appendChild(header);
   container.appendChild(content);
@@ -324,6 +391,8 @@ function closePopup() {
 document.addEventListener('DOMContentLoaded', function() {
   decorateAllCards();
   applyLogosToAllCards();
+  // initialize any title-3d blocks (sets logo + rotation class)
+  try { initTitle3DBlocks(); } catch (e) {}
   initializeProgressBars();
   addProgressBarClickListeners();
 });

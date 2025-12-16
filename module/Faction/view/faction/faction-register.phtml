@@ -1,3 +1,5 @@
+
+
 <div class="hud-cards" id="card-1" style="display:block">
         <div class="hud-card-large panel-corners">
             <div class="card-header">
@@ -36,10 +38,7 @@
                 </p>
             </div>
             <br>
-              <button id="btn-card4-back" class="faction-btn-angular btn-full" data-show="card-1">
-                    <img src="/assets/img/CDC_logo.svg" alt="CDC" class="btn-icon"><br>
-                    <span class="btn-text">CDC</span>
-                </button>
+
             <div class="card-footer">
                  <button id="btn-card1-next" class="faction-btn-angular" data-show="card-2">
                   <span class="btn-text">J'ai compris</span>
@@ -174,143 +173,61 @@
                 </div>
             </div>
             <div class="card-body">
-                  <button id="btn-card4-back" class="faction-btn-angular btn-full" data-show="card-1">
-                    <img src="/assets/images/factions/cdc_icon.png" alt="CDC" class="btn-icon"><br>
-                    <span class="btn-text">CDC</span>
+                <button id="btn-cdc-details" class="faction-btn-angular btn-full" data-popup-target="faction-popup" data-faction-name="CONVENANT DEFENSE COMPANY" data-faction-id="cdc">
+                  <img src="/assets/img/CDC_logo.png" alt="CDC" class="btn-icon logo-blue"><br>
+                  <span class="btn-text">CONVENANT DEFENSE COMPANY</span>
+                  <h3 class="btn-text">Voir les détails</h3>
+                </button>
+                <br><br>
+                <button id="btn-cgs-details" class="faction-btn-angular btn-full" data-popup-target="faction-popup" data-faction-name="CRIMSON GLOBAL SOLUTION" data-faction-id="cgs">
+                  <img src="/assets/img/CGS_logo.png" alt="CGS" class="btn-icon logo-blue"><br>
+                  <span class="btn-text">CRIMSON GLOBAL SOLUTION</span>
+                  <h3 class="btn-text">Voir les détails</h3>
                 </button>
             </div>
             <br>
-            <!-- <div class="card-footer">
-              <button id="btn-card5-action" class="faction-btn" data-show="card-6">Choisir ma faction</button>
-              <button id="btn-card5-back" class="faction-btn" data-show="card-1">Précedent</button>
-            </div> -->
         </div>
     </div>
+        <!-- Reusable popup (hidden by default). Populated and shown by JS. -->
+        <div id="faction-popup" class="popup-overlay" aria-hidden="true" role="dialog" aria-modal="true" style="display:none">
+          <div class="popup-container" role="document">
+            <div class="popup-header" id="popup-header">
+              <div>        
+                <div class="title-3d" style="width:120px; display:none;" id='cdc-icon'>
+                    <div class="title-card" data-rotate="1">
+                        <div class="title-mask front" data-logo="cdc" role="img" aria-label="Factions" title="Factions"></div>
+                        <div class="title-mask back" data-logo="cdc" aria-hidden="true"></div>
+                    </div>
+                </div>
+                <div class="title-3d" style="width:120px; display:none;" id='cgs-icon' >
+                    <div class="title-card" data-rotate="1">
+                        <div class="title-mask front" data-logo="cgs" role="img" aria-label="Factions" title="Factions"></div>
+                        <div class="title-mask back" data-logo="cgs" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+              </div>
+
+              <div>
+                <div class="popup-title" id="faction-popup-title">Faction</div>
+              </div>
+            </div>
+            <div class="popup-content" id="faction-popup-content">
+              <div class="hud-cards">
+                <div class="hud-card-large">
+                  <div class="card-body" id="faction-popup-body">
+                    <p style="color:rgba(191,248,255,0.9)">Description de la faction...</p>
+                  </div>
+                  <div class="card-footer" style="justify-content:flex-end;padding:12px">
+                    <button class="faction-btn-angular" id="faction-popup-close" aria-label="Fermer"><span class="btn-text">Fermer</span></button>
+                    <button id="faction-join-btn" class="faction-btn-angular"><span class="btn-text">Rejoindre</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
 
 
-<script>
-  // Card switching via data-show attribute. Buttons must have a `data-show="card-id"` targeting card to display.
-
-  function scrollToTopInstant() {
-    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
-  }
-
-  // Scroll to top and call callback when detected at top or after timeout
-  function waitForScrollTop(cb) {
-    var start = Date.now();
-    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0,0); }
-    var maxMs = 900;
-    function check() {
-      var y = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-      if (y <= 2) {
-        if (typeof cb === 'function') cb();
-        return;
-      }
-      if (Date.now() - start > maxMs) {
-        if (typeof cb === 'function') cb();
-        return;
-      }
-      requestAnimationFrame(check);
-    }
-    requestAnimationFrame(check);
-  }
-
-  function showCardById(cardId, cb) {
-    var el = document.getElementById(cardId);
-    if (!el) { if (typeof cb === 'function') cb(); return; }
-    if (el.style.display === 'none' || getComputedStyle(el).display === 'none') {
-      el.style.display = 'block';
-    }
-    requestAnimationFrame(function() {
-      el.classList.add('card-panel');
-      requestAnimationFrame(function() { el.classList.add('is-showing'); });
-    });
-    var onEnd = function(e) {
-      if (e && e.target !== el) return;
-      try { el.removeEventListener('transitionend', onEnd); } catch (err) {}
-      if (typeof cb === 'function') cb();
-    };
-    el.addEventListener('transitionend', onEnd);
-    // fallback
-    setTimeout(function() { try{ el.removeEventListener('transitionend', onEnd); }catch(e){} if (typeof cb === 'function') cb(); }, 800);
-  }
-
-  function hideCardById(cardId, cb) {
-    var el = document.getElementById(cardId);
-    if (!el) { if (typeof cb === 'function') cb(); return; }
-    el.classList.remove('is-showing');
-    var onEnd = function(e) {
-      if (e && e.target !== el) return;
-      el.style.display = 'none';
-      try { el.removeEventListener('transitionend', onEnd); } catch (err) {}
-      if (typeof cb === 'function') cb();
-    };
-    el.addEventListener('transitionend', onEnd);
-    // fallback in case transitionend doesn't fire
-    setTimeout(function() {
-      if (getComputedStyle(el).display !== 'none') {
-        el.style.display = 'none';
-        try { el.removeEventListener('transitionend', onEnd); } catch (e) {}
-        if (typeof cb === 'function') cb();
-      }
-    }, 700);
-  }
-
-  function setupDataShowButtons() {
-    // Attach click handlers to any button with data-show attribute
-    var buttons = document.querySelectorAll('button[data-show]');
-    for (var i = 0; i < buttons.length; i++) {
-      (function(btn) {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          var targetId = btn.getAttribute('data-show');
-          if (!targetId) return;
-
-          // determine current panel (closest ancestor with id starting with 'card-')
-          var current = btn.closest('[id^="card-"]');
-
-          var proceedToShow = function() {
-            showCardById(targetId, function() {
-              // focus first focusable element without scrolling
-              var targetEl = document.getElementById(targetId);
-              if (!targetEl) return;
-              var focusable = targetEl.querySelector('button, a, input, [tabindex]');
-              if (focusable) {
-                try {
-                  focusable.focus({preventScroll: true});
-                } catch (err) {
-                  try { focusable.focus(); } catch (e) {}
-                }
-              }
-            });
-          };
-
-          if (current) {
-            // hide current, then scroll, then show target
-            hideCardById(current.id, function() {
-              waitForScrollTop(proceedToShow);
-            });
-          } else {
-            // no current panel -> just scroll then show
-            waitForScrollTop(proceedToShow);
-          }
-        });
-      })(buttons[i]);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    // Ensure panels have base class
-    var p1 = document.getElementById('card-1');
-    var p2 = document.getElementById('card-2');
-    if (p1) p1.classList.add('card-panel');
-    if (p2) p2.classList.add('card-panel');
-
-    // Initialize visible state
-    if (p1 && getComputedStyle(p1).display !== 'none') p1.classList.add('is-showing');
-    if (p2 && getComputedStyle(p2).display !== 'none') p2.classList.add('is-showing');
-
-    setupDataShowButtons();
-  });
-</script>
+<script src="/assets/js/faction-register.js" ></script>
