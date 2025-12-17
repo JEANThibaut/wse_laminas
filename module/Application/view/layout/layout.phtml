@@ -112,6 +112,7 @@
                     Mon Arsenal
                 </a>
             </li> -->
+          
             <?php if ($this->currentUser->getFaction() != null) : ?>
                 <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu === 'faction') ? 'active' : '' ?>" href="<?= $this->url('faction') ?>">

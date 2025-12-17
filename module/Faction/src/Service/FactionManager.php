@@ -45,4 +45,12 @@ class FactionManager
         $this->entityManager->remove($faction);
         $this->entityManager->flush();
     }
+
+    public function joinFaction($faction, $user)
+    {
+        $user->setFaction($faction->getIdfaction());
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return true;
+    }
 }

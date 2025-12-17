@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application;
 
 use Laminas\Mvc\MvcEvent;
-use Laminas\Authentication\AuthenticationService;
+use Application\Service\AuthService as AppAuthService;
 use Laminas\View\Model\ViewModel;
 use Laminas\Session\Config\SessionConfig;
 use Laminas\Session\SessionManager;
@@ -39,7 +39,8 @@ class Module
     
         $eventManager->attach(MvcEvent::EVENT_RENDER, function (MvcEvent $e) {
             $serviceManager = $e->getApplication()->getServiceManager();
-            $authService = $serviceManager->get(AuthenticationService::class);
+            // use our application AuthService which re-hydrates the User entity
+            $authService = $serviceManager->get(AppAuthService::class);
             $user = $authService->getIdentity();
     
             // Récupère le layout (ViewModel racine)

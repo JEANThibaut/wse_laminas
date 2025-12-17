@@ -40,11 +40,12 @@
         <br>
 
         <div class="card-footer">
-                <button id="btn-card1-next" class="faction-btn-angular" data-show="card-2">
+            <button id="go-home" class="faction-btn-angular" >
+                <span class="btn-text">Quitter</span>
+            </button>
+            <button id="btn-card1-next" class="faction-btn-angular" data-show="card-2">
                 <span class="btn-text">J'ai compris</span>
             </button>
-
-            
         </div>
     </div>
 </div>
@@ -150,7 +151,7 @@
             </p>
             <br>
             <p class="card-text">   
-                Prenez le temps de lire avant de choisir!! Ce choix est d''efinitf pour toute la durée de la campagne de faction en cours.<br>
+                Prenez le temps de lire avant de choisir!! Ce choix est définitf pour toute la durée de la campagne de faction en cours.<br>
                 En aucune circonstance vous ne pourrez changer de faction avant la fin de cette dernière.<br>
                 Choisissez sagement et en connaissance de cause !<br>
             </p>
@@ -173,13 +174,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <button id="btn-cdc-details" class="faction-btn-angular btn-full" data-popup-target="faction-popup" data-faction-name="CONVENANT DEFENSE COMPANY" data-faction-id="cdc">
+                               <button id="btn-cdc-details" class="faction-btn-angular btn-full" data-show="card-7" data-popup-target="faction-popup" data-faction-name="CONVENANT DEFENSE COMPANY" data-faction-id="1">
                   <img src="/assets/img/CDC_logo.png" alt="CDC" class="btn-icon logo-blue"><br>
                   <span class="btn-text">CONVENANT DEFENSE COMPANY</span>
                   <h3 class="btn-text">Voir les détails</h3>
                 </button>
                 <div style='height:35px;'></div>
-                <button id="btn-cgs-details" class="faction-btn-angular btn-full" data-popup-target="faction-popup" data-faction-name="CRIMSON GLOBAL SOLUTION" data-faction-id="cgs">
+                <button id="btn-cgs-details" class="faction-btn-angular btn-full" data-show="card-8" data-popup-target="faction-popup" data-faction-name="CRIMSON GLOBAL SOLUTION" data-faction-id="2">
                   <img src="/assets/img/CGS_logo.png" alt="CGS" class="btn-icon logo-blue"><br>
                   <span class="btn-text">CRIMSON GLOBAL SOLUTION</span>
                   <h3 class="btn-text">Voir les détails</h3>
@@ -190,6 +191,57 @@
             </div>
         </div>
     </div>
+    
+            <!-- Card 7: CDC details -->
+            <div class="hud-cards" id="card-7" style="display:none">
+                <div class="hud-card-large panel-corners">
+                    <div class="card-header-faction">
+                        <div class="title-3d" style="width:120px; display:block; background-image:none;" id='cdc-icon'>
+                            <div class="title-card" data-rotate="1">
+                                <div class="title-mask front" data-logo="cdc" role="img" aria-label="Factions" title="Factions"></div>
+                                <div class="title-mask back" data-logo="cdc" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card-title">CONVENANT<br> DEFENSE <br>COMPANY</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Description détaillée de la faction CONVENANT DEFENSE COMPANY. A remplacer par le contenu réel.</p>
+                        <br>
+                    </div>
+                    <div class="card-footer">
+                        <button class="faction-btn-angular" data-show="card-6"><span class="btn-text">Retour</span></button>
+                        <button class="faction-btn-angular" data-popup-target="faction-popup" data-faction-name="CONVENANT DEFENSE COMPANY" data-faction-id="1"><span class="btn-text">Rejoindre</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 8: CGS details -->
+            <div class="hud-cards" id="card-8" style="display:none">
+                <div class="hud-card-large panel-corners">
+                    <div class="card-header-faction">
+                        <div class="title-3d" style="width:120px; display:block; background-image:none;" id='cgs-icon'>
+                            <div class="title-card" data-rotate="1">
+                                <div class="title-mask front" data-logo="cgs" role="img" aria-label="Factions" title="Factions"></div>
+                                <div class="title-mask back" data-logo="cgs" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card-title">CRIMSON<br> GLOBAL <br>SOLUTION</div>
+                        </div>
+                    </div>
+    
+                    <div class="card-body">
+                        <p class="card-text">Description détaillée de la faction CRIMSON GLOBAL SOLUTION.  A remplacer par le contenu réel.</p>
+                        <br>
+                    </div>
+                    <div class="card-footer">
+                        <button class="faction-btn-angular" data-show="card-6"><span class="btn-text">Retour</span></button>
+                        <button class="faction-btn-angular" data-popup-target="faction-popup" data-faction-name="CRIMSON GLOBAL SOLUTION" data-faction-id="2"><span class="btn-text">Rejoindre</span></button>
+                    </div>
+                </div>
+            </div>
         <!-- Reusable popup (hidden by default). Populated and shown by JS. -->
                 <div id="faction-popup" class="popup-overlay"  aria-hidden="true" role="dialog" aria-modal="true" style="display:none">
                     <div class="popup-container" role="document">
@@ -216,12 +268,11 @@
                                         <div class="popup-title" id="faction-popup-title">Faction</div>
                                     </div>
                                 </div>
-
-                                <div class="popup-content" id="faction-popup-content">
+                                <div class="" id="faction-popup-content">
                                     <div class="card-body" id="faction-popup-body">
-                                        <p style="color:rgba(191,248,255,0.9)">Description de la faction...</p>
+                                        <p style="color:rgba(191,248,255,0.9)"></p>
                                     </div>
-                                    <div class="card-footer" style="justify-content:flex-end;padding:12px">
+                                    <div class="card-footer" style="display:flex; justify-content:space-between;padding:12px">
                                         <button class="faction-btn-angular" id="faction-popup-close" aria-label="Fermer"><span class="btn-text">Fermer</span></button>
                                         <button id="faction-join-btn" class="faction-btn-angular"><span class="btn-text">Rejoindre</span></button>
                                     </div>
