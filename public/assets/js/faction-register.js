@@ -130,7 +130,24 @@ function scrollToTopInstant() {
       var body = document.getElementById('faction-popup-body');
       // populate
       title.textContent = opts.name || 'Faction';
-      overlay.style.display = 'flex';
+        // set join button destination so we can redirect to a page
+        var join = document.getElementById('faction-join-btn');
+        overlay.style.display = 'flex';
+        // populate body with a definitive-join message and attach factionId to join button
+        try {
+          if (body) {
+            var factionId = opts.id || '';
+            var factionName = opts.name || 'cette faction';
+            body.innerHTML = '' +
+              '<p style="color:rgba(191,248,255,0.95)"><strong>Vous êtes sur le point de rejoindre ' +
+                '<span style="color:#fff">' + factionName + '</span>.</strong></p>' +
+              '<p style="color:rgba(191,248,255,0.85);margin-top:8px">Cette action est définitive pour la durée de la campagne en cours. En validant vous acceptez les règles et l\'engagement demandé.</p>';
+            // attach faction id to join button for fetch
+            if (join) {
+              try { join.dataset.factionId = factionId; } catch (e) { }
+            }
+          }
+        } catch (e) { console.warn(e); }
       // small timeout to allow CSS transition (popup-overlay.is-visible sets opacity)
       requestAnimationFrame(function(){ overlay.classList.add('is-visible'); overlay.setAttribute('aria-hidden','false'); });
       // focus join button
@@ -160,18 +177,41 @@ function scrollToTopInstant() {
       setTimeout(function(){ if(overlay) overlay.style.display='none'; }, 280);
     }
 
+    // POST join request for given factionId, returns a Promise resolving to parsed JSON or {}
+     async function postJoinFaction(factionId){
+        var url = '/faction-register';
+        var payload = { factionId: factionId };
+        return fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function(res){
+        if (res && res.ok) return res.json().catch(function(){ return {}; });
+        return {};
+      });
+    }
+
     // attach openers: any element with data-popup-target and data-faction-name
     var popupButtons = document.querySelectorAll('button[data-popup-target]');
     popupButtons.forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.preventDefault();
-        var target = btn.getAttribute('data-popup-target');
-        if(!target) return;
-        var name = btn.getAttribute('data-faction-name') || btn.textContent.trim();
-        var id = btn.getAttribute('data-faction-id') || '';
-        var desc = btn.getAttribute('data-faction-desc') || 'Description courte de la faction. Remplacez par un texte réel.';
-        openFactionPopup({ name: name, id: id, desc: desc });
-      });
+        btn.addEventListener('click', function(e){
+          // If this element is intended to show a card instead, skip popup handling
+          if (btn.hasAttribute('data-show')) return;
+          // If this element is intended to be a direct link to a page, allow navigation
+          var href = btn.getAttribute('href');
+          var linkOnly = btn.hasAttribute('data-link-only');
+          if (linkOnly && href) {
+            // let the browser navigate to href
+            return;
+          }
+          e.preventDefault();
+          var target = btn.getAttribute('data-popup-target');
+          if(!target) return;
+          var name = btn.getAttribute('data-faction-name') || btn.textContent.trim();
+          var id = btn.getAttribute('data-faction-id') || '';
+          var desc = btn.getAttribute('data-faction-desc') || 'Description courte de la faction. Remplacez par un texte réel.';
+          openFactionPopup({ name: name, id: id, desc: desc });
+        });
     });
 
     // close handlers
@@ -184,7 +224,17 @@ function scrollToTopInstant() {
     var joinBtn = document.getElementById('faction-join-btn');
     if(joinBtn) joinBtn.addEventListener('click', function(e){
       e.preventDefault();
-      // Here you would call your join routine (AJAX or navigate). For now show console and close.
+      // If a destination page was set, redirect there
+      var dest = joinBtn.dataset && joinBtn.dataset.href;
+      if (dest) {
+        window.location.href = dest;
+        return;
+      }
+      // otherwise use faction id attached to the join button and POST to route
+      var factionId = joinBtn.dataset && joinBtn.dataset.factionId;
+      if (factionId) {
+        postJoinFaction(factionId);   
+       }
       var title = document.getElementById('faction-popup-title').textContent;
       console.log('Joining faction:', title);
       closeFactionPopup();

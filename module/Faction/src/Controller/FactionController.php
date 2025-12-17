@@ -65,6 +65,18 @@ class FactionController extends AbstractActionController
         $view = new ViewModel([
             'currentUser' => $currentUser,
         ]);
+        $request = $this->getRequest(); 
+        if($request->isPost()){
+            $data = json_decode($request->getContent(), true);
+            $factionId = $data['factionId'] ?? null;
+            $faction = $this->entityManager->getRepository(Faction::class)->findOneBy(['idfaction' => $factionId]);
+            $result = $this->factionManager->joinFaction($faction,$currentUser,);
+            if ($result) {
+                return $this->redirect()->toUrl('/faction');
+            } else {
+                return $this->redirect()->toUrl('/faction-register');
+            }
+        }
         // Template file is located at module/Faction/view/faction/faction-register.phtml
         // Set explicit template to match that location (module folder + template file)
         $view->setTemplate('faction/faction-register');

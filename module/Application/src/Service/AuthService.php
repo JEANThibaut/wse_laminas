@@ -27,7 +27,8 @@ class AuthService
         }   
 
         if (password_verify($password, $user->getPassword())) {
-            $this->authenticationService->getStorage()->write($user);
+            // store only the user id in session so we can re-hydrate on each request
+            $this->authenticationService->getStorage()->write($user->getIdUser());
             return true;
         }
 
@@ -41,7 +42,9 @@ class AuthService
 
     public function getIdentity()
     {
-        return $this->authenticationService->getIdentity();
+        $id = $this->authenticationService->getIdentity();
+        if (!$id) return null;
+        return $this->entityManager->getRepository(User::class)->find($id);
     }
     public function getStorage()
     {

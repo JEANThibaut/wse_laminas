@@ -23,7 +23,6 @@ class IndexController extends AbstractActionController
     {
         $currentUser = $this->authService->getIdentity();
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
-        
         $isRegister = false;
         $isInWaitingList = false;
         $isComplete = false;
@@ -38,7 +37,7 @@ class IndexController extends AbstractActionController
             $isComplete = count($countRegister) >= $game->getPlayerMax();
         }
 
-       
+
         return new ViewModel([
             'game' => $game,
             'isRegister'=> $isRegister,
