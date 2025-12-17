@@ -156,7 +156,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
 
 @keyframes progress-stripes{ from { background-position: 0 0; } to { background-position: 40px 0; } }
 /* Title image container + image (centered, responsive, animation-ready) */
-.faction-title{display:block;text-align:center;margin:0 0 0 0}
+.faction-title{display:block;text-align:center;margin:0 0 0 0; }
 .faction-title-img{display:block;margin:0 auto;max-width:420px;width:60%;height:auto;will-change:transform,opacity;transition:transform .45s ease,opacity .45s ease;color:var(--neon-1)}
 
 @media (max-width:600px){
@@ -599,16 +599,17 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-gradie
     border-radius: 50%;
     filter: blur(20px);
     z-index: -1;
+
 }
 
 /* Container pour l'image de fond du logo */
 .title-3d {
     position: relative;
-    background-image: var(--title-background-image, none);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     padding: 20px 0;
+        background-image: none;
 }
 
 /* Amélioration du fond des cards */

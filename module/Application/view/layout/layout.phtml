@@ -19,7 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
-        <?= $this->headLink()->prependStylesheet($this->basePath('assets/css/custom.css')) ?>
+        <?= $this->headLink()->prependStylesheet($this->basePath('assets/css/custom.css') . '?v=' . time()) ?>
 
 </head>
 
@@ -221,7 +221,7 @@
 
 <!-- Custom scripts -->
 <?= $this->inlineScript()
-    ->prependFile($this->basePath('assets/js/custom.js')) ?>
+    ->prependFile($this->basePath('assets/js/custom.js') . '?v=' . time()) ?>
 
 <script>
     // Auto-hide des alertes flash
