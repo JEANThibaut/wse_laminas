@@ -1,0 +1,18 @@
+<style>
+    .card { margin-bottom: 12px; }
+</style>
+
+<?php if (! empty($actus)): ?>
+    <?php foreach ($actus as $actu): ?>
+        <div class="card p-3">
+            <a href="/get-actu/<?php echo $actu->getIdactus(); ?>" class="text-decoration-none text-dark">
+                <div class="d-flex justify-content-between p-2 mb-2">
+                    <div><?php echo $actu->getTitre(); ?></div>
+                    <div><?php echo $actu->getType(); ?></div>
+                </div>
+            </a>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <div class="card p-3">Aucune actu pour le moment.</div>
+<?php endif; ?>
