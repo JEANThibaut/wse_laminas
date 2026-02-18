@@ -40,7 +40,8 @@
             "Admin\\": "module/Admin/src",
             "Photo\\": "module/Photo/src",
             "Annonce\\" : "module/Annonce/src",
-            "Faction\\": "module/Faction/src"
+            "Faction\\": "module/Faction/src",
+            "Actus\\": "module/Actu/src/"
         }
     },
     "autoload-dev": {
