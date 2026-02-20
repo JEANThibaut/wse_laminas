@@ -24,6 +24,49 @@ return [
                     ],
                 ],
             ],
+            'actus-create' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/actus/create',
+                    'defaults' => [
+                        'controller' => ActusController::class,
+                        'action' => 'actusCreate',
+                    ],
+                ],
+            ],
+            'actus-edit' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/actus/edit/:id',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => ActusController::class,
+                        'action' => 'actusEdit',
+                    ],
+                ],
+            ],
+            'actus-delete' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/actus/delete',
+                    'defaults' => [
+                        'controller' => ActusController::class,
+                        'action' => 'actusDelete',
+                    ],
+                ],
+            ],
+            'actus-admin' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/actus',
+                    'defaults' => [
+                        'controller' => ActusController::class,
+                        'action' => 'actusAdmin',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [

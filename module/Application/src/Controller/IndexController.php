@@ -7,6 +7,7 @@ use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\Register;
 use Game\Entity\WaitingList;
+use Actus\Entity\Actus;
 class IndexController extends AbstractActionController
 {
     private $authService;
@@ -37,6 +38,12 @@ class IndexController extends AbstractActionController
             $isComplete = count($countRegister) >= $game->getPlayerMax();
         }
 
+        $actus = $this->entityManager->getRepository(Actus::class)->findBy(
+            ['isActive' => 1],
+            ['date' => 'DESC'],
+            2
+        );
+
 
         return new ViewModel([
             'game' => $game,
@@ -44,6 +51,7 @@ class IndexController extends AbstractActionController
             'currentUser'=>$currentUser,
             'register'=>$register ?? null,
             'isComplete'=>$isComplete,
+            'actus' => $actus,
             // 'isInWaitingList'=>$isInWaitingList,
         ]);
     }

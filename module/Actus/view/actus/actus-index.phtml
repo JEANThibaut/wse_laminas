@@ -2,17 +2,96 @@
     .card { margin-bottom: 12px; }
 </style>
 
+<?php $isAdmin = $currentUser && $currentUser->getIsAdmin(); ?>
+
+<?php if ($isAdmin): ?>
+    <div class="mb-3">
+        <a href="<?= $this->url('actus-create') ?>" class="btn btn-warning">
+            Ajouter une actu
+        </a>
+    </div>
+<?php endif; ?>
+
 <?php if (! empty($actus)): ?>
     <?php foreach ($actus as $actu): ?>
         <div class="card p-3">
             <a href="/get-actu/<?php echo $actu->getIdactus(); ?>" class="text-decoration-none text-dark">
                 <div class="d-flex justify-content-between p-2 mb-2">
-                    <div><?php echo $actu->getTitre(); ?></div>
-                    <div><?php echo $actu->getType(); ?></div>
+                    <div><?php echo $this->escapeHtml($actu->getTitre()); ?></div>
+                    <div>
+                        <?php echo $this->escapeHtml($actu->getType()); ?>
+                        <?php if ($actu->getDate()): ?>
+                            <span class="ms-2 text-muted"><?php echo $this->escapeHtml($actu->getDate()->format('d/m/Y')); ?></span>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </a>
+
+            <?php if ($isAdmin): ?>
+                <div class="d-flex justify-content-end" style="gap: 0.5rem;">
+                    <?php if (! $actu->getIsActive()): ?>
+                        <span class="badge bg-secondary align-self-center">Inactif</span>
+                    <?php endif; ?>
+                    <a href="<?= $this->url('actus-edit', ['id' => $actu->getIdactus()]) ?>" class="btn btn-sm btn-warning">
+                        <i class="fa-solid fa-edit"></i>
+                    </a>
+                    <button type="button"
+                            class="btn btn-sm btn-danger btn-delete-actus"
+                            data-id="<?= $this->escapeHtmlAttr($actu->getIdactus()) ?>"
+                            data-title="<?= $this->escapeHtmlAttr($actu->getTitre()) ?>">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
     <?php endforeach; ?>
 <?php else: ?>
     <div class="card p-3">Aucune actu pour le moment.</div>
+<?php endif; ?>
+
+<?php if ($isAdmin): ?>
+<div class="modal fade" id="confirmDeleteActusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="<?= $this->url('actus-delete') ?>" id="confirmDeleteActusForm">
+                <input type="hidden" name="id" id="confirmDeleteActusId">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer cette actu
+                    <span id="confirmDeleteActusTitle" class="fw-bold"></span> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Confirmer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalElement = document.getElementById('confirmDeleteActusModal');
+        const modal = modalElement ? new bootstrap.Modal(modalElement) : null;
+        const idInput = document.getElementById('confirmDeleteActusId');
+        const titleSpan = document.getElementById('confirmDeleteActusTitle');
+
+        document.querySelectorAll('.btn-delete-actus').forEach(button => {
+            button.addEventListener('click', function () {
+                if (!modal || !idInput || !titleSpan) {
+                    return;
+                }
+
+                const id = this.getAttribute('data-id');
+                const title = this.getAttribute('data-title') || '';
+                idInput.value = id;
+                titleSpan.textContent = title ? `"${title}"` : '';
+                modal.show();
+            });
+        });
+    });
+</script>
 <?php endif; ?>

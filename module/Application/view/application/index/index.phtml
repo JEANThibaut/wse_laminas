@@ -95,13 +95,34 @@
 
 </div>
 
-
+ <?php if (! empty($actus)): ?>
 <div class='card'>
     <h4>Les dernières actus ! </h4>
     <hr>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. A inventore possimus modi praesentium aliquam. Enim deserunt officiis quibusdam minus aut nam, omnis odit excepturi mollitia voluptas culpa totam exercitationem ab.</P>
-</div>
 
+    <?php foreach ($actus as $actu): ?>
+      <div class="mb-3">
+        <div class="d-flex justify-content-between">
+          <div class="fw-bold"><?= $this->escapeHtml($actu->getTitre()) ?></div>
+          <?php if ($actu->getDate()): ?>
+            <div class="text-muted small"><?= $this->escapeHtml($actu->getDate()->format('d/m/Y')) ?></div>
+          <?php endif; ?>
+        </div>
+        <div class="text-muted small mb-1"><?= $this->escapeHtml($actu->getType()) ?></div>
+        <div><?= $this->escapeHtml($actu->getContenu()) ?></div>
+        <?php if ($actu->getLien()): ?>
+          <div class="mt-2">
+            <a href="<?= $this->escapeHtmlAttr($actu->getLien()) ?>" target="_blank" rel="noopener">
+              En savoir plus
+            </a>
+          </div>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+
+</div>
+  <?php endif; ?>
 
 
 

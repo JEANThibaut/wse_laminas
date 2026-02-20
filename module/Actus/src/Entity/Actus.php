@@ -28,6 +28,12 @@ class Actus
     /** @ORM\Column(type="string", length=255, nullable=true) */
     private $lien;
 
+    /** @ORM\Column(type="datetime") */
+    private $date;
+
+    /** @ORM\Column(type="integer") */
+    private $isActive;
+
     public function getIdactus()
     {
         return $this->idactus;
@@ -76,4 +82,27 @@ class Actus
         $this->lien = $lien;
         return $this;
     }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    public function setDate($date)
+    {
+        $this->date = $date;
+        return $this;
+    }
+
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+    
 }
