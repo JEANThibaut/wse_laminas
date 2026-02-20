@@ -41,7 +41,7 @@
             "Photo\\": "module/Photo/src",
             "Annonce\\" : "module/Annonce/src",
             "Faction\\": "module/Faction/src",
-            "Actus\\": "module/Actu/src/"
+            "Actus\\": "module/Actus/src/"
         }
     },
     "autoload-dev": {
