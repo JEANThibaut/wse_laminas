@@ -1,4 +1,5 @@
 <?php $activeMenu = $this->layout()->getVariable('activeMenu') ?? ''; ?>
+<?php $disablePtr = $this->layout()->getVariable('disablePtr') ?? false; ?>
 <?php $isFunny = true; ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -20,6 +21,27 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
         <?= $this->headLink()->prependStylesheet($this->basePath('assets/css/custom.css') . '?v=' . time()) ?>
+
+    <style>
+        /* Pull-to-refresh indicator (circular arrow) */
+        #ptr-indicator{
+            position: fixed;
+            top: 54px;
+            left: 50%;
+            transform: translate(-50%, -120%);
+            z-index: 11000;
+            transition: transform 200ms ease, opacity 200ms ease;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #ptr-indicator.visible{ opacity: 1; }
+        #ptr-indicator svg{ height: 36px; width: 36px; display:block; }
+        /* optional stroke color */
+        #ptr-indicator svg circle, #ptr-indicator svg path{ stroke: #01003f5b; fill: none; stroke-width: 2.5; }
+    </style>
 
 </head>
 
@@ -192,10 +214,19 @@
 
     </div>
 
-    <!-- Main content -->
-    <main class="container-fluid mt-4 fade-in ">
-            <?= $this->content ?>
-    </main>
+        <!-- Pull-to-refresh indicator -->
+        <div id="ptr-indicator" aria-hidden="true">
+            <!-- circular arrow SVG -->
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="24" cy="24" r="16" stroke-linecap="round" stroke-linejoin="round"></circle>
+                <path d="M34 14 L34 24 L24 24" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </div>
+
+        <!-- Main content -->
+            <main class="container-fluid mt-4 fade-in" id="ptr-content" <?= $disablePtr ? 'data-ptr="off"' : '' ?>>
+                <?= $this->content ?>
+            </main>
     <!-- Footer -->
     <footer class="text-center mt-5 mb-3 text-muted">
      
@@ -263,6 +294,98 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+</script>
+<script>
+    // Pull-to-refresh mobile (non-intrusive) with logo indicator
+    (function(){
+        const el = document.getElementById('ptr-content');
+        const indicator = document.getElementById('ptr-indicator');
+        if (!el || !indicator) return;
+
+        // Skip PTR when page explicitly disables it via data attribute
+        if (el.dataset && el.dataset.ptr === 'off') return;
+
+        const PTR_THRESHOLD = 80; // px needed to trigger refresh
+        let startY = 0;
+        let dist = 0;
+        let pulling = false;
+
+        function onTouchStart(e){
+            if (!(e.touches && e.touches.length === 1)) return;
+
+            const touchAtTopOfWindow = window.scrollY === 0;
+            const contentIsScrollable = el.scrollHeight > el.clientHeight;
+            const touchAtTopOfContent = el.scrollTop === 0;
+
+            // If the page itself is the scrolling container, require window at top.
+            // If the content element is the scrolling container, require the element at top.
+            const allowed = contentIsScrollable ? touchAtTopOfContent : touchAtTopOfWindow;
+
+            if (allowed) {
+                startY = e.touches[0].clientY;
+                dist = 0;
+                pulling = true;
+            }
+        }
+
+        function onTouchMove(e){
+            if (!pulling) return;
+            const y = e.touches[0].clientY;
+            dist = y - startY;
+            if (dist > 0) {
+                // Damp the translation for a smoother feel
+                const damp = Math.min(dist / 2, PTR_THRESHOLD * 1.5);
+                el.style.transform = `translateY(${damp}px)`;
+                el.style.transition = 'transform 0s';
+
+                // Move and reveal indicator slightly behind the pulled content
+                indicator.classList.add('visible');
+                indicator.style.transition = 'transform 0s, opacity 0s';
+                const indY = Math.max(damp - 48, -32);
+                indicator.style.transform = `translate(-50%, ${indY}px)`;
+
+                // rotate a bit based on progress (SVG)
+                const progress = Math.min(damp / PTR_THRESHOLD, 1);
+                const svg = indicator.querySelector('svg');
+                if (svg) {
+                    svg.style.transform = `rotate(${progress * 360}deg) scale(${1 + progress*0.05})`;
+                    svg.style.transition = 'transform 0s';
+                }
+            } else {
+                el.style.transform = '';
+                indicator.classList.remove('visible');
+            }
+        }
+
+        function onTouchEnd(){
+            if (!pulling) return;
+            pulling = false;
+            el.style.transition = 'transform 300ms ease';
+            el.style.transform = '';
+            indicator.style.transition = 'transform 300ms ease, opacity 300ms ease';
+            indicator.style.transform = 'translate(-50%, -120%)';
+            indicator.classList.remove('visible');
+
+            if (dist >= PTR_THRESHOLD) {
+                // brief feedback animation on SVG then reload
+                const svg = indicator.querySelector('svg');
+                if (svg) {
+                    svg.style.transition = 'transform 200ms ease';
+                    svg.style.transform = 'rotate(360deg) scale(0.95)';
+                }
+                indicator.classList.add('visible');
+                indicator.style.transform = 'translate(-50%, 10px)';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 220);
+            }
+        }
+
+        // Use passive listeners so we don't break scrolling behaviour; we only read values and transform.
+        document.addEventListener('touchstart', onTouchStart, {passive: true});
+        document.addEventListener('touchmove', onTouchMove, {passive: true});
+        document.addEventListener('touchend', onTouchEnd);
+    })();
 </script>
 
 </body>
