@@ -19,45 +19,6 @@ class PhotoController extends AbstractActionController
     }
 
 
-    // public function indexAction()
-    // {
-    //     $currentUser = $this->authService->getIdentity();
-
-    //     $photoBaseDir = 'public/photos'; // chemin relatif depuis la racine du projet
-    //     $photoWebPath = '/photos'; // pour les URLs
-
-    //     $dates = [];
-
-    //     if (is_dir($photoBaseDir)) {
-    //         foreach (scandir($photoBaseDir) as $folder) {
-    //             if ($folder === '.' || $folder === '..') {
-    //                 continue;
-    //             }
-
-    //             $fullPath = $photoBaseDir . '/' . $folder;
-    //             if (is_dir($fullPath)) {
-    //                 $files = array_filter(scandir($fullPath), function ($f) use ($fullPath) {
-    //                     return preg_match('/\.(jpg|jpeg|png|gif)$/i', $f) && is_file($fullPath . '/' . $f);
-    //                 });
-    //                 if (!empty($files)) {
-    //                     $dates[] = $folder;
-    //                 }
-    //             }
-    //         }
-
-    //         sort($dates);
-    //     }
-
-        // $view = new ViewModel([
-        //     'currentUser' => $currentUser,
-        //     'dates'       => $dates,
-        //     'photoWebPath' => $photoWebPath,
-        // ]);
-
-        // $this->layout()->setVariable('activeMenu', 'photo-index');
-        // $view->setTemplate('photo/photo-index');
-        // return $view;
-    // }
 
     public function indexAction()
 {
@@ -133,6 +94,9 @@ class PhotoController extends AbstractActionController
 
 public function photosViewAction()
 {
+    // Désactive le pull-to-refresh pour cette page
+    $this->layout()->setVariable('disablePtr', true);
+
     $currentUser = $this->authService->getIdentity();
     $date = $this->params()->fromRoute('date');
     $type = $this->params()->fromRoute('type');

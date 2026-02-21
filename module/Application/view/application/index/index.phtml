@@ -8,6 +8,14 @@
 
                   <h4>La prochaine partie est complète!</h4>
                   <hr>
+                  <div class='row'>
+                    <div class="col-12 text-center">
+                        <p>Consulter de nouveau cette page plus tard pour vérifier si des places se sont libérées ! </p>
+                    </div>
+
+                  </div>
+
+<?php if (false): ?>
               <?php if(!$isInWaitingList) : ?>
                 
                   <div class='row'>
@@ -34,7 +42,7 @@
                     </div>  
                   </div>
               <?php endif ?>
-
+ <?php endif ?>
 
             <?php else :?>
                 <?php if($isComplete): ?>
@@ -48,7 +56,7 @@
               <?php if($this->currentUser):?>
                   <?php if($this->register): ?>
                     <div class='alert alert-success'>
-                      <p>Vous êtes déjà inscrit</p>
+                      <p>Vous êtes inscrit à la partie</p>
                   </div>
                   <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
                       <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
@@ -108,7 +116,7 @@
             <div class="text-muted small"><?= $this->escapeHtml($actu->getDate()->format('d/m/Y')) ?></div>
           <?php endif; ?>
         </div>
-        <div class="text-muted small mb-1"><?= $this->escapeHtml($actu->getType()) ?></div>
+  
         <div><?= $this->escapeHtml($actu->getContenu()) ?></div>
         <?php if ($actu->getLien()): ?>
           <div class="mt-2">

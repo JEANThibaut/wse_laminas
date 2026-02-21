@@ -69,31 +69,58 @@ class AuthService
         // Prépare le lien de réinitialisation
         // $resetLink = 'https://yourdomain.com/reset-password?token=' . $token;
 
-        $resetLink = 'http://wolfsofteure:8080/reset-password?token=' . $token;
+        $resetLink = 'http://www.wolfsofteure.fr/reset-password?token=' . $token;
 
         // Envoi avec PHPMailer
         $mail = new PHPMailer(true);
+        // try {
+        //     // Paramètres SMTP o2switch
+        //     $mail->isSMTP();
+        //     $mail->Host = 'mail.wolfsofteure.fr';
+        //     $mail->SMTPAuth = true;
+        //     $mail->Username = 'contact@wolfsofteure.fr'; // ton adresse email
+        //     $mail->Password = 'AppliWSE27';         // ton mot de passe email
+        //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        //     $mail->Port = 465;
+
+        //     $mail->setFrom('contact@wolfsofteure.fr', 'Wolf Soft Eure');
+        //     $mail->addAddress($user->getEmail());
+
+        //     $mail->Subject = 'Réinitialisation de mot de passe';
+        //     $mail->Body = "Cliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink;
+
+        //     $mail->send();
+        // } catch (Exception $e) {
+        //     // Pour le debug en local
+        //     echo "Erreur d'envoi : {$mail->ErrorInfo}";
+        // }
         try {
-            // Paramètres SMTP o2switch
-            $mail->isSMTP();
-            $mail->Host = 'mail.wolf-soft-eure.fr';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'contact@wolf-soft-eure.fr'; // ton adresse email
-            $mail->Password = 'c,@DTo%*zGSj';         // ton mot de passe email
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port = 465;
+        // --- Paramètres Serveur SMTP OVH ---
+        $mail->isSMTP();
+        $mail->Host       = 'ssl0.ovh.net';                // Serveur SMTP OVH
+        $mail->SMTPAuth   = true;                          // Activation de l'authentification
+        $mail->Username   = 'contact@wolfsofteure.fr';     // Votre adresse email complète
+        $mail->Password   = 'AppliWSE27';                  // Votre mot de passe
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;    // SSL pour le port 465
+        $mail->Port       = 465;                           // Port standard SSL chez OVH
+        $mail->CharSet    = 'UTF-8';                       // Gestion des accents
 
-            $mail->setFrom('contact@wolf-soft-eure.fr', 'Wolf Soft Eure');
-            $mail->addAddress($user->getEmail());
+        // --- Destinataires ---
+        $mail->setFrom('contact@wolfsofteure.fr', 'Wolf Soft Eure');
+        $mail->addAddress($user->getEmail());
 
-            $mail->Subject = 'Réinitialisation de mot de passe';
-            $mail->Body = "Cliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink;
+        // --- Contenu du mail ---
+        $mail->isHTML(false); // On reste en texte brut pour ce lien
+        $mail->Subject = 'Réinitialisation de mot de passe';
+        $mail->Body    = "Bonjour,\n\nCliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink . "\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message.";
 
-            $mail->send();
-        } catch (Exception $e) {
-            // Pour le debug en local
-            echo "Erreur d'envoi : {$mail->ErrorInfo}";
-        }
+        $mail->send();
+        
+    } catch (Exception $e) {
+        // En cas d'erreur, on peut loguer le message de PHPMailer
+        // error_log("Erreur PHPMailer : " . $mail->ErrorInfo);
+        echo "Erreur d'envoi : {$mail->ErrorInfo}";
+    }
     }
 
     public function resetPassword($email, $newPassword)
