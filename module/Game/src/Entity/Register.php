@@ -28,7 +28,6 @@ class Register
      */
     private $game;
 
-
     /** @ORM\Column(type="integer") */
     private $paid;
     /** @ORM\Column(type="integer") */

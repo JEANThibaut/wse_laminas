@@ -63,6 +63,7 @@ class GameManager
         $register->setUser($user);
         $register->setGame($game);
         $register->setPaid(0);   
+        $register->setArrivedNumber(0);
         $register->setMember($user->getIsMember());
         $this->entityManager->persist($register);
         $this->entityManager->flush();
