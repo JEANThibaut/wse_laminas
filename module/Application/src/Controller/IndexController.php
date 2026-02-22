@@ -62,6 +62,7 @@ class IndexController extends AbstractActionController
             'isComplete'=>$isComplete,
             'isPaymentPending' => $isPaymentPending,
             'actus' => $actus,
+            'countRegister'=> $countRegister ?? null,
             // 'isInWaitingList'=>$isInWaitingList,
         ]);
     }

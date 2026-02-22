@@ -49,6 +49,9 @@
                     <h4>La prochaine partie est complète!</h4>
                 <?php else : ?>    
                     <h4>Prochaine partie du <?php echo $game->getDate()->format("d/m/Y"); ?> </h4>
+                    <?php if(count($countRegister)>0): ?>  
+                    <p>  <?php echo(count($countRegister)) ?> joueurs inscrits ! </p>
+                    <?php endif; ?>
                 <?php endif;?>
           <hr>
           <div class='row'>
