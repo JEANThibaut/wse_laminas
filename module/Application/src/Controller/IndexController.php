@@ -61,4 +61,10 @@ class IndexController extends AbstractActionController
         $this->layout()->setVariable('activeMenu', 'faq');
         return new ViewModel();
     }
+
+    public function briefingAction()
+    {
+        $this->layout()->setVariable('activeMenu', 'briefing');
+        return new ViewModel();
+    }
 }
