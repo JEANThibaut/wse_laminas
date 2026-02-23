@@ -70,6 +70,16 @@ return [
                     ],
                 ],
             ],
+               'briefing' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/briefing',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'briefing',
+                    ],
+                ],
+            ],
         ],
     ],
 

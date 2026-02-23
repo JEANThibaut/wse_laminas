@@ -157,14 +157,22 @@
                     Prochaine partie
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">
                     <?php if($isFunny): ?>
                         <img class="mb-1" src="/images/icones/checklist.png" alt="type" style="height: 20px; margin-right:10px;">
                     <?php endif ?>            
                     Prochain aménagement
                 </a>
-            </li>            
+            </li> -->
+                  <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('briefing') ?>">
+                    <?php if($isFunny): ?>
+                        <img class="mb-1" src="/images/icones/checklist.png" alt="type" style="height: 20px; margin-right:10px;">
+                    <?php endif ?>            
+                   Briefing des parties
+                </a>
+            </li>                        
 
         <?php endif; ?>
             <?php if ($this->currentUser && $this->currentUser->getIsAdmin()) : ?>
