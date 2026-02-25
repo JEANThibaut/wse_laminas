@@ -46,16 +46,19 @@ class UserController extends AbstractActionController
         $iduser = (int) $params['iduser'];
         if($request->isPost()){
             $data = $request->getPost()->toArray();
-            if(!empty($data['username']) && !empty($data['email']) && isset($data['is_admin']) && isset($data['is_active'])){
+            // dump($data);
+            if(!empty($data['first_name']) && !empty($data['last_name']) && !empty($data['email']) ){
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
                 if($user){
-                    $user = $this->entityManager->getRepository(User::class)->editUser($user, $data);
-                    // $user->setUsername($data['username']);
-                    // $user->setEmail($data['email']);
-                    // $user->setIsAdmin((int)$data['is_admin']);
-                    // $user->setIsActive((int)$data['is_active']);
-                    // $this->entityManager->flush();
-                    // $this->flashMessenger()->addSuccessMessage('Utilisateur modifié avec succès.');
+                   
+                    $user->setFirstName($data['first_name']);
+                    $user->setLastName($data['last_name']);
+                    $user->setEmail($data['email']);
+                    $user->setIsAdmin($data['isAdmin']);
+                    $user->setIsMember($data['isMember']);
+                     $user->setIsBlacklist($data['isBlacklist'] ?? 0);
+                    $this->entityManager->flush();
+                    $this->flashMessenger()->addSuccessMessage('Utilisateur modifié avec succès.');
                     return $this->redirect()->toRoute('admin-users');
                 }else{
                     $this->flashMessenger()->addErrorMessage('Utilisateur introuvable.');
