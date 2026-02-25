@@ -120,7 +120,17 @@ class AdminController extends AbstractActionController
         $request = $this->getRequest();
 
         $nextGame= $this->entityManager->getRepository(Game::class)->findNextGame();
-        $registers =  $this->entityManager->getRepository(Register::class)->findBy(['game' => $nextGame, 'member'=>0]);
+        // Previously used simple findBy; keep it commented for reference:
+        // $registers =  $this->entityManager->getRepository(Register::class)->findBy(['game' => $nextGame, 'member'=>0, ],);
+        // Use QueryBuilder to join the related user and order by user.firstname ASC
+        $qb = $this->entityManager->getRepository(Register::class)->createQueryBuilder('r')
+            ->leftJoin('r.user', 'u')
+            ->addSelect('u')
+            ->where('r.game = :game')
+            ->andWhere('r.member = 0')
+            ->setParameter('game', $nextGame)
+            ->orderBy('u.firstname', 'ASC');
+        $registers = $qb->getQuery()->getResult();
         if ($request->isPost()) {
             $data = $this->params()->fromPost();
             $registerId = $data['register_id'] ?? null;
