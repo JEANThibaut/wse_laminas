@@ -48,7 +48,7 @@
                 </div>
                 <div class='col-3'>
                     <label for="status">Blacklist</label>
-                    <select class="form-control" name="isMember" id="isMember">
+                    <select class="form-control" name="isBlacklist" id="isBlacklist">
                         <option value="1" <?= $user->getIsBlacklist() == 1 ? 'selected' : '' ?>>Oui </option>
                         <option value="0" <?= $user->getIsBlacklist() == 0 ? 'selected' : '' ?>>Non</option>
                     </select>
