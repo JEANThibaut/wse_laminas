@@ -22,8 +22,11 @@ class UserController extends AbstractActionController
 
 
 
-    public function usersAction()
-    {
+    public function usersAction(){
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $currentUser = $this->authService->getIdentity();
         $users = $this->entityManager->getRepository(User::class)->findBy([], ['lastname' => 'ASC']);
         $view = new ViewModel([
@@ -38,8 +41,11 @@ class UserController extends AbstractActionController
     }
 
     
-     public function editUserAction()
-    {        
+     public function editUserAction(){  
+            if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+                $this->flashMessenger()->addErrorMessage('Accès refusé.');
+                return $redirect;
+            }      
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
         $params = $this->params()->fromRoute();
@@ -78,8 +84,12 @@ class UserController extends AbstractActionController
         return $view;
     }
   
-    public function deleteUserAction()
-    {        
+    public function deleteUserAction(){      
+
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }  
         $request = $this->getRequest();
         if (!$request->isPost()) {
             return $this->redirect()->toRoute('admin-users');

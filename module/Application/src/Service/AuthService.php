@@ -3,6 +3,7 @@ namespace Application\Service;
 
 use Doctrine\ORM\EntityManager;
 use Laminas\Authentication\AuthenticationService;
+use Laminas\Mvc\Controller\Plugin\Redirect;
 use User\Entity\User;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -73,27 +74,7 @@ class AuthService
 
         // Envoi avec PHPMailer
         $mail = new PHPMailer(true);
-        // try {
-        //     // Paramètres SMTP o2switch
-        //     $mail->isSMTP();
-        //     $mail->Host = 'mail.wolfsofteure.fr';
-        //     $mail->SMTPAuth = true;
-        //     $mail->Username = 'contact@wolfsofteure.fr'; // ton adresse email
-        //     $mail->Password = 'AppliWSE27';         // ton mot de passe email
-        //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        //     $mail->Port = 465;
 
-        //     $mail->setFrom('contact@wolfsofteure.fr', 'Wolf Soft Eure');
-        //     $mail->addAddress($user->getEmail());
-
-        //     $mail->Subject = 'Réinitialisation de mot de passe';
-        //     $mail->Body = "Cliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink;
-
-        //     $mail->send();
-        // } catch (Exception $e) {
-        //     // Pour le debug en local
-        //     echo "Erreur d'envoi : {$mail->ErrorInfo}";
-        // }
         try {
         // --- Paramètres Serveur SMTP OVH ---
         $mail->isSMTP();
@@ -138,5 +119,34 @@ class AuthService
 
         return true;
     }
+
+
+
+
+    public function requireRoles(array $rolesAutorises, Redirect $redirectPlugin)
+    {
+        $user = $this->authService->getIdentity();
+        if (!$user) {
+            return $redirectPlugin->toRoute('login');
+        }
+        $roles = $user->getRoles();
+        if (is_string($roles)) {
+            $roles = json_decode($roles, true);
+        }
+        if (!is_array($roles)) {
+            $roles = [];
+        }
+        // Tout passe si GOD
+        $rolesLower = array_map('strtolower', $roles);
+        if (in_array('god', $rolesLower, true)) {
+            return null;
+        }
+        $rolesAutorisesLower = array_map('strtolower', $rolesAutorises);
+        if (!array_intersect($rolesLower, $rolesAutorisesLower)) {
+            return $redirectPlugin->toRoute('home');
+        }
+        return null;
+    }
+
 
 }

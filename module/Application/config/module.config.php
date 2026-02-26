@@ -101,9 +101,11 @@ return [
                 $storage = new Session('UserAuth');
                 return new AuthenticationService($storage);
             },
+            Service/SumupService::class => Service\Factory\SumupServiceFactory::class,
         ],
         'aliases' => [
             'authentication' => AuthenticationService::class,
+            'sumup_service' => Service\SumupService::class,
         ],
     ],
 

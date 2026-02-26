@@ -24,6 +24,10 @@ class AnnonceController extends AbstractActionController
     }
 
     public function annoncesIndexAction(){
+                if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+                    $this->flashMessenger()->addErrorMessage('Accès refusé.');
+                    return $redirect;
+                }
         $page = (int)$this->params()->fromQuery('page', 1);
         $search = $this->params()->fromQuery('search', '');
         $annonces = $this->entityManager->getRepository(Annonce::class)->fetchPaginated($page, 10, $search);
@@ -40,6 +44,10 @@ class AnnonceController extends AbstractActionController
     }
 
     public function getAnnonceAction(){
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
 
         $currentUser = $this->authService->getIdentity();
         $annonceId = (int) $this->params()->fromRoute('id');
