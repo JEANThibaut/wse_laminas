@@ -26,6 +26,10 @@ class AdminController extends AbstractActionController
     public function gamesAction()
     {
         $currentUser = $this->authService->getIdentity();
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $request = $this->getRequest();
         $games = $this->entityManager->getRepository(Game::class)->findBy([], ['date' => 'DESC']);
         if ($request->isPost()) {
@@ -52,6 +56,10 @@ class AdminController extends AbstractActionController
 
     public function editGameAction()
     {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $id = (int) $this->params()->fromRoute('id');
         $game = $this->entityManager->getRepository(Game::class)->find($id);
 
@@ -95,6 +103,10 @@ class AdminController extends AbstractActionController
 
     public function deleteGameAction()
     {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $request = $this->getRequest();
         if ($request->isPost()) {
             $id =  $request->getPost('id');
@@ -116,6 +128,11 @@ class AdminController extends AbstractActionController
 
     public function nextGameAction()
     {
+
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
 

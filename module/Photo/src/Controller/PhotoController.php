@@ -20,19 +20,10 @@ class PhotoController extends AbstractActionController
 
 
 
-    public function indexAction()
+    public function indexAction(){
 
-{
-
-
-    if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-        $this->flashMessenger()->addErrorMessage('Accès refusé.');
-        return $redirect;
-    }
 
     $currentUser = $this->authService->getIdentity();
-
-
     $photoBaseDir = 'public/photos';
     $photoWebPath = '/photos';
 
@@ -103,10 +94,7 @@ class PhotoController extends AbstractActionController
 
 public function photosViewAction(){
 
-    if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-        $this->flashMessenger()->addErrorMessage('Accès refusé.');
-        return $redirect;
-    }   
+
     // Désactive le pull-to-refresh pour cette page
     $this->layout()->setVariable('disablePtr', true);
 

@@ -27,10 +27,7 @@ class GameController extends AbstractActionController
 
 
     public function registerInGameAction(){
-                if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-                    $this->flashMessenger()->addErrorMessage('Accès refusé.');
-                    return $redirect;
-                }
+ 
         $currentUser = $this->authService->getIdentity();
         $id = (int) $this->params()->fromQuery('id'); 
         $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);
@@ -53,10 +50,7 @@ class GameController extends AbstractActionController
     
     
     public function unregisterInGameAction(){
-                if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-                    $this->flashMessenger()->addErrorMessage('Accès refusé.');
-                    return $redirect;
-                }
+  
         $request = $this->getRequest();
         if ($request->isPost()) {
             $currentUser = $this->authService->getIdentity();
@@ -78,10 +72,7 @@ class GameController extends AbstractActionController
 
 
     public function registerInWaitingListAction(){
-                if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-                    $this->flashMessenger()->addErrorMessage('Accès refusé.');
-                    return $redirect;
-                }
+        
         $currentUser = $this->authService->getIdentity();
         $id = (int) $this->params()->fromQuery('id'); 
         $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findBy(['game_id'=>$id]);
@@ -96,10 +87,7 @@ class GameController extends AbstractActionController
 
     
     public function unregisterInWaitingListAction(){
-                if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-                    $this->flashMessenger()->addErrorMessage('Accès refusé.');
-                    return $redirect;
-                }
+  
         $currentUser = $this->authService->getIdentity();
         $id = (int) $this->params()->fromQuery('id'); 
         $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game_id'=>$id, 'user_id'=>$currentUser->getIdUser()]);
