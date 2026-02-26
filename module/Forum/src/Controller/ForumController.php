@@ -24,6 +24,10 @@ class ForumController extends AbstractActionController
     }
 
     public function forumIndexAction(){
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
   
         $view = new ViewModel([
         
