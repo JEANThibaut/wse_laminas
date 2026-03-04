@@ -122,10 +122,6 @@ class AdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin-games');
     }
 
-
-
-
-
     public function nextGameAction()
     {
 

@@ -125,7 +125,7 @@ class AuthService
 
     public function requireRoles(array $rolesAutorises, Redirect $redirectPlugin)
     {
-        $user = $this->authService->getIdentity();
+        $user = $this->getIdentity();
         if (!$user) {
             return $redirectPlugin->toRoute('login');
         }

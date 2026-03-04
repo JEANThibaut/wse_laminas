@@ -1,9 +1,9 @@
 <?php
 namespace Game\Controller\Factory;
 
+use Application\Service\SumUpService;
 use Game\Controller\GameController;
 use Game\Service\GameManager;
-use Game\Service\WaitingListManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +17,10 @@ class GameControllerFactory implements FactoryInterface
         $authService = $container->get(AuthService::class);
         $entityManager = $container->get(EntityManager::class);
         $gameManager = $container->get(GameManager::class);
-        return new GameController($entityManager,$authService,$gameManager);
+        $sumupService = $container->get(SumUpService::class);
+        $config = $container->get('config');
+        $sumupConfig = $config['sumup_settings'] ?? [];
+
+        return new GameController($entityManager, $authService, $gameManager, $sumupService, $sumupConfig);
     }
 }

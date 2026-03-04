@@ -3,7 +3,7 @@
 <div class='card'>
     <?php if($game):?>
 
-        	<?php if($isComplete && !$isRegister) : ?>
+  <?php if($isComplete && !$isRegister && !($this->isPaymentPending ?? false)) : ?>
 
 
                   <h4>La prochaine partie est complète!</h4>
@@ -54,7 +54,14 @@
           <div class='row'>
             <div class="col-12 text-center">
               <?php if($this->currentUser):?>
-                  <?php if($this->register): ?>
+                  <?php if(($this->isPaymentPending ?? false)): ?>
+                    <div class='alert alert-warning'>
+                      <p>Paiement en attente. Cliquez pour finaliser votre paiement.</p>
+                    </div>
+                    <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                      Finaliser le paiement
+                    </a>
+                  <?php elseif($this->register && (int)$this->register->getPaid() === 1): ?>
                     <div class='alert alert-success'>
                       <p>Vous êtes inscrit à la partie</p>
                   </div>
@@ -134,7 +141,7 @@
 
 
 
-<?php if($this->register): ?>
+<?php if($this->register && (int)$this->register->getPaid() === 1): ?>
 
 <div class="modal fade" id="unregisterModal" tabindex="-1" aria-labelledby="unregisterModalLabel" aria-hidden="true">
   <div class="modal-dialog">
