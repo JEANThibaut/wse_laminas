@@ -7,6 +7,7 @@ use Laminas\View\Model\ViewModel;
 use Profil\Entity\Replique;
 use User\Entity\User;
 use Game\Entity\Register;
+use Application\Util\InputSanitizer;
 
 class ProfilController extends AbstractActionController
 {
@@ -47,7 +48,7 @@ class ProfilController extends AbstractActionController
     {
         $request = $this->getRequest();
         $currentUser = $this->authService->getIdentity();
-        $userId = (int) $this->params()->fromRoute('id');
+        $userId = InputSanitizer::cleanInt($this->params()->fromRoute('id'));
         $user = $this->entityManager->getRepository(User::class)->find($userId);
 
 
@@ -61,13 +62,23 @@ class ProfilController extends AbstractActionController
         }
 
         if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
+            $birthdate = \DateTime::createFromFormat('Y-m-d', $data['birthdate'] ?? '');
 
-            $user->setFirstName($data['firstname']);
-            $user->setLastName($data['lastname']);
-            $user->setNickname($data['nickname']);
-            $user->setEmail($data['email']);
-            $user->setBirthdate(new \DateTime($data['birthdate']));
+            if (!filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL)) {
+                $this->flashMessenger()->addErrorMessage("Adresse email invalide.");
+                return $this->redirect()->toRoute('profil-index');
+            }
+            if (!$birthdate) {
+                $this->flashMessenger()->addErrorMessage("Date de naissance invalide.");
+                return $this->redirect()->toRoute('profil-index');
+            }
+
+            $user->setFirstName($data['firstname'] ?? '');
+            $user->setLastName($data['lastname'] ?? '');
+            $user->setNickname($data['nickname'] ?? '');
+            $user->setEmail($data['email'] ?? '');
+            $user->setBirthdate($birthdate);
 
             $this->entityManager->flush();
 
@@ -111,9 +122,10 @@ class ProfilController extends AbstractActionController
         $request = $this->getRequest();
         $currentUser = $this->authService->getIdentity();
         if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
-            $action = $request->getPost('action');
-            $data['puissance'] = str_replace(',', '.', $data['puissance']);
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
+            $action = InputSanitizer::cleanString($request->getPost('action'));
+            $data['replique-id'] = InputSanitizer::cleanInt($data['replique-id'] ?? 0);
+            $data['puissance'] = str_replace(',', '.', $data['puissance'] ?? '');
             if ($action === 'edit') {
                 $replique = $this->entityManager->getRepository(Replique::class)->findOneBy(['idreplique'=>$data['replique-id']]);
                 if ($replique) {

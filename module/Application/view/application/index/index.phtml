@@ -23,7 +23,7 @@
                         <p>Vous pouvez vous inscrire en file d'attente <br> et recevoir un message si une place se libère </p>
                     </div>
                       <div class="col-12 text-center">
-                        <a href="<?= $this->url('register-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                        <a href="<?= $this->escapeHtmlAttr($this->url('register-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]])) ?>" class="btn btn-warning">
                           S'inscrire en file d'attente
                         </a>
                     </div>  
@@ -36,7 +36,7 @@
                       </div>                   
                     </div>
                       <div class="col-12 text-center">
-                        <a href="<?= $this->url('unregister-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                        <a href="<?= $this->escapeHtmlAttr($this->url('unregister-in-waiting-list', [], ['query' => ['id' => $game->getIdgame()]])) ?>" class="btn btn-warning">
                           Se désinscrire
                         </a>
                     </div>  
@@ -48,10 +48,12 @@
                 <?php if($isComplete): ?>
                     <h4>La prochaine partie est complète!</h4>
                 <?php else : ?>    
-                    <h4>Prochaine partie du <?php echo $game->getDate()->format("d/m/Y"); ?> </h4>
-                    <?php if(count($countRegister)>0): ?>  
-                    <p>  <?php echo(count($countRegister)) ?> joueurs inscrits ! </p>
-                    <?php endif; ?>
+                    <h4>Prochaine partie du <?= $this->escapeHtml($game->getDate()->format('d/m/Y')) ?> </h4>
+                    <?php if($countRegister): ?>
+                      <?php if(count($countRegister)>0): ?>  
+                      <p>  <?= $this->escapeHtml(count($countRegister)) ?> joueurs inscrits ! </p>
+                      <?php endif; ?>
+                      <?php endif; ?>
                 <?php endif;?>
           <hr>
           <div class='row'>
@@ -61,8 +63,8 @@
                     <div class='alert alert-success'>
                       <p>Vous êtes inscrit à la partie</p>
                   </div>
-                  <form action="<?= $this->url('unregister-in-game') ?>" method="post" style="display: inline;">
-                      <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
+                    <form action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game')) ?>" method="post" style="display: inline;">
+                      <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($register->getIdregister()) ?>">
                       <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#unregisterModal">
                       Se désinscrire
                   </button>
@@ -75,7 +77,7 @@
                       <p>Les inscriptions sont ouvertes ! </p>
                   </div>
                     <div class="col-12 text-center">
-                      <a href="<?= $this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]]) ?>" class="btn btn-warning">
+                      <a href="<?= $this->escapeHtmlAttr($this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]])) ?>" class="btn btn-warning">
                           S'inscrire
                       </a>
                   </div>  
@@ -84,7 +86,7 @@
             
                   <?php endif; ?>      
               <?php else: ?>
-                  <a href="<?= $this->url('login')?>" class="btn btn-warning">
+                  <a href="<?= $this->escapeHtmlAttr($this->url('login')) ?>" class="btn btn-warning">
                       Se connecter
                   </a>        
               <?php endif ?>
@@ -142,8 +144,8 @@
 <div class="modal fade" id="unregisterModal" tabindex="-1" aria-labelledby="unregisterModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="<?= $this->url('unregister-in-game') ?>" method="post">
-        <input type="hidden" name="id" value="<?= $register->getIdregister() ?>">
+      <form action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game')) ?>" method="post">
+        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($register->getIdregister()) ?>">
         <div class="modal-header">
           <h5 class="modal-title" id="unregisterModalLabel">Confirmation</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>

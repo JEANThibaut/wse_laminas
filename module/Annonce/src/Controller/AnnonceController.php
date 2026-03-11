@@ -5,6 +5,7 @@ namespace Annonce\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Annonce\Entity\Annonce;
+use Application\Util\InputSanitizer;
 
 
 class AnnonceController extends AbstractActionController
@@ -24,8 +25,8 @@ class AnnonceController extends AbstractActionController
     }
 
     public function annoncesIndexAction(){
-        $page = (int)$this->params()->fromQuery('page', 1);
-        $search = $this->params()->fromQuery('search', '');
+        $page = InputSanitizer::cleanInt($this->params()->fromQuery('page', 1));
+        $search = InputSanitizer::cleanString($this->params()->fromQuery('search', ''));
         $annonces = $this->entityManager->getRepository(Annonce::class)->fetchPaginated($page, 10, $search);
 
         $view = new ViewModel([
@@ -42,7 +43,7 @@ class AnnonceController extends AbstractActionController
     public function getAnnonceAction(){
 
         $currentUser = $this->authService->getIdentity();
-        $annonceId = (int) $this->params()->fromRoute('id');
+        $annonceId = InputSanitizer::cleanInt($this->params()->fromRoute('id'));
         $annonce = $this->entityManager->getRepository(Annonce::class)->findOneBy(['idannonce'=>$annonceId]);
         dump($annonce);
         $view = new ViewModel([

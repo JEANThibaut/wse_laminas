@@ -58,7 +58,7 @@
         </button>
 
         <!-- Logo cliquable -->
-        <a href="<?= $this->url('home') ?>" class="logo d-flex align-items-center text-decoration-none">
+        <a href="<?= $this->escapeHtmlAttr($this->url('home')) ?>" class="logo d-flex align-items-center text-decoration-none">
             <img src="/images/WSE.png" alt="Logo" class="logo-default" style="height: 30px;">
             <img src="/images/WSE_hover.png" alt="Logo hover" class="logo-hover" style="height: 30px;">
         </a>
@@ -76,7 +76,7 @@
     <ul class="nav flex-column">
         <li class="nav-item">
  
-            <a class="nav-link <?= ($activeMenu === 'home') ? 'active' : '' ?>" href="<?= $this->url('home') ?>">
+            <a class="nav-link <?= ($activeMenu === 'home') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('home')) ?>">
                 <?php if($isFunny): ?>
                     <img class=" mb-1" src="/images/icones/home.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>
@@ -85,7 +85,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link <?= ($activeMenu === 'photo-index') ? 'active' : '' ?>" href="<?= $this->url('photo-index') ?>">
+            <a class="nav-link <?= ($activeMenu === 'photo-index') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('photo-index')) ?>">
                  <?php if($isFunny): ?>
                     <img class="mb-1" src="/images/icones/gallery.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>
@@ -93,7 +93,7 @@
             </a>
         </li>
         <li class="nav-item d-none">
-            <a class="nav-link <?= ($activeMenu === 'annonce-index') ? 'active' : '' ?>" href="<?= $this->url('annonce-index') ?>">
+            <a class="nav-link <?= ($activeMenu === 'annonce-index') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('annonce-index')) ?>">
                 <?php if($isFunny): ?>
                     <img class="" src="/images/icones/payment-method.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>    
@@ -120,14 +120,14 @@
             <hr>
             <h4>Profil</h4>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'profil') ? 'active' : '' ?>" href="<?= $this->url('profil-index') ?>">
+                <a class="nav-link <?= ($activeMenu === 'profil') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('profil-index')) ?>">
                 <?php if($isFunny): ?>
                     <img class="mb-1" src="/images/icones/verified.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>            
                 Mon profil</a>
             </li>
             <!-- <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'arsenal') ? 'active' : '' ?>" href="<?= $this->url('arsenal') ?>">
+                    <a class="nav-link <?= ($activeMenu === 'arsenal') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('arsenal')) ?>">
                     <?php if($isFunny): ?>
                         <img class="mb-1" src="/images/icones/magazine.png" alt="type" style="height: 20px; margin-right:10px;">
                     <?php endif ?>         
@@ -137,7 +137,7 @@
           
             <?php if ($this->currentUser->getFaction() != null) : ?>
                 <li class="nav-item">
-                    <a class="nav-link <?= ($activeMenu === 'faction') ? 'active' : '' ?>" href="<?= $this->url('faction') ?>">
+                    <a class="nav-link <?= ($activeMenu === 'faction') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('faction')) ?>">
                         <?php if($isFunny): ?>
                             <img class="mb-1" src="/images/icones/magazine.png" alt="type" style="height: 20px; margin-right:10px;">
                         <?php endif ?>         
@@ -150,7 +150,7 @@
              <hr>
             <h4>Espace membres</h4>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">
+                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-next-games')) ?>">
                     <?php if($isFunny): ?>
                         <img class="mb-1" src="/images/icones/online-game.png" alt="type" style="height: 20px; margin-right:10px;">
                     <?php endif ?>        
@@ -158,7 +158,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->url('admin-next-games') ?>">
+                <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-next-games')) ?>">
                     <?php if($isFunny): ?>
                         <img class="mb-1" src="/images/icones/checklist.png" alt="type" style="height: 20px; margin-right:10px;">
                     <?php endif ?>            
@@ -171,7 +171,7 @@
             <hr>
             <h4>Espace Administration</h4>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-users') ? 'active' : '' ?>" href="<?= $this->url('admin-users') ?>">
+                <a class="nav-link <?= ($activeMenu === 'admin-users') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-users')) ?>">
                     <?php if($isFunny): ?>
                         <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
                     <?php endif ?>        
@@ -179,7 +179,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'admin-games') ? 'active' : '' ?>" href="<?= $this->url('admin-games') ?>">
+                <a class="nav-link <?= ($activeMenu === 'admin-games') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-games')) ?>">
                 <?php if($isFunny): ?>
                     <img class="mb-1" src="/images/icones/game-development.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>          
@@ -187,7 +187,7 @@
                 </a>
             </li>
               <li class="nav-item">
-                <a class="nav-link <?= ($activeMenu === 'actus-admin') ? 'active' : '' ?>" href="<?= $this->url('actus-admin') ?>">
+                <a class="nav-link <?= ($activeMenu === 'actus-admin') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('actus-admin')) ?>">
                 <?php if($isFunny): ?>
                     <img class="mb-1" src="/images/icones/game-development.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>          
@@ -200,13 +200,13 @@
     <?php if ($this->currentUser): ?>
 
         <div class="mb-3">
-            <a class="btn btn-outline-danger w-100" href="<?= $this->url('logout') ?>">Se déconnecter</a>
+            <a class="btn btn-outline-danger w-100" href="<?= $this->escapeHtmlAttr($this->url('logout')) ?>">Se déconnecter</a>
         </div>
 
 
           <?php else : ?>
         <div class="mb-3">
-            <a class="btn btn-outline-success w-100" href="<?= $this->url('login') ?>">Se connecter / S'inscrire</a>
+            <a class="btn btn-outline-success w-100" href="<?= $this->escapeHtmlAttr($this->url('login')) ?>">Se connecter / S'inscrire</a>
         </div>
 
     <?php endif; ?>

@@ -7,6 +7,7 @@ use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\Register;
 use User\Entity\User;
+use Application\Util\InputSanitizer;
 
 class AdminController extends AbstractActionController
 {
@@ -29,7 +30,7 @@ class AdminController extends AbstractActionController
         $request = $this->getRequest();
         $games = $this->entityManager->getRepository(Game::class)->findBy([], ['date' => 'DESC']);
         if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
             if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
 
                 $newGame = $this->gameManager->addGame($data);
@@ -52,7 +53,7 @@ class AdminController extends AbstractActionController
 
     public function editGameAction()
     {
-        $id = (int) $this->params()->fromRoute('id');
+        $id = InputSanitizer::cleanInt($this->params()->fromRoute('id'));
         $game = $this->entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
@@ -66,7 +67,7 @@ class AdminController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
 
             if (!empty($data['date']) && !empty($data['player_max']) && isset($data['status'])) {
                 $date = \DateTime::createFromFormat('d/m/Y', $data['date']);
@@ -97,7 +98,7 @@ class AdminController extends AbstractActionController
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $id =  $request->getPost('id');
+            $id = InputSanitizer::cleanInt($request->getPost('id'));
             $game = $this->entityManager->getRepository(Game::class)->find($id);
             if ($game) {
                 $delete = $this->gameManager->deleteGame($game);
@@ -122,9 +123,9 @@ class AdminController extends AbstractActionController
         $nextGame= $this->entityManager->getRepository(Game::class)->findNextGame();
         $registers =  $this->entityManager->getRepository(Register::class)->findBy(['game' => $nextGame, 'member'=>0]);
         if ($request->isPost()) {
-            $data = $this->params()->fromPost();
-            $registerId = $data['register_id'] ?? null;
-            $action = $data['action'] ?? null;
+            $data = InputSanitizer::cleanArray($this->params()->fromPost());
+            $registerId = InputSanitizer::cleanInt($data['register_id'] ?? null);
+            $action = InputSanitizer::cleanString($data['action'] ?? '');
 
             if ($registerId && in_array($action, ['validate', 'cancel'])) {
                 $register = $this->entityManager->getRepository(Register::class)->find($registerId);

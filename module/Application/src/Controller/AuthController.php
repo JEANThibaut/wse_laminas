@@ -8,6 +8,7 @@ use Application\Form\LoginForm;
 use Application\Service\AuthService;
 use User\Entity\User;
 use Application\Form\RegisterForm;
+use Application\Util\InputSanitizer;
 
 class AuthController extends AbstractActionController
 {
@@ -31,7 +32,7 @@ class AuthController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
 
-            $email = trim($data['email'] ?? '');
+            $email = InputSanitizer::cleanString($data['email'] ?? '');
             $password = $data['password'] ?? '';
 
             if (filter_var($email, FILTER_VALIDATE_EMAIL) && !empty($password)) {
@@ -65,7 +66,7 @@ class AuthController extends AbstractActionController
         
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
-            $email = trim($data['email'] ?? '');
+            $email = InputSanitizer::cleanString($data['email'] ?? '');
             $newPassword = trim($data['new-password'] ?? '');
                 if($newPassword !=""){
                     $reset = $this->authService->resetPassword($email, $newPassword);
@@ -85,7 +86,8 @@ class AuthController extends AbstractActionController
                     } 
                 }
         } else {
-            if ($token = $this->params()->fromQuery('token')) {
+            $token = InputSanitizer::cleanString($this->params()->fromQuery('token'));
+            if ($token !== '') {
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
                 if ($user) {
                     return new ViewModel([
@@ -106,17 +108,48 @@ class AuthController extends AbstractActionController
         // $form = new RegisterForm();
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
-         
-            // dump($data);
-            $mail = trim($data['email'] ?? '');
-            $firstname = trim($data['firstname'] ?? '');
-            $lastname = trim($data['lastname'] ?? '');
-            $nickname = trim($data['nickname'] ?? '');
+
+            $mailRaw = $data['email'] ?? '';
+            $firstnameRaw = $data['firstname'] ?? '';
+            $lastnameRaw = $data['lastname'] ?? '';
+            $nicknameRaw = $data['nickname'] ?? '';
+
+            $mail = InputSanitizer::cleanString($mailRaw);
+            $firstname = InputSanitizer::cleanString($firstnameRaw);
+            $lastname = InputSanitizer::cleanString($lastnameRaw);
+            $nickname = InputSanitizer::cleanString($nicknameRaw);
             $password = trim($data['password'] ?? '');
             $confirmPassword = trim($data['confirm_password'] ?? '');
-            $birthday_day = trim($data['birthday_day'] ?? '');
-            $birthday_month = trim($data['birthday_month'] ?? '');
-            $birthday_year = trim($data['birthday_year'] ?? '');
+            $birthday_day = (int) ($data['birthday_day'] ?? 0);
+            $birthday_month = (int) ($data['birthday_month'] ?? 0);
+            $birthday_year = (int) ($data['birthday_year'] ?? 0);
+
+            $errors = [];
+            if ($mail !== $mailRaw || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Veuillez entrer une adresse email valide.";
+            }
+            if ($firstname !== $firstnameRaw || $firstname === '' || !preg_match('/\A[\p{L}\p{M}\'\-\s]+\z/u', $firstname)) {
+                $errors[] = "Le prenom contient des caracteres invalides.";
+            }
+            if ($lastname !== $lastnameRaw || $lastname === '' || !preg_match('/\A[\p{L}\p{M}\'\-\s]+\z/u', $lastname)) {
+                $errors[] = "Le nom contient des caracteres invalides.";
+            }
+            if ($nickname !== '') {
+                if ($nickname !== $nicknameRaw || !preg_match('/\A[\p{L}\p{M}0-9._\'\-\s]+\z/u', $nickname)) {
+                    $errors[] = "Le pseudo contient des caracteres invalides.";
+                }
+            }
+            if (!checkdate($birthday_month, $birthday_day, $birthday_year)) {
+                $errors[] = "La date de naissance est invalide.";
+            }
+
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $this->flashMessenger()->addErrorMessage($error);
+                }
+                return new ViewModel();
+            }
+
             $birthday = sprintf('%04d-%02d-%02d', $birthday_year, $birthday_month, $birthday_day);
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $mail]);
 

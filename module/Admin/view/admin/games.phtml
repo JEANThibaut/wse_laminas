@@ -16,7 +16,7 @@
             <input type="number" name="player_max" id="player_max" class="form-control" list="player_max_list" min="0" required>
             <datalist id="player_max_list">
                 <?php for ($i = 10; $i <= 40; $i += 5): ?>
-                <option value="<?= $i ?>"></option>
+                <option value="<?= $this->escapeHtmlAttr($i) ?>"></option>
                 <?php endfor; ?>
             </datalist>
             </div>
@@ -51,17 +51,17 @@
         <tbody>
             <?php foreach ($games as $game): ?>
                 <tr>
-                    <td><?= $game->getDate()->format('d/m/Y') ?></td>
+                    <td><?= $this->escapeHtml($game->getDate()->format('d/m/Y')) ?></td>
                     <td><?= $this->escapeHtml($game->getPlayerMax()) ?></td>
                     <td><?= $game->getStatus() ? 'Actif' : 'Inactif' ?></td>
                 <td>
                     <div class="d-flex justify-content-between" style="gap: 0.5rem;">
-                        <a href="<?= $this->url('admin-edit-game', ['id' => $game->getIdgame()]) ?>" class="btn btn-sm btn-warning">
+                        <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-game', ['id' => $game->getIdgame()])) ?>" class="btn btn-sm btn-warning">
                             <i class="fa-solid fa-edit"></i>
                         </a>
-                        <form method="post" action="<?= $this->url('admin-delete-game') ?>" class="delete-form">
-                            <input type="hidden" name="id" value="<?= $game->getIdgame() ?>">
-                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $game->getIdgame() ?>">
+                        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-delete-game')) ?>" class="delete-form">
+                            <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($game->getIdgame()) ?>">
+                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($game->getIdgame()) ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>

@@ -1,36 +1,35 @@
-<form method="post" action="<?= $this->url('profil-edit', ['id' => $user->getIdUser()]) ?>" class="card p-3">
+<form method="post" action="<?= $this->escapeHtmlAttr($this->url('profil-edit', ['id' => $user->getIdUser()])) ?>" class="card p-3">
     <h4 class="mb-3">Éditer le profil</h4>
 
     <div class="row g-3">
         <div class="col-md-6">
             <label for="lastname" class="form-label">Nom</label>
             <input type="text" class="form-control" id="lastname" name="lastname"
-                   value="<?= htmlentities($user->getLastName()) ?>" required>
+                   value="<?= $this->escapeHtmlAttr($user->getLastName()) ?>" required>
         </div>
 
         <div class="col-md-6">
             <label for="firstname" class="form-label">Prénom</label>
             <input type="text" class="form-control" id="firstname" name="firstname"
-                   value="<?= htmlentities($user->getFirstName()) ?>" required>
+                   value="<?= $this->escapeHtmlAttr($user->getFirstName()) ?>" required>
         </div>
 
         <div class="col-md-6">
             <label for="nickname" class="form-label">Pseudo</label>
             <input type="text" class="form-control" id="nickname" name="nickname"
-                   value="<?= htmlentities($user->getNickname() ?? '') ?>
-">
+                   value="<?= $this->escapeHtmlAttr($user->getNickname() ?? '') ?>">
         </div>
 
         <div class="col-md-6">
             <label for="birthdate" class="form-label">Date de naissance</label>
             <input type="date" class="form-control" id="birthdate" name="birthdate"
-                   value="<?= $user->getBirthdate() ? $user->getBirthdate()->format('Y-m-d') : '' ?>" required>
+                   value="<?= $this->escapeHtmlAttr($user->getBirthdate() ? $user->getBirthdate()->format('Y-m-d') : '') ?>" required>
         </div>
 
         <div class="col-12">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" name="email"
-                   value="<?= htmlentities($user->getEmail()) ?>" required>
+                   value="<?= $this->escapeHtmlAttr($user->getEmail()) ?>" required>
         </div>
     </div>
 
@@ -38,7 +37,7 @@
         <div class='d-flex justify-content-between mt-3 '>
             <div class="form-group ">
                 <button type="submit" class="btn btn-warning">Sauvegarder</button>
-                <a href="<?= $this->url('profil-index') ?>" class="btn btn-secondary">Annuler</a>
+                <a href="<?= $this->escapeHtmlAttr($this->url('profil-index')) ?>" class="btn btn-secondary">Annuler</a>
             </div>
         </div>
 

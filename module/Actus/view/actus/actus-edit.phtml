@@ -72,7 +72,7 @@
 
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-warning">Enregistrer</button>
-            <a href="<?= $this->url('actus-index') ?>" class="btn btn-secondary">Annuler</a>
+            <a href="<?= $this->escapeHtmlAttr($this->url('actus-index')) ?>" class="btn btn-secondary">Annuler</a>
         </div>
     </form>
 </div>

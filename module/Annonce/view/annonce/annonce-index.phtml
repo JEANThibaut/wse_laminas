@@ -17,10 +17,10 @@
 
         <?php foreach ($annonces as $annonce): ?>
             <div class="card p-3">
-            <a href="/get-annonce/<?php echo $annonce->getIdannonce(); ?>" class="text-decoration-none text-dark">
+            <a href="/get-annonce/<?= $this->escapeHtmlAttr($annonce->getIdannonce()) ?>" class="text-decoration-none text-dark">
                 <div class="d-flex justify-content-between p-2 mb-2">
-                    <div><?php echo $annonce->getTitle(); ?></div>
-                    <div><?php echo $annonce->getDate()->format('Y-m-d'); ?></div>
+                <div><?= $this->escapeHtml($annonce->getTitle()) ?></div>
+                <div><?= $this->escapeHtml($annonce->getDate()->format('Y-m-d')) ?></div>
                 </div>
             </a>
             </div>
