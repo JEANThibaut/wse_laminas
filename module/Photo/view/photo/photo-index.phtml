@@ -19,14 +19,14 @@
                 }
             ?>
             <div class="mb-4">
-                <h5 class="text-capitalize border-bottom pb-2 text-white"><?= htmlspecialchars($typeText) ?></h5>
+                <h5 class="text-capitalize border-bottom pb-2 text-white"><?= $this->escapeHtml($typeText) ?></h5>
                 <div class="row g-2">
                     <?php foreach ($dates as $date): ?>
-                        <a href="<?= $this->url('photos-view', ['date' => $date,'type'=>$type]) ?>" class="text-decoration-none text-reset">
+                        <a href="<?= $this->escapeHtmlAttr($this->url('photos-view', ['date' => $date,'type'=>$type])) ?>" class="text-decoration-none text-reset">
                             <div class="card my-1 shadow-sm clickable-card">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-1"><?php echo $titleType ; ?>
-                                        <?php echo  str_replace('-',"/",$date) ?>
+                                    <h5 class="card-title mb-1"><?= $this->escapeHtml($titleType) ?>
+                                        <?= $this->escapeHtml(str_replace('-', '/', $date)) ?>
                                     </h5>
                                 </div>
                             </div>

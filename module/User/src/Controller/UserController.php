@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use User\Service\UserManager;
 use User\Entity\User;
+use Application\Util\InputSanitizer;
 
 class UserController extends AbstractActionController
 {   
@@ -48,8 +49,7 @@ class UserController extends AbstractActionController
             }      
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
-        $params = $this->params()->fromRoute();
-        $iduser = (int) $params['iduser'];
+        $iduser = InputSanitizer::cleanInt($this->params()->fromRoute('iduser'));
         if($request->isPost()){
             $data = $request->getPost()->toArray();
             // dump($data);
@@ -94,7 +94,7 @@ class UserController extends AbstractActionController
         if (!$request->isPost()) {
             return $this->redirect()->toRoute('admin-users');
         }   
-        $iduser = (int) $this->params()->fromPost('iduser');
+        $iduser = InputSanitizer::cleanInt($this->params()->fromPost('iduser'));
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
         if($user){

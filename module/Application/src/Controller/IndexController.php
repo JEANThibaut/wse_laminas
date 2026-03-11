@@ -28,6 +28,9 @@ class IndexController extends AbstractActionController
         $isPaymentPending = false;
         $isInWaitingList = false;
         $isComplete = false;
+        if($game){
+            $countRegister = $this->entityManager->getRepository(Register::class)->findBy(['game'=>$game->getIdGame(),]);
+        }   
         $this->layout()->setVariable('activeMenu', 'home');
         $register = null;
         if($game && $currentUser){

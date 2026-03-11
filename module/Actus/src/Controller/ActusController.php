@@ -5,6 +5,7 @@ namespace Actus\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Actus\Entity\Actus;
+use Application\Util\InputSanitizer;
 
 
 class ActusController extends AbstractActionController
@@ -46,7 +47,7 @@ class ActusController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
             $actus = $this->actusManager->addActus($data);
             if ($actus) {
                 $this->flashMessenger()->addSuccessMessage('Actu créée.');
@@ -68,7 +69,7 @@ class ActusController extends AbstractActionController
             return $redirect;
         }
 
-        $id = (int) $this->params()->fromRoute('id');
+        $id = InputSanitizer::cleanInt($this->params()->fromRoute('id'));
         $actus = $this->entityManager->getRepository(Actus::class)->find($id);
 
         if (! $actus) {
@@ -78,7 +79,7 @@ class ActusController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
             $this->actusManager->editActus($actus, $data);
             $this->flashMessenger()->addSuccessMessage('Actu modifiée.');
             return $this->redirect()->toRoute('actus-index');
@@ -104,7 +105,7 @@ class ActusController extends AbstractActionController
             return $this->redirect()->toRoute('actus-index');
         }
 
-        $id = (int) $this->params()->fromPost('id');
+        $id = InputSanitizer::cleanInt($this->params()->fromPost('id'));
         $actus = $this->entityManager->getRepository(Actus::class)->find($id);
         if ($actus) {
             $this->actusManager->deleteActus($actus);

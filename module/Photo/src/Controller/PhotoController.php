@@ -4,6 +4,7 @@ namespace Photo\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
+use Application\Util\InputSanitizer;
 
 
 class PhotoController extends AbstractActionController
@@ -99,8 +100,13 @@ public function photosViewAction(){
     $this->layout()->setVariable('disablePtr', true);
 
     $currentUser = $this->authService->getIdentity();
-    $date = $this->params()->fromRoute('date');
-    $type = $this->params()->fromRoute('type');
+    $date = InputSanitizer::cleanString($this->params()->fromRoute('date'));
+    $type = InputSanitizer::cleanString($this->params()->fromRoute('type'));
+    if ($date === '' || $type === ''
+        || !preg_match('/\A[a-zA-Z0-9_-]+\z/', $date)
+        || !preg_match('/\A[a-zA-Z0-9_-]+\z/', $type)) {
+        return $this->redirect()->toRoute('photo-index');
+    }
     $images = [];
 
     $baseDir = 'public/photos/'.$type.'/'. $date;

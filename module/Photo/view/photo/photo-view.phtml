@@ -1,10 +1,10 @@
 <div id="scroll-gallery">
     <?php foreach ($this->images as $index => $url): ?>
-        <div class="photo-slide" data-index="<?= $index ?>">
+        <div class="photo-slide" data-index="<?= $this->escapeHtmlAttr($index) ?>">
             <div class="photo-content text-center">
 
-                <img data-src="<?= htmlentities($url) ?>" class="lazy-img img-fluid rounded shadow" alt="photo <?= $index ?>">
-                        <a href="<?= htmlentities($url) ?>" download class="btn btn-outline-light ">
+                <img data-src="<?= $this->escapeHtmlAttr($url) ?>" class="lazy-img img-fluid rounded shadow" alt="photo <?= $this->escapeHtmlAttr($index) ?>">
+                    <a href="<?= $this->escapeHtmlAttr($url) ?>" download class="btn btn-outline-light ">
                     <i class="fas fa-download"></i> Télécharger
                 </a>
           

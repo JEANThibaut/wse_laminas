@@ -312,7 +312,7 @@ class GameController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $currentUser = $this->authService->getIdentity();
-            $id = $this->params()->fromPost('id');
+            $id = InputSanitizer::cleanInt($this->params()->fromPost('id'));
             $register = $this->entityManager->getRepository(Register::class)->findOneBy(['idregister'=>$id]);
             if($register){
                 $this->entityManager->remove($register);
@@ -332,7 +332,7 @@ class GameController extends AbstractActionController
     public function registerInWaitingListAction(){
         
         $currentUser = $this->authService->getIdentity();
-        $id = (int) $this->params()->fromQuery('id'); 
+        $id = InputSanitizer::cleanInt($this->params()->fromQuery('id'));
         $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findBy(['game_id'=>$id]);
          $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);
         $count = count($waitingList);
@@ -347,7 +347,7 @@ class GameController extends AbstractActionController
     public function unregisterInWaitingListAction(){
   
         $currentUser = $this->authService->getIdentity();
-        $id = (int) $this->params()->fromQuery('id'); 
+        $id = InputSanitizer::cleanInt($this->params()->fromQuery('id'));
         $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game_id'=>$id, 'user_id'=>$currentUser->getIdUser()]);
   
         if($waitingList != null){

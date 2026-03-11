@@ -23,7 +23,7 @@
                        class="form-control datepicker"
                        name="date"
                        id="date"
-                       value="<?= $game->getDate()->format('d/m/Y') ?>"
+                       value="<?= $this->escapeHtmlAttr($game->getDate()->format('d/m/Y')) ?>"
                        required>
             </div>
 
@@ -48,12 +48,12 @@
 
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-warning">Enregistrer</button>
-            <a href="<?= $this->url('admin-games') ?>" class="btn btn-secondary">Annuler</a>
+            <a href="<?= $this->escapeHtmlAttr($this->url('admin-games')) ?>" class="btn btn-secondary">Annuler</a>
         </div>
     </form>
 </div>
 <div class="card mt-4">
-    <h4>Joueurs inscrits (<?= count($players) ?>/<?= $game->getPlayerMax() ?>)</h4>
+    <h4>Joueurs inscrits (<?= $this->escapeHtml(count($players)) ?>/<?= $this->escapeHtml($game->getPlayerMax()) ?>)</h4>
 
     <?php if (count($players) == 0): ?>
         <p>Aucun joueur inscrit pour cette partie.</p>
@@ -74,9 +74,9 @@
              
                     <td>
    
-                          <form method="post" action="<?= $this->url('unregister-in-game', ['id' => $player->getIdregister()]) ?>" class="delete-form">
-                            <input type="hidden" name="id" value="<?=$player->getIdregister()?>">
-                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?=$player->getIdregister() ?>">
+                                                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game', ['id' => $player->getIdregister()])) ?>" class="delete-form">
+                                                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
+                                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>
