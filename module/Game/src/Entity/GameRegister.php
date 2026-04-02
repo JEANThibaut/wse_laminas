@@ -3,6 +3,10 @@ namespace Game\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+if (class_exists(GameRegister::class, false)) {
+    return;
+}
+
 /**
  * @ORM\Entity(repositoryClass="Game\Repository\GameRepository")
  * @ORM\Table(name="game_register")

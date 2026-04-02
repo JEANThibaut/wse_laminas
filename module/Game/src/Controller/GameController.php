@@ -66,13 +66,7 @@ class GameController extends AbstractActionController
         }
 
         if (! $this->sumupService->hasValidConfiguration()) {
-            $registered = $this->ensurePaidRegistration($game->getIdgame(), $user->getIdUser());
-            if (! $registered) {
-                $this->flashMessenger()->addErrorMessage('Configuration de paiement invalide et inscription impossible.');
-                return $this->redirect()->toRoute('home');
-            }
-
-            $this->flashMessenger()->addSuccessMessage('Votre inscription a bien ete prise en compte.');
+            $this->flashMessenger()->addErrorMessage('Configuration de paiement invalide. Inscription non créée.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -85,8 +79,7 @@ class GameController extends AbstractActionController
         $currency = strtoupper((string)($eventConfig['currency'] ?? 'EUR'));
 
         if ($amount <= 0) {
-            $this->ensurePaidRegistration($game->getIdgame(), $user->getIdUser());
-            $this->flashMessenger()->addSuccessMessage('Votre inscription a bien été validée.');
+            $this->flashMessenger()->addErrorMessage('Montant de paiement invalide. Inscription non créée.');
             return $this->redirect()->toRoute('home');
         }
 
