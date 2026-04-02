@@ -5,7 +5,7 @@ namespace Admin\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
 use User\Entity\User;
 use Application\Util\InputSanitizer;
 
@@ -61,14 +61,14 @@ class AdminController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $redirect;
         }
-        $id = (int) $this->params()->fromRoute('id');
+        $id = InputSanitizer::cleanInt($this->params()->fromRoute('id'));
         $game = $this->entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
             $this->flashMessenger()->addErrorMessage('Partie introuvable.');
             return $this->redirect()->toRoute('admin-games');
         }
-        $registers = $this->entityManager->getRepository(Register::class)->findBy(
+        $registers = $this->entityManager->getRepository(GameRegister::class)->findBy(
             ['game' => $game->getIdGame()],
         );
         $players = $registers;
@@ -135,13 +135,14 @@ class AdminController extends AbstractActionController
 
         $nextGame= $this->entityManager->getRepository(Game::class)->findNextGame();
         // Previously used simple findBy; keep it commented for reference:
-        // $registers =  $this->entityManager->getRepository(Register::class)->findBy(['game' => $nextGame, 'member'=>0, ],);
+        // $registers =  $this->entityManager->getRepository(GameRegister::class)->findBy(['game' => $nextGame, 'member'=>0, ],);
         // Use QueryBuilder to join the related user and order by user.firstname ASC
-        $qb = $this->entityManager->getRepository(Register::class)->createQueryBuilder('r')
+        $qb = $this->entityManager->getRepository(GameRegister::class)->createQueryBuilder('r')
             ->leftJoin('r.user', 'u')
             ->addSelect('u')
             ->where('r.game = :game')
             ->andWhere('r.member = 0')
+            ->andWhere('r.paid = 1')
             ->setParameter('game', $nextGame)
             ->orderBy('u.firstname', 'ASC');
         $registers = $qb->getQuery()->getResult();
@@ -151,19 +152,17 @@ class AdminController extends AbstractActionController
             $action = InputSanitizer::cleanString($data['action'] ?? '');
 
             if ($registerId && in_array($action, ['validate', 'cancel'])) {
-                $register = $this->entityManager->getRepository(Register::class)->find($registerId);
+                $register = $this->entityManager->getRepository(GameRegister::class)->find($registerId);
 
                 if ($register) {
-                    // $nextArrived = $this->entityManager->getRepository(Register::class)->getNextArrivedNumber($register,$nextGame->getIdgame());
-                    $nextArrived = $this->entityManager->getRepository(Register::class)->getFirstMissingArrivedNumber($register,$nextGame->getIdgame());
-                    
-                    $register->setPaid($action === 'validate' ? 1 : 0);
+                    // $nextArrived = $this->entityManager->getRepository(GameRegister::class)->getNextArrivedNumber($register,$nextGame->getIdgame());
+                    $nextArrived = $this->entityManager->getRepository(GameRegister::class)->getFirstMissingArrivedNumber($register,$nextGame->getIdgame());
+
                     if($register->getArrivedNumber() == 0){
 
                     }
     
                     if($nextArrived){
-                        $register->setPaid($action === 'validate' ? 1 : 0);
                         $register->setArrivedNumber($action === 'validate' ? $nextArrived : 0);
                     }
                     else{

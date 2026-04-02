@@ -159,4 +159,28 @@ class SumUpService
 
         return $data;
     }
+
+    public function refundTransaction(string $transactionId, float $amount): bool
+    {
+        if (! $this->hasValidConfiguration() || $transactionId === '' || $amount <= 0) {
+            return false;
+        }
+
+        $client = new Client();
+        $client->setUri($this->baseUrl . '/me/refund/' . rawurlencode($transactionId));
+        $client->setMethod(Request::METHOD_POST);
+        $client->setHeaders([
+            'Authorization' => 'Bearer ' . ($this->config['access_token'] ?? ''),
+            'Content-Type'  => 'application/json',
+        ]);
+
+        try {
+            $client->setRawBody(Json::encode(['amount' => $amount]));
+            $response = $client->send();
+        } catch (Throwable $exception) {
+            return false;
+        }
+
+        return $response->isSuccess();
+    }
 }

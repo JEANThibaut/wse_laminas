@@ -84,9 +84,9 @@
                       <p>Les inscriptions sont ouvertes ! </p>
                   </div>
                     <div class="col-12 text-center">
-                      <a href="<?= $this->escapeHtmlAttr($this->url('register-in-game', [], ['query' => ['id' => $game->getIdgame()]])) ?>" class="btn btn-warning">
-                          S'inscrire
-                      </a>
+                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        S'inscrire
+                      </button>
                   </div>  
                 </div>
                     
@@ -169,3 +169,34 @@
   </div>
 </div>
 <?php endif ;?>
+
+<?php if ($this->currentUser && $game && !($this->isPaymentPending ?? false) && !($this->register && (int)$this->register->getPaid() === 1)): ?>
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="registerConfirmForm" action="<?= $this->escapeHtmlAttr($this->url('register-in-game')) ?>" method="get">
+        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($game->getIdgame()) ?>">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registerModalLabel">Confirmation d'inscription</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <p>Vous allez être redirigé vers la page de paiement en ligne pour finaliser votre inscription. La réservation est confirmée après validation du paiement.</p>
+          <p>L'annulation de l'inscription est possible et entrainera un remboursement de <b>9,50 euros</b> afin de pallier au frais inhérent au service de paiement en ligne.</p>
+          <p> De plus le remboursement pourra être pris en charge uniquement si l'annulation intervient <b> 48h maximum </b> avant la date de la partie.</p>
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" value="1" id="refundConditionsAccepted" required>
+            <label class="form-check-label" for="refundConditionsAccepted">
+              J'ai lu, compris, et j'accepte les conditions d'inscriptions et de remboursement.
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-warning">Continuer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<?php endif; ?>

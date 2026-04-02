@@ -6,7 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Profil\Entity\Replique;
 use User\Entity\User;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
 use Application\Util\InputSanitizer;
 
 class ProfilController extends AbstractActionController
@@ -29,7 +29,7 @@ class ProfilController extends AbstractActionController
 
         $currentUser = $this->authService->getIdentity();
         // $form = new \Profil\Form\RepliqueForm();
-        $registers = $this->entityManager->getRepository(Register::class)->findBy(['user'=>$currentUser]);
+        $registers = $this->entityManager->getRepository(GameRegister::class)->findBy(['user'=>$currentUser]);
   
         $view = new ViewModel([
             // 'form' => $form,

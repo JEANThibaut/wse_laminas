@@ -5,9 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="Game\Repository\GameRepository")
- * @ORM\Table(name="register")
+ * @ORM\Table(name="game_register")
  */
-class Register
+class GameRegister
 {
     /**
      * @ORM\Id

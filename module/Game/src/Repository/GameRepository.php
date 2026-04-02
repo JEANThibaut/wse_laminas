@@ -2,7 +2,7 @@
 namespace Game\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
 
 class GameRepository extends EntityRepository
 {
@@ -29,7 +29,7 @@ public function findNextGame()
 }
 
 public function findRegister($game, $currentUser){
-        return $this->_em->getRepository(Register::class)->findOneBy([
+        return $this->_em->getRepository(GameRegister::class)->findOneBy([
         'game' => $game->getIdGame(),
         'user' => $currentUser
     ]);

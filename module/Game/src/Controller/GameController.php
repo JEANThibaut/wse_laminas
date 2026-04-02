@@ -2,11 +2,13 @@
 
 namespace Game\Controller;
 
+use Application\Util\InputSanitizer;
 use Application\Service\SumUpService;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
+use Game\Entity\PaymentTransaction;
 use Game\Entity\WaitingList;
 use Game\Form\GameForm;
 use User\Entity\User;
@@ -40,7 +42,7 @@ class GameController extends AbstractActionController
             return $this->redirect()->toRoute('login');
         }
 
-        $id = (int) $this->params()->fromQuery('id'); 
+        $id = InputSanitizer::cleanInt($this->params()->fromQuery('id'));
         $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);
         if (!$game) {
             $this->flashMessenger()->addErrorMessage('Pas de partie trouvée');
@@ -53,18 +55,24 @@ class GameController extends AbstractActionController
             return $this->redirect()->toRoute('home');
         }
 
-        $register = $this->entityManager->getRepository(Register::class)->findOneBy([
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game,
         ]);
 
-        if ($register && $register->getPaid() === 1) {
+        if ($register && $this->isRegisterPaid($register)) {
             $this->flashMessenger()->addSuccessMessage('Vous êtes déjà inscrit et votre paiement est validé.');
             return $this->redirect()->toRoute('home');
         }
 
         if (! $this->sumupService->hasValidConfiguration()) {
-            $this->flashMessenger()->addSuccessMessage('Votre inscription à bien été prise en compte');
+            $registered = $this->ensurePaidRegistration($game->getIdgame(), $user->getIdUser());
+            if (! $registered) {
+                $this->flashMessenger()->addErrorMessage('Configuration de paiement invalide et inscription impossible.');
+                return $this->redirect()->toRoute('home');
+            }
+
+            $this->flashMessenger()->addSuccessMessage('Votre inscription a bien ete prise en compte.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -83,26 +91,8 @@ class GameController extends AbstractActionController
         }
 
         $checkoutReference = sprintf('game-%d-user-%d-%d', $game->getIdgame(), $user->getIdUser(), time());
-        $redirectUrl = $this->url()->fromRoute(
-            'register-in-game-payment-return',
-            [],
-            [
-                'force_canonical' => true,
-                'query' => [
-                    'game' => $game->getIdgame(),
-                    'reference' => $checkoutReference,
-                ],
-            ]
-        );
-        $returnUrl = $this->sumupService->isWebhookEnabled()
-            ? $this->url()->fromRoute(
-                'sumup-webhook',
-                [],
-                [
-                    'force_canonical' => true,
-                ]
-            )
-            : $redirectUrl;
+        $redirectUrl = $this->buildPaymentReturnUrl($game->getIdgame(), $checkoutReference);
+        $returnUrl = $redirectUrl;
 
         $checkout = $this->sumupService->createCheckout(
             $amount,
@@ -118,10 +108,33 @@ class GameController extends AbstractActionController
             return $this->redirect()->toRoute('home');
         }
 
-        $paymentUrl = trim((string)($checkout['hosted_checkout_url'] ?? ''));
-        if ($paymentUrl === '' && isset($checkout['next_step']['url']) && is_string($checkout['next_step']['url'])) {
-            $paymentUrl = trim($checkout['next_step']['url']);
+        $hostedCheckoutUrl = trim((string)($checkout['hosted_checkout_url'] ?? ''));
+        $nextStepUrl = '';
+        if (isset($checkout['next_step']['url']) && is_string($checkout['next_step']['url'])) {
+            $nextStepUrl = trim($checkout['next_step']['url']);
         }
+
+        // SumUp may return next_step URL asynchronously; refresh checkout before redirecting.
+        if ($nextStepUrl === '' && $checkoutReference !== '') {
+            for ($attempt = 0; $attempt < 2 && $nextStepUrl === ''; $attempt++) {
+                usleep(200000);
+                $checkoutRefreshed = $this->sumupService->getCheckoutByReference($checkoutReference);
+                if (! is_array($checkoutRefreshed)) {
+                    continue;
+                }
+
+                if ($hostedCheckoutUrl === '' && isset($checkoutRefreshed['hosted_checkout_url']) && is_string($checkoutRefreshed['hosted_checkout_url'])) {
+                    $hostedCheckoutUrl = trim($checkoutRefreshed['hosted_checkout_url']);
+                }
+
+                if (isset($checkoutRefreshed['next_step']['url']) && is_string($checkoutRefreshed['next_step']['url'])) {
+                    $nextStepUrl = trim($checkoutRefreshed['next_step']['url']);
+                }
+            }
+        }
+
+        // Prefer full-page redirect flow first to avoid 3DS iframe/popup issues.
+        $paymentUrl = $nextStepUrl !== '' ? $nextStepUrl : '';
 
         if (
             $paymentUrl === ''
@@ -130,6 +143,17 @@ class GameController extends AbstractActionController
             && stripos($checkout['redirect_url'], 'sumup.com') !== false
         ) {
             $paymentUrl = trim($checkout['redirect_url']);
+        }
+
+        if ($paymentUrl === '') {
+            $paymentUrl = $hostedCheckoutUrl;
+        }
+
+        if ($paymentUrl === '' && isset($checkout['id']) && is_string($checkout['id'])) {
+            $checkoutIdForUrl = trim($checkout['id']);
+            if ($checkoutIdForUrl !== '') {
+                $paymentUrl = 'https://checkout.sumup.com/pay/c-' . rawurlencode($checkoutIdForUrl);
+            }
         }
 
         if ($paymentUrl === '') {
@@ -148,9 +172,9 @@ class GameController extends AbstractActionController
             return $this->redirect()->toRoute('login');
         }
 
-        $gameId = (int)$this->params()->fromQuery('game', 0);
-        $checkoutReference = (string)$this->params()->fromQuery('reference', '');
-        $checkoutId = (string)$this->params()->fromQuery('checkout_id', '');
+        $gameId = InputSanitizer::cleanInt($this->params()->fromQuery('game', 0));
+        $checkoutReference = InputSanitizer::cleanString($this->params()->fromQuery('reference', ''));
+        $checkoutId = InputSanitizer::cleanString($this->params()->fromQuery('checkout_id', ''));
 
         if (($gameId <= 0 && $checkoutReference === '') || ($checkoutReference === '' && $checkoutId === '')) {
             $this->flashMessenger()->addErrorMessage('Retour de paiement invalide.');
@@ -175,7 +199,7 @@ class GameController extends AbstractActionController
         }
 
         $existingRegister = $this->findUserGameRegister($currentUser->getIdUser(), $gameId);
-        if ($existingRegister && $existingRegister->getPaid() === 1) {
+        if ($existingRegister && $this->isRegisterPaid($existingRegister)) {
             $this->flashMessenger()->addSuccessMessage('Paiement confirmé par le serveur, votre inscription est validée.');
             return $this->redirect()->toRoute('home');
         }
@@ -198,6 +222,10 @@ class GameController extends AbstractActionController
                 if (! $registered) {
                     $this->flashMessenger()->addErrorMessage('Paiement OK mais inscription introuvable.');
                     return $this->redirect()->toRoute('home');
+                }
+                $register = $this->findUserGameRegister($currentUser->getIdUser(), $gameId);
+                if ($register) {
+                    $this->savePaidTransaction($register, $checkout);
                 }
                 $this->flashMessenger()->addSuccessMessage('Paiement confirmé (mode test local), votre inscription est validée.');
                 return $this->redirect()->toRoute('home');
@@ -279,7 +307,7 @@ class GameController extends AbstractActionController
 
         if (preg_match('/^game-\d+-register-(\d+)-\d+$/', $resolvedReference, $legacyMatches)) {
             $registerId = (int)$legacyMatches[1];
-            $register = $this->entityManager->getRepository(Register::class)->findOneBy(['idregister' => $registerId]);
+            $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy(['idregister' => $registerId]);
             if (! $register) {
                 return $this->emptyResponse(204);
             }
@@ -302,6 +330,11 @@ class GameController extends AbstractActionController
             return $this->emptyResponse(204);
         }
 
+        $register = $this->findUserGameRegister($parsedReference['userId'], $parsedReference['gameId']);
+        if ($register) {
+            $this->savePaidTransaction($register, $checkout);
+        }
+
         return $this->emptyResponse(204);
     }
 
@@ -312,9 +345,47 @@ class GameController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $currentUser = $this->authService->getIdentity();
+            if (! $currentUser) {
+                $this->flashMessenger()->addErrorMessage('Vous devez être connecté pour vous désinscrire.');
+                return $this->redirect()->toRoute('login');
+            }
             $id = InputSanitizer::cleanInt($this->params()->fromPost('id'));
-            $register = $this->entityManager->getRepository(Register::class)->findOneBy(['idregister'=>$id]);
+            $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy(['idregister'=>$id]);
             if($register){
+                $registerUser = $register->getUser();
+                if (! $registerUser || (int)$registerUser->getIdUser() !== (int)$currentUser->getIdUser()) {
+                    $this->flashMessenger()->addErrorMessage('Action non autorisée.');
+                    return $this->redirect()->toRoute('home');
+                }
+
+                $paymentTransaction = $this->getRefundableTransactionForRegister($register);
+                if ($paymentTransaction) {
+                    $isRefundEligible = $this->isRefundEligible($register);
+                    if ($isRefundEligible) {
+                        if (! $paymentTransaction->getProviderTransactionId()) {
+                            $this->flashMessenger()->addErrorMessage('Remboursement impossible: transaction de paiement introuvable.');
+                            return $this->redirect()->toRoute('home');
+                        }
+
+                        $refundAmount = (float)($this->sumupConfig['refund']['amount'] ?? 9.50);
+                        $refunded = $this->sumupService->refundTransaction($paymentTransaction->getProviderTransactionId(), $refundAmount);
+                        if (! $refunded) {
+                            $this->flashMessenger()->addErrorMessage('Remboursement refusé par SumUp. Réessayez plus tard ou contactez un admin.');
+                            return $this->redirect()->toRoute('home');
+                        }
+
+                        $paymentTransaction->setStatus('refunded');
+                        $paymentTransaction->setRefundedAmount($refundAmount);
+                        $paymentTransaction->setRefundDoneAt(new \DateTime());
+                        $this->entityManager->flush();
+                    } else {
+                        $this->flashMessenger()->addWarningMessage('Désinscription enregistrée sans remboursement (moins de 48h avant la partie).');
+                    }
+                } elseif ((int)$register->getPaid() === 1) {
+                    // Legacy flag without transaction record: keep unregister possible but cannot call SumUp refund safely.
+                    $this->flashMessenger()->addWarningMessage('Désinscription enregistrée sans remboursement automatique (paiement legacy sans transaction SumUp).');
+                }
+
                 $this->entityManager->remove($register);
                 $this->entityManager->flush();
                 $this->flashMessenger()->addSuccessMessage('Désinscription réussie.');
@@ -410,6 +481,46 @@ class GameController extends AbstractActionController
         return null;
     }
 
+    private function isMobileClient(): bool
+    {
+        $userAgent = strtolower((string)($_SERVER['HTTP_USER_AGENT'] ?? ''));
+        if ($userAgent === '') {
+            return false;
+        }
+
+        return (bool) preg_match('/android|iphone|ipad|ipod|mobile|webview|wv|opera mini/i', $userAgent);
+    }
+
+    private function buildPaymentReturnUrl(int $gameId, string $checkoutReference): string
+    {
+        $query = [
+            'game' => $gameId,
+            'reference' => $checkoutReference,
+        ];
+
+        $pathWithQuery = $this->url()->fromRoute(
+            'register-in-game-payment-return',
+            [],
+            [
+                'query' => $query,
+            ]
+        );
+
+        $publicBaseUrl = trim((string)($this->sumupConfig['public_base_url'] ?? ''));
+        if ($publicBaseUrl !== '') {
+            return rtrim($publicBaseUrl, '/') . $pathWithQuery;
+        }
+
+        return $this->url()->fromRoute(
+            'register-in-game-payment-return',
+            [],
+            [
+                'force_canonical' => true,
+                'query' => $query,
+            ]
+        );
+    }
+
     private function extractGameUserFromReference(string $checkoutReference): ?array
     {
         if (! preg_match('/^game-(\d+)-user-(\d+)-\d+$/', $checkoutReference, $matches)) {
@@ -422,7 +533,7 @@ class GameController extends AbstractActionController
         ];
     }
 
-    private function findUserGameRegister(int $userId, int $gameId): ?Register
+    private function findUserGameRegister(int $userId, int $gameId): ?GameRegister
     {
         if ($userId <= 0 || $gameId <= 0) {
             return null;
@@ -434,12 +545,12 @@ class GameController extends AbstractActionController
             return null;
         }
 
-        $register = $this->entityManager->getRepository(Register::class)->findOneBy([
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game,
         ]);
 
-        return $register instanceof Register ? $register : null;
+        return $register instanceof GameRegister ? $register : null;
     }
 
     private function ensurePaidRegistration(int $gameId, int $userId): bool
@@ -454,13 +565,13 @@ class GameController extends AbstractActionController
             return false;
         }
 
-        $register = $this->entityManager->getRepository(Register::class)->findOneBy([
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game,
         ]);
 
         if (! $register) {
-            $register = new Register();
+            $register = new GameRegister();
             $register->setUser($user);
             $register->setGame($game);
             $register->setArrivedNumber(0);
@@ -472,6 +583,92 @@ class GameController extends AbstractActionController
         $this->entityManager->flush();
 
         return true;
+    }
+
+    private function savePaidTransaction(GameRegister $register, array $checkout): void
+    {
+        $transactionId = $this->extractCheckoutTransactionId($checkout);
+        if ($transactionId === '') {
+            return;
+        }
+
+        $existingPaidForRegister = $this->getRefundableTransactionForRegister($register);
+        if ($existingPaidForRegister) {
+            return;
+        }
+
+        $existing = $this->entityManager->getRepository(PaymentTransaction::class)->findOneBy([
+            'register' => $register,
+            'provider_transaction_id' => $transactionId,
+        ]);
+
+        if ($existing) {
+            if ($existing->getStatus() !== 'paid') {
+                $existing->setStatus('paid');
+                $this->entityManager->flush();
+            }
+            return;
+        }
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setRegister($register);
+        $paymentTransaction->setProviderTransactionId($transactionId);
+        $paymentTransaction->setStatus('paid');
+        $this->entityManager->persist($paymentTransaction);
+        $this->entityManager->flush();
+    }
+
+    private function getRefundableTransactionForRegister(GameRegister $register): ?PaymentTransaction
+    {
+        $transaction = $this->entityManager->getRepository(PaymentTransaction::class)->findOneBy([
+            'register' => $register,
+            'status' => 'paid',
+            'refund_done_at' => null,
+        ]);
+
+        return $transaction instanceof PaymentTransaction ? $transaction : null;
+    }
+
+    private function isRegisterPaid(GameRegister $register): bool
+    {
+        if ($this->getRefundableTransactionForRegister($register) !== null) {
+            return true;
+        }
+
+        // Compatibility for old registrations created before transaction tracking.
+        return (int)$register->getPaid() === 1;
+    }
+
+    private function extractCheckoutTransactionId(array $checkout): string
+    {
+        if (isset($checkout['transaction_id']) && is_string($checkout['transaction_id']) && trim($checkout['transaction_id']) !== '') {
+            return trim($checkout['transaction_id']);
+        }
+
+        if (isset($checkout['transactions']) && is_array($checkout['transactions']) && isset($checkout['transactions'][0]) && is_array($checkout['transactions'][0])) {
+            $candidate = $checkout['transactions'][0]['id'] ?? '';
+            if (is_string($candidate) && trim($candidate) !== '') {
+                return trim($candidate);
+            }
+        }
+
+        return '';
+    }
+
+    private function isRefundEligible(GameRegister $register): bool
+    {
+        $game = $register->getGame();
+        if (! $game || ! method_exists($game, 'getDate')) {
+            return false;
+        }
+
+        $gameDate = $game->getDate();
+        if (! $gameDate instanceof \DateTimeInterface) {
+            return false;
+        }
+
+        $limit = (new \DateTimeImmutable($gameDate->format('Y-m-d H:i:s')))->modify('-48 hours');
+        return new \DateTimeImmutable('now') <= $limit;
     }
 
   

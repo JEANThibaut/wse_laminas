@@ -5,7 +5,7 @@ namespace Application\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
 use Game\Entity\WaitingList;
 use Actus\Entity\Actus;
 class IndexController extends AbstractActionController
@@ -29,13 +29,13 @@ class IndexController extends AbstractActionController
         $isInWaitingList = false;
         $isComplete = false;
         if($game){
-            $countRegister = $this->entityManager->getRepository(Register::class)->findBy(['game'=>$game->getIdGame(),]);
+            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy(['game'=>$game->getIdGame(),]);
         }   
         $this->layout()->setVariable('activeMenu', 'home');
         $register = null;
         if($game && $currentUser){
             $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser->getIdUser());
-            $countRegister = $this->entityManager->getRepository(Register::class)->findBy([
+            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
                 'game' => $game->getIdGame(),
                 'paid' => 1,
             ]);

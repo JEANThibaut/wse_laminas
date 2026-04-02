@@ -51,7 +51,7 @@ class UserController extends AbstractActionController
         $request = $this->getRequest();
         $iduser = InputSanitizer::cleanInt($this->params()->fromRoute('iduser'));
         if($request->isPost()){
-            $data = $request->getPost()->toArray();
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
             // dump($data);
             if(!empty($data['first_name']) && !empty($data['last_name']) && !empty($data['email']) ){
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
@@ -60,9 +60,9 @@ class UserController extends AbstractActionController
                     $user->setFirstName($data['first_name']);
                     $user->setLastName($data['last_name']);
                     $user->setEmail($data['email']);
-                    $user->setIsAdmin($data['isAdmin']);
-                    $user->setIsMember($data['isMember']);
-                     $user->setIsBlacklist($data['isBlacklist'] ?? 0);
+                    $user->setIsAdmin(InputSanitizer::cleanBool($data['isAdmin'] ?? 0));
+                    $user->setIsMember(InputSanitizer::cleanBool($data['isMember'] ?? 0));
+                    $user->setIsBlacklist(InputSanitizer::cleanBool($data['isBlacklist'] ?? 0));
                     $this->entityManager->flush();
                     $this->flashMessenger()->addSuccessMessage('Utilisateur modifié avec succès.');
                     return $this->redirect()->toRoute('admin-users');
