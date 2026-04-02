@@ -46,6 +46,7 @@ class FactionController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $faction = $this->entityManager->getRepository(Faction::class)->findOneBy(['idfaction' => $currentUser->getFaction()]);
         $objectifs = $this->entityManager->getRepository(Objectif::class)->findBy(['idfaction' => $currentUser->getFaction()]);
+        
         if (!$faction) {
             // Redirect using a literal URL to avoid route name resolution issues
             return $this->redirect()->toUrl('/faction-register');
