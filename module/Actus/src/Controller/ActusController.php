@@ -25,7 +25,6 @@ class ActusController extends AbstractActionController
     }
 
     public function actusIndexAction(){
-        // Récupère toutes les actus (simple implémentation)
         $actus = $this->entityManager->getRepository(Actus::class)->findAll();
         $currentUser = $this->authService->getIdentity();
 
@@ -41,7 +40,8 @@ class ActusController extends AbstractActionController
 
     public function actusCreateAction()
     {
-        if ($redirect = $this->requireAdmin()) {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $redirect;
         }
 
@@ -64,7 +64,8 @@ class ActusController extends AbstractActionController
 
     public function actusEditAction()
     {
-        if ($redirect = $this->requireAdmin()) {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $redirect;
         }
 
@@ -94,7 +95,8 @@ class ActusController extends AbstractActionController
 
     public function actusDeleteAction()
     {
-        if ($redirect = $this->requireAdmin()) {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $redirect;
         }
 
@@ -117,7 +119,8 @@ class ActusController extends AbstractActionController
 
     public function actusAdminAction()
     {
-        if ($redirect = $this->requireAdmin()) {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $redirect;
         }
 
@@ -132,15 +135,5 @@ class ActusController extends AbstractActionController
         return $view;
     }
 
-    private function requireAdmin()
-    {
-        $currentUser = $this->authService->getIdentity();
-        if (! $currentUser || ! $currentUser->getIsAdmin()) {
-            $this->flashMessenger()->addErrorMessage('Accès refusé.');
-            return $this->redirect()->toRoute('home');
-        }
-
-        return null;
-    }
   
 }

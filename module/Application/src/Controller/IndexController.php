@@ -5,7 +5,7 @@ namespace Application\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
 use Game\Entity\WaitingList;
 use Actus\Entity\Actus;
 class IndexController extends AbstractActionController
@@ -25,19 +25,28 @@ class IndexController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
         $isRegister = false;
+        $isPaymentPending = false;
         $isInWaitingList = false;
         $isComplete = false;
         if($game){
-            $countRegister = $this->entityManager->getRepository(Register::class)->findBy(['game'=>$game->getIdGame(),]);
+            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy(['game'=>$game->getIdGame(),]);
         }   
         $this->layout()->setVariable('activeMenu', 'home');
+        $register = null;
         if($game && $currentUser){
             $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser->getIdUser());
-            // $countRegister = $this->entityManager->getRepository(Register::class)->findBy(['game'=>$game->getIdGame(),]);
+            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
+                'game' => $game->getIdGame(),
+                'paid' => 1,
+            ]);
             // $isInWaitingList = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game'=>$game->getIdGame(),'user'=>$currentUser->getIdUser()]);
-          if($register){
-            $isRegister = true;
-          }
+            if($register){
+                if ((int)$register->getPaid() === 1) {
+                    $isRegister = true;
+                } else {
+                    $isPaymentPending = true;
+                }
+            }
             $isComplete = count($countRegister) >= $game->getPlayerMax();
         }
 
@@ -54,6 +63,7 @@ class IndexController extends AbstractActionController
             'currentUser'=>$currentUser,
             'register'=>$register ?? null,
             'isComplete'=>$isComplete,
+            'isPaymentPending' => $isPaymentPending,
             'actus' => $actus,
             'countRegister'=> $countRegister ?? null,
             // 'isInWaitingList'=>$isInWaitingList,
@@ -63,6 +73,12 @@ class IndexController extends AbstractActionController
     public function faqAction()
     {
         $this->layout()->setVariable('activeMenu', 'faq');
+        return new ViewModel();
+    }
+
+    public function briefingAction()
+    {
+        $this->layout()->setVariable('activeMenu', 'briefing');
         return new ViewModel();
     }
 }

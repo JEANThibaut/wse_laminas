@@ -70,6 +70,16 @@ return [
                     ],
                 ],
             ],
+               'briefing' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/briefing',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action'     => 'briefing',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -91,9 +101,11 @@ return [
                 $storage = new Session('UserAuth');
                 return new AuthenticationService($storage);
             },
+            Service\SumUpService::class => Service\Factory\SumupServiceFactory::class,
         ],
         'aliases' => [
             'authentication' => AuthenticationService::class,
+            'sumup_service' => Service\SumUpService::class,
         ],
     ],
 

@@ -22,6 +22,26 @@ return [
                     ],
                 ],
             ],
+            'register-in-game-payment-return' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/register-in-game/payment-return',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'registerInGamePaymentReturn',
+                    ],
+                ],
+            ],
+            'sumup-webhook' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/webhooks/sumup',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'sumupWebhook',
+                    ],
+                ],
+            ],
             'unregister-in-game' => [
                 'type' => Literal::class,
                 'options' => [

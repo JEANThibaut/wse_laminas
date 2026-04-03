@@ -2,7 +2,7 @@
 namespace Game\Service;
 
 use Game\Entity\Game;
-use Game\Entity\Register;
+use Game\Entity\GameRegister;
 use Game\Entity\WaitingList;
 use User\Entity\User;
 use Doctrine\ORM\EntityManager;
@@ -50,7 +50,7 @@ class GameManager
     {
          $user = $this->entityManager->getRepository(User::class)->find($currentUser->getIdUser());
 
-        $existing = $this->entityManager->getRepository(Register::class)->findOneBy([
+        $existing = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game
         ]);
@@ -59,7 +59,7 @@ class GameManager
             return false; 
         }
 
-        $register = new Register();
+        $register = new GameRegister();
         $register->setUser($user);
         $register->setGame($game);
         $register->setPaid(0);   

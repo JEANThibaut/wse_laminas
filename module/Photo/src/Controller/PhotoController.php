@@ -21,10 +21,10 @@ class PhotoController extends AbstractActionController
 
 
 
-    public function indexAction()
-{
-    $currentUser = $this->authService->getIdentity();
+    public function indexAction(){
 
+
+    $currentUser = $this->authService->getIdentity();
     $photoBaseDir = 'public/photos';
     $photoWebPath = '/photos';
 
@@ -93,8 +93,9 @@ class PhotoController extends AbstractActionController
 
 
 
-public function photosViewAction()
-{
+public function photosViewAction(){
+
+
     // Désactive le pull-to-refresh pour cette page
     $this->layout()->setVariable('disablePtr', true);
 

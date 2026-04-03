@@ -25,7 +25,11 @@ class AnnonceController extends AbstractActionController
     }
 
     public function annoncesIndexAction(){
+
         $page = InputSanitizer::cleanInt($this->params()->fromQuery('page', 1));
+        if ($page < 1) {
+            $page = 1;
+        }
         $search = InputSanitizer::cleanString($this->params()->fromQuery('search', ''));
         $annonces = $this->entityManager->getRepository(Annonce::class)->fetchPaginated($page, 10, $search);
 
@@ -45,7 +49,6 @@ class AnnonceController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $annonceId = InputSanitizer::cleanInt($this->params()->fromRoute('id'));
         $annonce = $this->entityManager->getRepository(Annonce::class)->findOneBy(['idannonce'=>$annonceId]);
-        dump($annonce);
         $view = new ViewModel([
             'annonce' => $annonce,
         ]);

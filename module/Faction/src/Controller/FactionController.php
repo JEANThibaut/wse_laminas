@@ -36,10 +36,17 @@ class FactionController extends AbstractActionController
     }
 
     public function indexAction()
+
     {
+
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $currentUser = $this->authService->getIdentity();
         $faction = $this->entityManager->getRepository(Faction::class)->findOneBy(['idfaction' => $currentUser->getFaction()]);
         $objectifs = $this->entityManager->getRepository(Objectif::class)->findBy(['idfaction' => $currentUser->getFaction()]);
+        
         if (!$faction) {
             // Redirect using a literal URL to avoid route name resolution issues
             return $this->redirect()->toUrl('/faction-register');
@@ -59,8 +66,11 @@ class FactionController extends AbstractActionController
     }
 
 
-    public function factionRegisterAction()
-    {
+    public function factionRegisterAction(){
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }        
         $currentUser = $this->authService->getIdentity();
         $view = new ViewModel([
             'currentUser' => $currentUser,

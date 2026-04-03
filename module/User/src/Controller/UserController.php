@@ -23,8 +23,11 @@ class UserController extends AbstractActionController
 
 
 
-    public function usersAction()
-    {
+    public function usersAction(){
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
         $currentUser = $this->authService->getIdentity();
         $users = $this->entityManager->getRepository(User::class)->findBy([], ['lastname' => 'ASC']);
         $view = new ViewModel([
@@ -39,23 +42,29 @@ class UserController extends AbstractActionController
     }
 
     
-     public function editUserAction()
-    {        
+     public function editUserAction(){  
+            if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+                $this->flashMessenger()->addErrorMessage('Accès refusé.');
+                return $redirect;
+            }      
         $currentUser = $this->authService->getIdentity();
         $request = $this->getRequest();
         $iduser = InputSanitizer::cleanInt($this->params()->fromRoute('iduser'));
         if($request->isPost()){
             $data = InputSanitizer::cleanArray($request->getPost()->toArray());
-            if(!empty($data['username']) && !empty($data['email']) && isset($data['is_admin']) && isset($data['is_active'])){
+            // dump($data);
+            if(!empty($data['first_name']) && !empty($data['last_name']) && !empty($data['email']) ){
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
                 if($user){
-                    $user = $this->entityManager->getRepository(User::class)->editUser($user, $data);
-                    // $user->setUsername($data['username']);
-                    // $user->setEmail($data['email']);
-                    // $user->setIsAdmin((int)$data['is_admin']);
-                    // $user->setIsActive((int)$data['is_active']);
-                    // $this->entityManager->flush();
-                    // $this->flashMessenger()->addSuccessMessage('Utilisateur modifié avec succès.');
+                   
+                    $user->setFirstName($data['first_name']);
+                    $user->setLastName($data['last_name']);
+                    $user->setEmail($data['email']);
+                    $user->setIsAdmin(InputSanitizer::cleanBool($data['isAdmin'] ?? 0));
+                    $user->setIsMember(InputSanitizer::cleanBool($data['isMember'] ?? 0));
+                    $user->setIsBlacklist(InputSanitizer::cleanBool($data['isBlacklist'] ?? 0));
+                    $this->entityManager->flush();
+                    $this->flashMessenger()->addSuccessMessage('Utilisateur modifié avec succès.');
                     return $this->redirect()->toRoute('admin-users');
                 }else{
                     $this->flashMessenger()->addErrorMessage('Utilisateur introuvable.');
@@ -75,8 +84,12 @@ class UserController extends AbstractActionController
         return $view;
     }
   
-    public function deleteUserAction()
-    {        
+    public function deleteUserAction(){      
+
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }  
         $request = $this->getRequest();
         if (!$request->isPost()) {
             return $this->redirect()->toRoute('admin-users');

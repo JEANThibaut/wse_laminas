@@ -13,4 +13,23 @@
  */
 
 return [
+	// Exemple de surcharge locale pour SumUp (ne pas committer les vraies clés)
+	// 'sumup_settings' => [
+	//     'enabled' => true,
+	//     'access_token' => 'SUP_SK_...',
+	//     'merchant_code' => 'MH4H92C7',
+	//     'webhook' => [
+	//         'enabled' => false,
+	//     ],
+	//     'local_test' => [
+	//         'confirm_on_return' => true,
+	//     ],
+	//     'event_registration' => [
+	//         'currency' => 'EUR',
+	//         'amount' => 15,
+	//         // Optionnel: garder des tarifs différents
+	//         // 'amount_member' => 5,
+	//         // 'amount_non_member' => 15,
+	//     ],
+	// ],
 ];
