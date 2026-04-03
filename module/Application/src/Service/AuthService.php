@@ -74,7 +74,6 @@ class AuthService
 
         // Envoi avec PHPMailer
         $mail = new PHPMailer(true);
-
         try {
         // --- Paramètres Serveur SMTP OVH ---
         $mail->isSMTP();

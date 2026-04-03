@@ -135,6 +135,5 @@ class ActusController extends AbstractActionController
         return $view;
     }
 
-
   
 }
