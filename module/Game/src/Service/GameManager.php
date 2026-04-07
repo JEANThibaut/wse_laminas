@@ -52,7 +52,8 @@ class GameManager
 
         $existing = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
-            'game' => $game
+            'game' => $game,
+            'status' => GameRegister::STATUS_ACTIVE,
         ]);
 
         if ($existing) {
@@ -65,6 +66,7 @@ class GameManager
         $register->setPaid(0);   
         $register->setArrivedNumber(0);
         $register->setMember($user->getIsMember());
+        $register->setStatus(GameRegister::STATUS_ACTIVE);
         $this->entityManager->persist($register);
         $this->entityManager->flush();
 
