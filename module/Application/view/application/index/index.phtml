@@ -151,14 +151,21 @@
 <div class="modal fade" id="unregisterModal" tabindex="-1" aria-labelledby="unregisterModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game')) ?>" method="post">
+      <form id="unregisterConfirmForm" action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game')) ?>" method="post">
         <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($register->getIdregister()) ?>">
         <div class="modal-header">
           <h5 class="modal-title" id="unregisterModalLabel">Confirmation</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
         </div>
         <div class="modal-body">
-          Êtes-vous sûr de vouloir vous désinscrire de cette partie ?
+          <p>Êtes-vous sûr de vouloir vous désinscrire de cette partie ?</p>
+          <p>Si la désinscription intervient plus de <b>24h avant</b> la partie, le remboursement sera de <b>9,50 euros</b> et traité sous <b>24 à 48h</b>.</p>
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" value="1" id="unregisterRefundAccepted" required>
+            <label class="form-check-label" for="unregisterRefundAccepted">
+              J'ai lu, compris, et j'accepte les conditions de désinscription et de remboursement.
+            </label>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

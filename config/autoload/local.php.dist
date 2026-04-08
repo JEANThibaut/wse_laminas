@@ -13,23 +13,29 @@
  */
 
 return [
-	// Exemple de surcharge locale pour SumUp (ne pas committer les vraies clés)
+	// Exemple de surcharge locale pour SumUp (ne pas committer les vraies cles)
 	// 'sumup_settings' => [
 	//     'enabled' => true,
 	//     'access_token' => 'SUP_SK_...',
 	//     'merchant_code' => 'MH4H92C7',
+	//     'base_url' => 'https://api.sumup.com/v0.1',
+	//     'public_base_url' => 'https://www.wolfsofteure.fr',
+	//     'hosted_checkout' => [
+	//         'enabled' => true,
+	//     ],
 	//     'webhook' => [
 	//         'enabled' => false,
+	//         'secret' => '',
 	//     ],
 	//     'local_test' => [
 	//         'confirm_on_return' => true,
 	//     ],
 	//     'event_registration' => [
 	//         'currency' => 'EUR',
-	//         'amount' => 15,
-	//         // Optionnel: garder des tarifs différents
+	//         'amount' => 10,
+	//         // Optionnel: garder des tarifs differents
 	//         // 'amount_member' => 5,
-	//         // 'amount_non_member' => 15,
+	//         // 'amount_non_member' => 10,
 	//     ],
 	// ],
 ];
