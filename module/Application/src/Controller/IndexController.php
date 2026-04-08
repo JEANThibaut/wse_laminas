@@ -29,7 +29,10 @@ class IndexController extends AbstractActionController
         $isInWaitingList = false;
         $isComplete = false;
         if($game){
-            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy(['game'=>$game->getIdGame(),]);
+            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
+                'game' => $game->getIdGame(),
+                'status' => GameRegister::STATUS_ACTIVE,
+            ]);
         }   
         $this->layout()->setVariable('activeMenu', 'home');
         $register = null;
@@ -38,6 +41,7 @@ class IndexController extends AbstractActionController
             $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
                 'game' => $game->getIdGame(),
                 'paid' => 1,
+                'status' => GameRegister::STATUS_ACTIVE,
             ]);
             // $isInWaitingList = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game'=>$game->getIdGame(),'user'=>$currentUser->getIdUser()]);
             if($register){

@@ -68,9 +68,10 @@ class AdminController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage('Partie introuvable.');
             return $this->redirect()->toRoute('admin-games');
         }
-        $registers = $this->entityManager->getRepository(GameRegister::class)->findBy(
-            ['game' => $game->getIdGame()],
-        );
+        $registers = $this->entityManager->getRepository(GameRegister::class)->findBy([
+            'game' => $game->getIdGame(),
+            'status' => GameRegister::STATUS_ACTIVE,
+        ]);
         $players = $registers;
 
         $request = $this->getRequest();
@@ -143,7 +144,9 @@ class AdminController extends AbstractActionController
             ->where('r.game = :game')
             ->andWhere('r.member = 0')
             ->andWhere('r.paid = 1')
+            ->andWhere('r.status = :status')
             ->setParameter('game', $nextGame)
+            ->setParameter('status', GameRegister::STATUS_ACTIVE)
             ->orderBy('u.firstname', 'ASC');
         $registers = $qb->getQuery()->getResult();
         if ($request->isPost()) {

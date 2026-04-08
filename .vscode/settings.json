@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^Set-Location 'f:\\\\DEV\\\\wse_laminas'; php -l 'module/Game/config/module\\.config\\.php'; php -l 'module/Admin/config/module\\.config\\.php'$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

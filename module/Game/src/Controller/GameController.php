@@ -45,7 +45,7 @@ class GameController extends AbstractActionController
         $id = InputSanitizer::cleanInt($this->params()->fromQuery('id'));
         $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);
         if (!$game) {
-            $this->flashMessenger()->addErrorMessage('Pas de partie trouvée');
+            $this->flashMessenger()->addErrorMessage('Partie introuvable.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -58,28 +58,25 @@ class GameController extends AbstractActionController
         $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game,
+            'status' => GameRegister::STATUS_ACTIVE,
         ]);
 
         if ($register && $this->isRegisterPaid($register)) {
-            $this->flashMessenger()->addSuccessMessage('Vous êtes déjà inscrit et votre paiement est validé.');
+            $this->flashMessenger()->addSuccessMessage('Votre inscription est déjà confirmée.');
             return $this->redirect()->toRoute('home');
         }
 
         if (! $this->sumupService->hasValidConfiguration()) {
-            $this->flashMessenger()->addErrorMessage('Configuration de paiement invalide. Inscription non créée.');
+            $this->flashMessenger()->addErrorMessage('Le paiement n\'est pas disponible pour le moment.');
             return $this->redirect()->toRoute('home');
         }
 
         $eventConfig = $this->sumupConfig['event_registration'] ?? [];
-        $amount = array_key_exists('amount', $eventConfig)
-            ? (float)$eventConfig['amount']
-            : ($user->getIsMember()
-                ? (float)($eventConfig['amount_member'] ?? 0)
-                : (float)($eventConfig['amount_non_member'] ?? 0));
+        $amount = $this->resolveRegistrationAmount((bool)$user->getIsMember());
         $currency = strtoupper((string)($eventConfig['currency'] ?? 'EUR'));
 
         if ($amount <= 0) {
-            $this->flashMessenger()->addErrorMessage('Montant de paiement invalide. Inscription non créée.');
+            $this->flashMessenger()->addErrorMessage('Le montant de l\'inscription est indisponible pour le moment.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -97,7 +94,7 @@ class GameController extends AbstractActionController
         );
 
         if (! is_array($checkout)) {
-            $this->flashMessenger()->addErrorMessage('Impossible de lancer le paiement en ligne pour le moment.');
+            $this->flashMessenger()->addErrorMessage('Impossible d\'ouvrir le paiement en ligne pour le moment.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -150,7 +147,7 @@ class GameController extends AbstractActionController
         }
 
         if ($paymentUrl === '') {
-            $this->flashMessenger()->addErrorMessage('Paiement créé mais URL de paiement manquante.');
+            $this->flashMessenger()->addErrorMessage('Le paiement n\'a pas pu être ouvert. Réessayez dans quelques instants.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -193,7 +190,7 @@ class GameController extends AbstractActionController
 
         $existingRegister = $this->findUserGameRegister($currentUser->getIdUser(), $gameId);
         if ($existingRegister && $this->isRegisterPaid($existingRegister)) {
-            $this->flashMessenger()->addSuccessMessage('Paiement confirmé par le serveur, votre inscription est validée.');
+            $this->flashMessenger()->addSuccessMessage('Votre inscription est confirmée.');
             return $this->redirect()->toRoute('home');
         }
 
@@ -213,22 +210,22 @@ class GameController extends AbstractActionController
             if ($this->sumupService->isReturnConfirmationEnabled()) {
                 $registered = $this->ensurePaidRegistration($gameId, $currentUser->getIdUser());
                 if (! $registered) {
-                    $this->flashMessenger()->addErrorMessage('Paiement OK mais inscription introuvable.');
+                    $this->flashMessenger()->addErrorMessage('Le paiement a bien été confirmé, mais l\'inscription n\'a pas pu être finalisée.');
                     return $this->redirect()->toRoute('home');
                 }
                 $register = $this->findUserGameRegister($currentUser->getIdUser(), $gameId);
                 if ($register) {
                     $this->savePaidTransaction($register, $checkout);
                 }
-                $this->flashMessenger()->addSuccessMessage('Paiement confirmé (mode test local), votre inscription est validée.');
+                $this->flashMessenger()->addSuccessMessage('Votre inscription est confirmée.');
                 return $this->redirect()->toRoute('home');
             }
 
-            $this->flashMessenger()->addSuccessMessage('Paiement reçu, confirmation serveur en cours (webhook). Actualisez dans quelques secondes.');
+            $this->flashMessenger()->addSuccessMessage('Paiement reçu. Votre inscription sera confirmée dans quelques instants.');
             return $this->redirect()->toRoute('home');
         }
 
-        $this->flashMessenger()->addErrorMessage('Paiement non confirmé (statut: ' . $status . ').');
+        $this->flashMessenger()->addErrorMessage('Le paiement n\'a pas été confirmé (statut: ' . $status . ').');
         return $this->redirect()->toRoute('home');
     }
 
@@ -300,7 +297,10 @@ class GameController extends AbstractActionController
 
         if (preg_match('/^game-\d+-register-(\d+)-\d+$/', $resolvedReference, $legacyMatches)) {
             $registerId = (int)$legacyMatches[1];
-            $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy(['idregister' => $registerId]);
+            $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
+                'idregister' => $registerId,
+                'status' => GameRegister::STATUS_ACTIVE,
+            ]);
             if (! $register) {
                 return $this->emptyResponse(204);
             }
@@ -343,7 +343,10 @@ class GameController extends AbstractActionController
                 return $this->redirect()->toRoute('login');
             }
             $id = InputSanitizer::cleanInt($this->params()->fromPost('id'));
-            $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy(['idregister'=>$id]);
+            $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
+                'idregister' => $id,
+                'status' => GameRegister::STATUS_ACTIVE,
+            ]);
             if($register){
                 $registerUser = $register->getUser();
                 if (! $registerUser || (int)$registerUser->getIdUser() !== (int)$currentUser->getIdUser()) {
@@ -352,39 +355,48 @@ class GameController extends AbstractActionController
                 }
 
                 $paymentTransaction = $this->getRefundableTransactionForRegister($register);
+                $manualRefundMessage = null;
                 if ($paymentTransaction) {
                     $isRefundEligible = $this->isRefundEligible($register);
                     if ($isRefundEligible) {
                         if (! $paymentTransaction->getProviderTransactionId()) {
-                            $this->flashMessenger()->addErrorMessage('Remboursement impossible: transaction de paiement introuvable.');
+                            $this->flashMessenger()->addErrorMessage('Le remboursement n\'a pas pu être lancé car la transaction de paiement est introuvable.');
                             return $this->redirect()->toRoute('home');
                         }
 
-                        $refundAmount = (float)($this->sumupConfig['refund']['amount'] ?? 9.50);
-                        $refunded = $this->sumupService->refundTransaction($paymentTransaction->getProviderTransactionId(), $refundAmount);
-                        if (! $refunded) {
-                            $this->flashMessenger()->addErrorMessage('Remboursement refusé par SumUp. Réessayez plus tard ou contactez un admin.');
-                            return $this->redirect()->toRoute('home');
+                        $refundAmount = $this->resolveRefundAmount((int)$registerUser->getIdUser());
+                        $refundResult = $this->sumupService->refundTransactionDetailed(
+                            $paymentTransaction->getProviderTransactionId(),
+                            $refundAmount
+                        );
+                        if (! ($refundResult['success'] ?? false)) {
+                            $paymentTransaction->setStatus('refund_pending_manual');
+                            $this->entityManager->flush();
+                            $manualRefundMessage = 'Désinscription enregistrée. Le remboursement sera traité sous 24 à 48h.';
+                        } else {
+                            $paymentTransaction->setStatus('refunded');
+                            $paymentTransaction->setRefundedAmount($refundAmount);
+                            $paymentTransaction->setRefundDoneAt(new \DateTime());
+                            $this->entityManager->flush();
                         }
-
-                        $paymentTransaction->setStatus('refunded');
-                        $paymentTransaction->setRefundedAmount($refundAmount);
-                        $paymentTransaction->setRefundDoneAt(new \DateTime());
-                        $this->entityManager->flush();
                     } else {
-                        $this->flashMessenger()->addWarningMessage('Désinscription enregistrée sans remboursement (moins de 48h avant la partie).');
+                        $this->flashMessenger()->addWarningMessage('Désinscription enregistrée. Aucun remboursement n\'est prévu à moins de 24h de la partie.');
                     }
                 } elseif ((int)$register->getPaid() === 1) {
                     // Legacy flag without transaction record: keep unregister possible but cannot call SumUp refund safely.
-                    $this->flashMessenger()->addWarningMessage('Désinscription enregistrée sans remboursement automatique (paiement legacy sans transaction SumUp).');
+                    $this->flashMessenger()->addWarningMessage('Désinscription enregistrée. Le remboursement ne peut pas être confirmé automatiquement.');
                 }
 
-                $this->entityManager->remove($register);
+                $register->setStatus(GameRegister::STATUS_CANCELLED);
+                $register->setArrivedNumber(0);
                 $this->entityManager->flush();
+                if ($manualRefundMessage !== null) {
+                    $this->flashMessenger()->addWarningMessage($manualRefundMessage);
+                }
                 $this->flashMessenger()->addSuccessMessage('Désinscription réussie.');
             }
             else{
-                $this->flashMessenger()->addSuccessMessage('Une erreur est survenue.');
+                $this->flashMessenger()->addErrorMessage('Une erreur est survenue pendant la désinscription.');
             }
         }
             
@@ -541,6 +553,7 @@ class GameController extends AbstractActionController
         $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game,
+            'status' => GameRegister::STATUS_ACTIVE,
         ]);
 
         return $register instanceof GameRegister ? $register : null;
@@ -561,6 +574,7 @@ class GameController extends AbstractActionController
         $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'user' => $user,
             'game' => $game,
+            'status' => GameRegister::STATUS_ACTIVE,
         ]);
 
         if (! $register) {
@@ -569,6 +583,7 @@ class GameController extends AbstractActionController
             $register->setGame($game);
             $register->setArrivedNumber(0);
             $register->setMember((int)$user->getIsMember());
+            $register->setStatus(GameRegister::STATUS_ACTIVE);
             $this->entityManager->persist($register);
         }
 
@@ -648,6 +663,25 @@ class GameController extends AbstractActionController
         return '';
     }
 
+    private function resolveRegistrationAmount(bool $isMember): float
+    {
+        $eventConfig = $this->sumupConfig['event_registration'] ?? [];
+
+        return array_key_exists('amount', $eventConfig)
+            ? (float)$eventConfig['amount']
+            : ($isMember
+                ? (float)($eventConfig['amount_member'] ?? 0)
+                : (float)($eventConfig['amount_non_member'] ?? 0));
+    }
+
+    private function resolveRefundAmount(int $userId): float
+    {
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+        $isMember = $user ? (bool)$user->getIsMember() : false;
+
+        return max(0, $this->resolveRegistrationAmount($isMember) - 0.50);
+    }
+
     private function isRefundEligible(GameRegister $register): bool
     {
         $game = $register->getGame();
@@ -660,7 +694,7 @@ class GameController extends AbstractActionController
             return false;
         }
 
-        $limit = (new \DateTimeImmutable($gameDate->format('Y-m-d H:i:s')))->modify('-48 hours');
+        $limit = (new \DateTimeImmutable($gameDate->format('Y-m-d H:i:s')))->modify('-24 hours');
         return new \DateTimeImmutable('now') <= $limit;
     }
 

@@ -162,8 +162,18 @@ class SumUpService
 
     public function refundTransaction(string $transactionId, float $amount): bool
     {
+        $result = $this->refundTransactionDetailed($transactionId, $amount);
+
+        return (bool)($result['success'] ?? false);
+    }
+
+    public function refundTransactionDetailed(string $transactionId, float $amount): array
+    {
         if (! $this->hasValidConfiguration() || $transactionId === '' || $amount <= 0) {
-            return false;
+            return [
+                'success' => false,
+                'message' => 'Paramètres de remboursement invalides.',
+            ];
         }
 
         $client = new Client();
@@ -178,9 +188,56 @@ class SumUpService
             $client->setRawBody(Json::encode(['amount' => $amount]));
             $response = $client->send();
         } catch (Throwable $exception) {
-            return false;
+            return [
+                'success' => false,
+                'message' => $exception->getMessage() !== '' ? $exception->getMessage() : 'Erreur réseau SumUp.',
+            ];
         }
 
-        return $response->isSuccess();
+        if ($response->isSuccess()) {
+            return [
+                'success' => true,
+            ];
+        }
+
+        return [
+            'success' => false,
+            'status' => $response->getStatusCode(),
+            'message' => $this->extractErrorMessage($response->getBody()),
+        ];
+    }
+
+    private function extractErrorMessage(string $responseBody): string
+    {
+        if (trim($responseBody) === '') {
+            return 'Réponse vide de SumUp.';
+        }
+
+        try {
+            $data = Json::decode($responseBody, Json::TYPE_ARRAY);
+        } catch (Throwable $exception) {
+            return $responseBody;
+        }
+
+        if (! is_array($data)) {
+            return $responseBody;
+        }
+
+        foreach (['message', 'detail', 'title', 'error_code', 'type'] as $key) {
+            if (isset($data[$key]) && is_string($data[$key]) && trim($data[$key]) !== '') {
+                return $this->translateErrorMessage(trim($data[$key]));
+            }
+        }
+
+        return $responseBody;
+    }
+
+    private function translateErrorMessage(string $message): string
+    {
+        if (stripos($message, 'Not enough available balance to perform the operation at the moment') !== false) {
+            return 'Solde SumUp insuffisant pour effectuer le remboursement pour le moment.';
+        }
+
+        return $message;
     }
 }

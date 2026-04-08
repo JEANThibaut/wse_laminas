@@ -100,18 +100,18 @@ return [
     //     'Game' => __DIR__ . '/../view',
     // ],
     'doctrine' => [
-    'driver' => [
-        'Profil_entity' => [
-            'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
-            'cache' => 'array',
-            'paths' => [__DIR__ . '/../src/Entity'],
-        ],
-        'orm_default' => [
-            'drivers' => [
-                'Game\Entity' => 'Profil_entity',
+        'driver' => [
+            'Game_entity' => [
+                'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src/Entity'],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    'Game\Entity' => 'Game_entity',
+                ],
             ],
         ],
     ],
-],
 ];
 
