@@ -3,16 +3,15 @@ namespace Game\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-if (class_exists(GameRegister::class, false)) {
-    return;
-}
-
 /**
  * @ORM\Entity(repositoryClass="Game\Repository\GameRepository")
  * @ORM\Table(name="game_register")
  */
 class GameRegister
 {
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_CANCELLED = 'cancelled';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -38,6 +37,8 @@ class GameRegister
     private $member;
     /** @ORM\Column(type="integer") */
     private $arrived_number;
+    /** @ORM\Column(type="string", length=32) */
+    private $status = self::STATUS_ACTIVE;
 
 public function getIdregister()
 {
@@ -97,6 +98,22 @@ public function setArrivedNumber($arrived_number)
 {
     $this->arrived_number = $arrived_number;
     return $this;
+}
+
+public function getStatus()
+{
+    return $this->status;
+}
+
+public function setStatus($status)
+{
+    $this->status = $status;
+    return $this;
+}
+
+public function isActive()
+{
+    return $this->status === self::STATUS_ACTIVE;
 }
 
   

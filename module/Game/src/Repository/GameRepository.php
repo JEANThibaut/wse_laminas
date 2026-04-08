@@ -31,7 +31,8 @@ public function findNextGame()
 public function findRegister($game, $currentUser){
         return $this->_em->getRepository(GameRegister::class)->findOneBy([
         'game' => $game->getIdGame(),
-        'user' => $currentUser
+    'user' => $currentUser,
+    'status' => GameRegister::STATUS_ACTIVE,
     ]);
 }
 

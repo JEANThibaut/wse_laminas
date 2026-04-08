@@ -18,7 +18,7 @@ class PaymentTransaction
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Game\\Entity\\GameRegister")
+     * @ORM\ManyToOne(targetEntity="Game\Entity\GameRegister")
      * @ORM\JoinColumn(name="register_id", referencedColumnName="idregister", nullable=false, onDelete="CASCADE")
      */
     private $register;
