@@ -25,7 +25,6 @@ class IndexController extends AbstractActionController
         $currentUser = $this->authService->getIdentity();
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
         $isRegister = false;
-        $isPaymentPending = false;
         $isInWaitingList = false;
         $isComplete = false;
         if($game){
@@ -40,16 +39,11 @@ class IndexController extends AbstractActionController
             $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser->getIdUser());
             $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
                 'game' => $game->getIdGame(),
-                'paid' => 1,
                 'status' => GameRegister::STATUS_ACTIVE,
             ]);
             // $isInWaitingList = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game'=>$game->getIdGame(),'user'=>$currentUser->getIdUser()]);
             if($register){
-                if ((int)$register->getPaid() === 1) {
-                    $isRegister = true;
-                } else {
-                    $isPaymentPending = true;
-                }
+                $isRegister = true;
             }
             $isComplete = count($countRegister) >= $game->getPlayerMax();
         }
@@ -67,7 +61,6 @@ class IndexController extends AbstractActionController
             'currentUser'=>$currentUser,
             'register'=>$register ?? null,
             'isComplete'=>$isComplete,
-            'isPaymentPending' => $isPaymentPending,
             'actus' => $actus,
             'countRegister'=> $countRegister ?? null,
             // 'isInWaitingList'=>$isInWaitingList,

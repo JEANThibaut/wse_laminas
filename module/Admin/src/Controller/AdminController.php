@@ -143,7 +143,6 @@ class AdminController extends AbstractActionController
             ->addSelect('u')
             ->where('r.game = :game')
             ->andWhere('r.member = 0')
-            ->andWhere('r.paid = 1')
             ->andWhere('r.status = :status')
             ->setParameter('game', $nextGame)
             ->setParameter('status', GameRegister::STATUS_ACTIVE)
@@ -157,20 +156,19 @@ class AdminController extends AbstractActionController
             if ($registerId && in_array($action, ['validate', 'cancel'])) {
                 $register = $this->entityManager->getRepository(GameRegister::class)->find($registerId);
 
-                if ($register) {
-                    // $nextArrived = $this->entityManager->getRepository(GameRegister::class)->getNextArrivedNumber($register,$nextGame->getIdgame());
-                    $nextArrived = $this->entityManager->getRepository(GameRegister::class)->getFirstMissingArrivedNumber($register,$nextGame->getIdgame());
+                if ($register && $register->getStatus() === GameRegister::STATUS_ACTIVE) {
+                    if ($action === 'validate') {
+                        $nextArrived = $this->entityManager
+                            ->getRepository(GameRegister::class)
+                            ->getFirstMissingArrivedNumber($register, $nextGame->getIdgame());
 
-                    if($register->getArrivedNumber() == 0){
+                        $register->setPaid(1);
+                        $register->setArrivedNumber($nextArrived ?: 0);
+                    } else {
+                        $register->setPaid(0);
+                        $register->setArrivedNumber(0);
+                    }
 
-                    }
-    
-                    if($nextArrived){
-                        $register->setArrivedNumber($action === 'validate' ? $nextArrived : 0);
-                    }
-                    else{
-                        $register->setArrivedNumber($action === 'validate' ? 0 : 0);
-                    }
                     $this->entityManager->flush();
                 }
             }
