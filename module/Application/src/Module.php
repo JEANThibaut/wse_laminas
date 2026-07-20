@@ -37,6 +37,16 @@ class Module
 
         $eventManager = $application->getEventManager();
     
+        $eventManager->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $e) {
+            $response = $e->getResponse();
+            if ($response instanceof \Laminas\Http\Response) {
+                $headers = $response->getHeaders();
+                $headers->addHeaderLine('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+                $headers->addHeaderLine('Pragma', 'no-cache');
+                $headers->addHeaderLine('Expires', '0');
+            }
+        }, 100);
+
         $eventManager->attach(MvcEvent::EVENT_RENDER, function (MvcEvent $e) {
             $serviceManager = $e->getApplication()->getServiceManager();
             // use our application AuthService which re-hydrates the User entity
