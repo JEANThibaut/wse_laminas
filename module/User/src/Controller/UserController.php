@@ -109,6 +109,7 @@ class UserController extends AbstractActionController
 
     public function sendResetPasswordAction(){
 
+        $currentUser = $this->authService->getIdentity();
         if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
             $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $redirect;
@@ -121,8 +122,15 @@ class UserController extends AbstractActionController
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
         if($user){
-            $this->authService->sendPasswordResetLink($user->getEmail());
-            $this->flashMessenger()->addSuccessMessage('Email de réinitialisation envoyé avec succès.');
+            $sent = $this->authService->sendPasswordResetLink($user->getEmail());
+            if ($sent) {
+                $this->flashMessenger()->addSuccessMessage('Email de réinitialisation envoyé avec succès.');
+                if ($currentUser) {
+                    $this->authService->sendAdminResetNotification($currentUser->getEmail(), $user);
+                }
+            } else {
+                $this->flashMessenger()->addErrorMessage("Échec de l'envoi de l'email de réinitialisation.");
+            }
         }else{
             $this->flashMessenger()->addErrorMessage('Utilisateur introuvable.');
         }

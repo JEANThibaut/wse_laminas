@@ -67,12 +67,12 @@ class AuthService
         return $this->authenticationService->getStorage();
     }
 
-    public function sendPasswordResetLink($email)
+    public function sendPasswordResetLink($email): bool
     {
         // Cherche l'utilisateur par email
         $user = $this->findUserByEmail($email);
         if (!$user) {
-            return;
+            return false;
         }
 
         // Génère un token de réinitialisation
@@ -87,35 +87,51 @@ class AuthService
 
         $resetLink = 'http://www.wolfsofteure.fr/reset-password?token=' . $token;
 
-        // Envoi avec PHPMailer
+        return $this->sendMail(
+            $user->getEmail(),
+            'Réinitialisation de mot de passe',
+            "Bonjour,\n\nCliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink . "\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message."
+        );
+    }
+
+    public function sendAdminResetNotification(string $adminEmail, User $targetUser): bool
+    {
+        return $this->sendMail(
+            $adminEmail,
+            'Lien de réinitialisation envoyé',
+            "Bonjour,\n\nUn lien de réinitialisation de mot de passe a été envoyé à "
+                . $targetUser->getFirstname() . ' ' . $targetUser->getLastname()
+                . " (" . $targetUser->getEmail() . ")."
+        );
+    }
+
+    private function sendMail(string $toEmail, string $subject, string $body): bool
+    {
         $mail = new PHPMailer(true);
         try {
-        // --- Paramètres Serveur SMTP (config/autoload/local.php: mail_settings) ---
-        $mail->isSMTP();
-        $mail->Host       = $this->mailSettings['host'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $this->mailSettings['username'];
-        $mail->Password   = $this->mailSettings['password'];
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port       = $this->mailSettings['port'];
-        $mail->CharSet    = 'UTF-8';
+            // --- Paramètres Serveur SMTP (config/autoload/local.php: mail_settings) ---
+            $mail->isSMTP();
+            $mail->Host       = $this->mailSettings['host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $this->mailSettings['username'];
+            $mail->Password   = $this->mailSettings['password'];
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = $this->mailSettings['port'];
+            $mail->CharSet    = 'UTF-8';
 
-        // --- Destinataires ---
-        $mail->setFrom($this->mailSettings['username'], $this->mailSettings['from_name']);
-        $mail->addAddress($user->getEmail());
+            $mail->setFrom($this->mailSettings['username'], $this->mailSettings['from_name']);
+            $mail->addAddress($toEmail);
 
-        // --- Contenu du mail ---
-        $mail->isHTML(false); // On reste en texte brut pour ce lien
-        $mail->Subject = 'Réinitialisation de mot de passe';
-        $mail->Body    = "Bonjour,\n\nCliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink . "\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message.";
+            $mail->isHTML(false);
+            $mail->Subject = $subject;
+            $mail->Body    = $body;
 
-        $mail->send();
-        
-    } catch (Exception $e) {
-        // En cas d'erreur, on peut loguer le message de PHPMailer
-        // error_log("Erreur PHPMailer : " . $mail->ErrorInfo);
-        echo "Erreur d'envoi : {$mail->ErrorInfo}";
-    }
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            error_log("Erreur envoi email a {$toEmail}: {$mail->ErrorInfo}");
+            return false;
+        }
     }
 
     public function generateNewPassword(User $user): string
