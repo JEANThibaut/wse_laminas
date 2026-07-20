@@ -103,6 +103,27 @@ class AuthService
     }
     }
 
+    public function generateNewPassword(User $user): string
+    {
+        $plainPassword = $this->generateRandomPassword();
+        $user->setPassword(password_hash($plainPassword, PASSWORD_BCRYPT));
+        $this->entityManager->flush();
+
+        return $plainPassword;
+    }
+
+    private function generateRandomPassword(int $length = 12): string
+    {
+        // Sans caractères ambigus (I, O, l, o, 0, 1)
+        $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+        $max = strlen($chars) - 1;
+        $password = '';
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $chars[random_int(0, $max)];
+        }
+        return $password;
+    }
+
     public function resetPassword($email, $newPassword)
     {
         // Cherche l'utilisateur par email

@@ -38,7 +38,27 @@ return [
                     ],
                 ],
             ],
-  
+            'admin-send-reset-password' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/send-reset-password',
+                    'defaults' => [
+                        'controller' => UserController::class,
+                        'action' => 'sendResetPassword',
+                    ],
+                ],
+            ],
+            'admin-generate-password' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/generate-password',
+                    'defaults' => [
+                        'controller' => UserController::class,
+                        'action' => 'generatePassword',
+                    ],
+                ],
+            ],
+
 
         ],
     ],
