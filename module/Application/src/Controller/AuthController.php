@@ -68,7 +68,14 @@ class AuthController extends AbstractActionController
             $data = $this->params()->fromPost();
             $email = InputSanitizer::cleanString($data['email'] ?? '');
             $newPassword = trim($data['new-password'] ?? '');
+            $confirmPassword = trim($data['confirm-password'] ?? '');
+            $token = InputSanitizer::cleanString($data['token'] ?? '');
                 if($newPassword !=""){
+                    if ($newPassword !== $confirmPassword) {
+                        $this->flashMessenger()->addErrorMessage("Les mots de passe ne correspondent pas.");
+                        $user = $this->entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+                        return new ViewModel(['user' => $user]);
+                    }
                     $reset = $this->authService->resetPassword($email, $newPassword);
                     if ($reset) {
                         $this->flashMessenger()->addSuccessMessage("Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.");
@@ -76,6 +83,11 @@ class AuthController extends AbstractActionController
                     } else {
                         $this->flashMessenger()->addErrorMessage("Erreur lors de la réinitialisation du mot de passe. Le token peut être invalide ou expiré.");
                     }
+                }elseif($token !== ''){
+                    // Formulaire "nouveau mot de passe" (token present) soumis sans mot de passe saisi
+                    $this->flashMessenger()->addErrorMessage("Veuillez saisir un nouveau mot de passe.");
+                    $user = $this->entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+                    return new ViewModel(['user' => $user]);
                 }else{
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $this->authService->sendPasswordResetLink($email);
@@ -83,7 +95,7 @@ class AuthController extends AbstractActionController
                         return $this->redirect()->toRoute('home');
                     } else {
                         $this->flashMessenger()->addErrorMessage("Veuillez entrer une adresse email valide.");
-                    } 
+                    }
                 }
         } else {
             $token = InputSanitizer::cleanString($this->params()->fromQuery('token'));
