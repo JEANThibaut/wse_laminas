@@ -21,13 +21,26 @@ class AuthService
         $this->mailSettings = $mailSettings;
     }
 
+    private function findUserByEmail(string $email): ?User
+    {
+        // Comparaison insensible à la casse et aux espaces (ex: majuscule auto
+        // ajoutee par le clavier mobile sur le premier caractere du champ email)
+        return $this->entityManager->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->where('LOWER(u.email) = LOWER(:email)')
+            ->setParameter('email', trim($email))
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function login(string $email, string $password): bool
     {
         // Cherche l'utilisateur par email
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        $user = $this->findUserByEmail($email);
         if (!$user) {
             return false;
-        }   
+        }
 
         if (password_verify($password, $user->getPassword())) {
             // store only the user id in session so we can re-hydrate on each request
@@ -57,7 +70,7 @@ class AuthService
     public function sendPasswordResetLink($email)
     {
         // Cherche l'utilisateur par email
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        $user = $this->findUserByEmail($email);
         if (!$user) {
             return;
         }
@@ -129,7 +142,7 @@ class AuthService
     public function resetPassword($email, $newPassword)
     {
         // Cherche l'utilisateur par email
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        $user = $this->findUserByEmail($email);
         if (!$user) {
             return false;
         }
