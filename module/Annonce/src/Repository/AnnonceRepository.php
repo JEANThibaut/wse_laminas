@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 class AnnonceRepository extends EntityRepository
 {
 
- public function fetchPaginated(int $page = 1, int $perPage = 10, string $search = null): array
+ public function fetchPaginated(int $page = 1, int $perPage = 10, ?string $search = null): array
 {
     $qb = $this->createQueryBuilder('a')
         ->orderBy('a.date', 'DESC')

@@ -28,6 +28,9 @@ class FactionController extends AbstractActionController
      */
     public function onDispatch(\Laminas\Mvc\MvcEvent $e)
     {
+        $this->flashMessenger()->addErrorMessage('Cette fonctionnalité est actuellement désactivée.');
+        return $this->redirect()->toRoute('home');
+
         // use the faction-specific layout
         $this->layout('layout/faction');
         $this->layout()->setVariable('hideMenu', true);

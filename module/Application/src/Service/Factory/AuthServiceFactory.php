@@ -14,7 +14,9 @@ class AuthServiceFactory implements FactoryInterface
         // Récupère EntityManager et AuthenticationService depuis le container
         $entityManager = $container->get(EntityManager::class);
         $authenticationService = $container->get(AuthenticationService::class);
+        $config = $container->get('config');
+        $mailSettings = $config['mail_settings'] ?? [];
 
-        return new AuthService($entityManager, $authenticationService);
+        return new AuthService($entityManager, $authenticationService, $mailSettings);
     }
 }

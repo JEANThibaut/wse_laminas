@@ -104,6 +104,9 @@ class ProfilController extends AbstractActionController
         
     public function arsenalAction()
     {
+        $this->flashMessenger()->addErrorMessage('Cette fonctionnalité est actuellement désactivée.');
+        return $this->redirect()->toRoute('profil-index');
+
         $currentUser = $this->authService->getIdentity();
         $repliques = $this->entityManager->getRepository(Replique::class)->findBy(['iduser'=>$currentUser->getIdUser()]);
         $view = new ViewModel([
@@ -119,6 +122,9 @@ class ProfilController extends AbstractActionController
 
     public function updateRepliqueAction()
     {
+        $this->flashMessenger()->addErrorMessage('Cette fonctionnalité est actuellement désactivée.');
+        return $this->redirect()->toRoute('profil-index');
+
         $request = $this->getRequest();
         $currentUser = $this->authService->getIdentity();
         if ($request->isPost()) {

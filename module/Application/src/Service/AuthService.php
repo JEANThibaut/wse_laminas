@@ -12,11 +12,13 @@ class AuthService
 {
     private EntityManager $entityManager;
     private AuthenticationService $authenticationService;
+    private array $mailSettings;
 
-    public function __construct(EntityManager $entityManager, AuthenticationService $authenticationService)
+    public function __construct(EntityManager $entityManager, AuthenticationService $authenticationService, array $mailSettings = [])
     {
         $this->entityManager = $entityManager;
         $this->authenticationService = $authenticationService;
+        $this->mailSettings = $mailSettings;
     }
 
     public function login(string $email, string $password): bool
@@ -75,18 +77,18 @@ class AuthService
         // Envoi avec PHPMailer
         $mail = new PHPMailer(true);
         try {
-        // --- Paramètres Serveur SMTP OVH ---
+        // --- Paramètres Serveur SMTP (config/autoload/local.php: mail_settings) ---
         $mail->isSMTP();
-        $mail->Host       = 'ssl0.ovh.net';                // Serveur SMTP OVH
-        $mail->SMTPAuth   = true;                          // Activation de l'authentification
-        $mail->Username   = 'contact@wolfsofteure.fr';     // Votre adresse email complète
-        $mail->Password   = 'AppliWSE27';                  // Votre mot de passe
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;    // SSL pour le port 465
-        $mail->Port       = 465;                           // Port standard SSL chez OVH
-        $mail->CharSet    = 'UTF-8';                       // Gestion des accents
+        $mail->Host       = $this->mailSettings['host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $this->mailSettings['username'];
+        $mail->Password   = $this->mailSettings['password'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = $this->mailSettings['port'];
+        $mail->CharSet    = 'UTF-8';
 
         // --- Destinataires ---
-        $mail->setFrom('contact@wolfsofteure.fr', 'Wolf Soft Eure');
+        $mail->setFrom($this->mailSettings['username'], $this->mailSettings['from_name']);
         $mail->addAddress($user->getEmail());
 
         // --- Contenu du mail ---

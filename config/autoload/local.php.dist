@@ -13,6 +13,15 @@
  */
 
 return [
+	// Exemple de surcharge locale pour l'envoi d'emails (SMTP OVH)
+	// 'mail_settings' => [
+	//     'host' => 'ssl0.ovh.net',
+	//     'port' => 465,
+	//     'username' => 'contact@wolfsofteure.fr',
+	//     'password' => 'MOT_DE_PASSE_ICI',
+	//     'from_name' => 'Wolf Soft Eure',
+	// ],
+
 	// Exemple de surcharge locale pour SumUp (ne pas committer les vraies cles)
 	// 'sumup_settings' => [
 	//     'enabled' => true,

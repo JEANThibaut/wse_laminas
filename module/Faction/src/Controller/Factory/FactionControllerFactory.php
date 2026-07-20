@@ -9,7 +9,7 @@ use Application\Service\AuthService;
 
 class FactionControllerFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
 
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
