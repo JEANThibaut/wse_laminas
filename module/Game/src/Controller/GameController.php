@@ -61,10 +61,20 @@ class GameController extends AbstractActionController
             'status' => GameRegister::STATUS_ACTIVE,
         ]);
 
-        if ($register && $this->isRegisterPaid($register)) {
-            $this->flashMessenger()->addSuccessMessage('Votre inscription est déjà confirmée.');
+        if ($register) {
+            $this->flashMessenger()->addSuccessMessage('Vous êtes déjà inscrit à cette partie.');
             return $this->redirect()->toRoute('home');
         }
+
+        // Ancien flux de paiement en ligne temporairement mis de cote.
+        $registered = $this->gameManager->registerInGame($game, $currentUser);
+        if (! $registered) {
+            $this->flashMessenger()->addErrorMessage('L\'inscription n\'a pas pu être finalisée.');
+            return $this->redirect()->toRoute('home');
+        }
+
+        $this->flashMessenger()->addSuccessMessage('Votre inscription est enregistrée.');
+        return $this->redirect()->toRoute('home');
 
         if (! $this->sumupService->hasValidConfiguration()) {
             $this->flashMessenger()->addErrorMessage('Le paiement n\'est pas disponible pour le moment.');
@@ -383,8 +393,7 @@ class GameController extends AbstractActionController
                         $this->flashMessenger()->addWarningMessage('Désinscription enregistrée. Aucun remboursement n\'est prévu à moins de 24h de la partie.');
                     }
                 } elseif ((int)$register->getPaid() === 1) {
-                    // Legacy flag without transaction record: keep unregister possible but cannot call SumUp refund safely.
-                    $this->flashMessenger()->addWarningMessage('Désinscription enregistrée. Le remboursement ne peut pas être confirmé automatiquement.');
+                    // Inscription sans transaction SumUp: aucune action de remboursement automatique a effectuer.
                 }
 
                 $register->setStatus(GameRegister::STATUS_CANCELLED);

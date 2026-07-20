@@ -23,6 +23,7 @@ public function findNextGame()
         ->where('g.date >= :today')
         ->setParameter('today', new \DateTime('today'))
         ->orderBy('g.date', 'ASC')
+        ->andWhere('g.status = 1')
         ->setMaxResults(1)
         ->getQuery()
         ->getOneOrNullResult();
