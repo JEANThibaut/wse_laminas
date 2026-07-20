@@ -8,12 +8,12 @@
         <div class="col-lg-6 col-sm-12">
             <form method="post" action="">
                 <div class="form-group">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                    <input type="email" autocomplete="username" class="form-control" name="email" id="email" placeholder="Email" required>
                 </div>
 
                 <div class="form-group mt-3">
                     <label for="password">Mot de passe</label>
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Mot de passe" required>
+                    <input type="password" autocomplete="current-password" class="form-control" name="password" id="password" placeholder="Mot de passe" required>
                 </div>
                 <div class="form-group mt-3">
                     <a href="<?= $this->escapeHtmlAttr($this->url('reset-password')) ?>">Mot de passe oublié ?</a>
