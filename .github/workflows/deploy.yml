@@ -1,0 +1,101 @@
+name: Deploiement production
+
+# Declenche a chaque push sur main, ou manuellement depuis l'onglet Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Un seul deploiement a la fois : deux uploads FTP concurrents corrompraient
+# l'etat de synchronisation cote serveur.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build et envoi FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recupere le code
+        uses: actions/checkout@v4
+
+      - name: Installe PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          # Doit correspondre a la version PHP configuree sur l'hebergement OVH.
+          php-version: ${{ vars.PHP_VERSION || '8.3' }}
+          coverage: none
+
+      - name: Cache des dependances Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-php${{ vars.PHP_VERSION || '8.3' }}-${{ hashFiles('composer.lock') }}
+
+      # --no-scripts : les scripts post-install de Laminas reecrivent la config
+      # et tentent de vider un cache qui n'existe pas dans le runner.
+      - name: Installe les dependances de production
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-progress --no-interaction --no-scripts
+
+      - name: Verifie la syntaxe PHP des modules
+        run: find module config public -name '*.php' -print0 | xargs -0 -n1 -P4 php -l > /dev/null
+
+      - name: Prepare les dossiers runtime
+        run: mkdir -p data/cache && touch data/cache/.gitkeep
+
+      - name: Envoi FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          # Doit se terminer par un / . Ex : /www/wse_laminas/
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          log-level: standard
+          # Cette liste REMPLACE les exclusions par defaut de l'action :
+          # les entrees .git / node_modules doivent donc y figurer.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .github/**
+            EN-PROD/**
+            doc/**
+            .vscode/**
+            bin/**
+            **/test/**
+            **/tests/**
+            **/*.md
+            **/*.dist
+            config/autoload/local.php
+            config/autoload/global.php
+            config/autoload/*.local.php
+            config/development.config.php
+            config/autoload/laminas-developer-tools.local-development.php
+            data/sessions/**
+            public/photos/**
+            public/diag.php
+            Dockerfile
+            docker-compose.yml
+            phpcs.xml
+            phpunit.xml.dist
+            psalm.xml
+            renovate.json
+            .phpstorm.meta.php
+            .psalm-stubs.phpstub
+
+      # Le cache de config Laminas est actif en prod (config_cache_enabled = true
+      # dans config/application.config.php). Sans cette etape, toute modification
+      # de route, de factory ou de module.config.php resterait sans effet.
+      - name: Vide le cache de configuration Laminas
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e "set ssl:verify-certificate no; set ftp:ssl-force true; cd $FTP_SERVER_DIR; glob -a rm -f data/cache/*.php; bye"
