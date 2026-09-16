@@ -22,8 +22,8 @@ projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 3. `php -l` sur `module/`, `config/` et `public/` : un fichier casse arrete tout
 4. Inspection de l'arborescence distante (diagnostic en lecture seule)
 5. `lftp mirror --reverse --delete` : seuls les fichiers modifies remontent, et ce
-   qui a disparu du repo est supprime cote serveur
-6. Suppression de `data/cache/*.php` pour invalider le cache de config Laminas
+   qui a disparu du repo est supprime cote serveur. C'est aussi ce qui invalide le
+   cache de config Laminas, `data/cache/` ne contenant que `.gitkeep` dans le repo
 
 ## Configuration GitHub
 
