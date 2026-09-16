@@ -50,6 +50,29 @@ jobs:
       - name: Prepare les dossiers runtime
         run: mkdir -p data/cache && touch data/cache/.gitkeep
 
+      # Diagnostic en lecture seule : sert a verifier que REMOTE_DIR vise bien
+      # le dossier du projet, et non un dossier vide ou inexistant.
+      - name: Inspecte l'arborescence distante
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+          SFTP_HOST: ${{ secrets.FTP_SERVER }}
+          SFTP_USER: ${{ secrets.FTP_USERNAME }}
+          SFTP_PORT: ${{ vars.SFTP_PORT || '22' }}
+          REMOTE_DIR: ${{ vars.FTP_SERVER_DIR }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp sshpass
+          lftp -u "$SFTP_USER", "sftp://${SFTP_HOST}:${SFTP_PORT}" <<LFTP
+          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          echo "----- racine du compte -----"
+          ls
+          echo "----- /www -----"
+          ls /www
+          echo "----- \$REMOTE_DIR -----"
+          ls "$REMOTE_DIR"
+          bye
+          LFTP
+
       # L'hebergement OVH expose du SFTP (sous-systeme SSH, port 22), pas du
       # FTPS. lftp parle les deux et fait de la synchronisation incrementale :
       # seuls les fichiers dont la taille ou la date ont change sont transmis.
