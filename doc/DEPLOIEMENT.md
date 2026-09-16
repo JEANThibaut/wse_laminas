@@ -1,8 +1,11 @@
 # Deploiement production (OVH)
 
-Le deploiement est pilote par le repo : tout push sur `main` declenche
-`.github/workflows/deploy.yml`, qui build et synchronise en **SFTP** sur
-l'hebergement OVH. Aucune action manuelle, aucun FileZilla.
+Le deploiement est pilote par le repo mais **jamais automatique** : il se declenche
+uniquement a la demande, depuis `Actions > Deploiement production > Run workflow`.
+Aucun push, pas meme sur `main`, ne met quoi que ce soit en ligne.
+
+Le workflow `.github/workflows/deploy.yml` build puis synchronise en **SFTP** sur
+l'hebergement OVH. Plus de FileZilla.
 
 ## Protocole
 
@@ -16,7 +19,7 @@ projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 
 ## Ce que fait le workflow
 
-1. Checkout de `main`
+1. Checkout de la branche choisie au lancement (`main` par defaut)
 2. `composer install --no-dev --optimize-autoloader` (vendor/ est construit par la
    CI, il n'est pas dans le repo)
 3. `php -l` sur `module/`, `config/` et `public/` : un fichier casse arrete tout
@@ -81,5 +84,5 @@ fichier s'appelait `SumupService.php`.
 
 ## Rollback
 
-`Actions > Deploiement production > Run workflow` depuis un commit anterieur, ou
-`git revert` puis push. Le workflow est idempotent.
+`Actions > Deploiement production > Run workflow` en selectionnant une branche ou un
+tag anterieur, ou `git revert` puis relancer le workflow. Il est idempotent.

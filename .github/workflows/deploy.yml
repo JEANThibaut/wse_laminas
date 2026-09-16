@@ -1,9 +1,8 @@
 name: Deploiement production
 
-# Declenche a chaque push sur main, ou manuellement depuis l'onglet Actions.
+# Deploiement exclusivement manuel : Actions > Deploiement production >
+# Run workflow. Un push, y compris sur main, ne met jamais en ligne.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       dry_run:
