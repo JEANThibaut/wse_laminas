@@ -113,7 +113,6 @@ jobs:
             --exclude '^config/development\.config\.php$' \
             --exclude '^data/sessions/' \
             --exclude '^public/photos/' \
-            --exclude '^public/diag\.php$' \
             --exclude '^Dockerfile$' \
             --exclude '^docker-compose\.yml$' \
             --exclude '^phpcs\.xml$' \
