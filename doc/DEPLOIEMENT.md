@@ -1,88 +1,85 @@
 # Deploiement production (OVH)
 
 Le deploiement est pilote par le repo : tout push sur `main` declenche
-`.github/workflows/deploy.yml`, qui build et envoie en FTPS sur l'hebergement OVH.
-Aucune action manuelle, aucun FileZilla.
+`.github/workflows/deploy.yml`, qui build et synchronise en **SFTP** sur
+l'hebergement OVH. Aucune action manuelle, aucun FileZilla.
+
+## Protocole
+
+L'hebergement expose du **SFTP sur le port 22** (sous-systeme SSH), pas du FTPS.
+Les deux n'ont rien en commun : tenter du FTPS donne `500 This security scheme is
+not implemented` puis `wrong version number`. Le transfert utilise donc `lftp`,
+qui parle SFTP et fait de la synchronisation incrementale.
+
+Le compte SFTP est cloisonne : la connexion atterrit directement dans la racine du
+projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 
 ## Ce que fait le workflow
 
 1. Checkout de `main`
-2. `composer install --no-dev --optimize-autoloader` (vendor/ est construit par la CI,
-   il n'est pas dans le repo)
-3. `php -l` sur `module/`, `config/` et `public/` : un fichier casse arrete le deploiement
-4. Synchronisation FTPS incrementale (seuls les fichiers modifies remontent)
-5. Suppression de `data/cache/*.php` pour invalider le cache de config Laminas
+2. `composer install --no-dev --optimize-autoloader` (vendor/ est construit par la
+   CI, il n'est pas dans le repo)
+3. `php -l` sur `module/`, `config/` et `public/` : un fichier casse arrete tout
+4. Inspection de l'arborescence distante (diagnostic en lecture seule)
+5. `lftp mirror --reverse --delete` : seuls les fichiers modifies remontent, et ce
+   qui a disparu du repo est supprime cote serveur
+6. Suppression de `data/cache/*.php` pour invalider le cache de config Laminas
 
-## Configuration GitHub (une seule fois)
+## Configuration GitHub
 
 `Settings > Secrets and variables > Actions`
 
-Secrets :
+Secrets : `FTP_SERVER` (hote SFTP OVH), `FTP_USERNAME`, `FTP_PASSWORD`.
 
-| Nom | Valeur |
-| --- | --- |
-| `FTP_SERVER` | hote FTP OVH, ex. `ftp.cluster0XX.hosting.ovh.net` |
-| `FTP_USERNAME` | login FTP |
-| `FTP_PASSWORD` | mot de passe FTP |
+Variables : `FTP_SERVER_DIR` = `.`, `SFTP_PORT` = `22`, `PHP_VERSION` = `8.3`.
 
-Variables :
+`PHP_VERSION` reste en 8.3 car `composer.json` n'autorise pas encore PHP 8.4
+(`~8.1.0 || ~8.2.0 || ~8.3.0`). Ce n'est pas genant : `vendor/composer/platform_check.php`
+ne verifie qu'un minimum (`>= 8.2.0`), donc un vendor construit en 8.3 tourne sur
+un serveur en 8.4. Pour builder directement en 8.4, elargir la contrainte dans
+`composer.json` puis regenerer `composer.lock`.
 
-| Nom | Valeur |
-| --- | --- |
-| `FTP_SERVER_DIR` | repertoire cible, **doit finir par `/`**, ex. `/home/xxx/wse_laminas/` |
-| `PHP_VERSION` | version PHP de l'hebergement OVH (defaut `8.3`) |
+**Piege Windows** : renseigner ces variables depuis Git Bash corrompt les valeurs
+qui ressemblent a un chemin Unix (`/www/` devient `C:/Program Files/Git/www/`).
+Passer par l'interface web, ou prefixer la commande par `MSYS_NO_PATHCONV=1`.
 
-`PHP_VERSION` doit correspondre a la version reellement active sur OVH, sinon vendor/
-est compile pour une version differente de celle qui l'execute.
+## Mode simulation
 
-## Arborescence serveur attendue
+`Actions > Deploiement production > Run workflow`, cocher **dry_run**. Le log liste
+tout ce qui serait envoye et supprime, sans ecrire une ligne sur le serveur.
 
-Le workflow recopie **la racine du repo** dans `FTP_SERVER_DIR`. Deux montages possibles :
-
-**Option A (recommandee)** — racine web du domaine pointee sur le sous-dossier `public/`
-(OVH : `Hebergements > Multisite > Racine du dossier`). `FTP_SERVER_DIR` vise le dossier
-du projet ; `index.php` et `.htaccess` a la racine du repo ne servent plus a rien.
-
-**Option B** — la racine web reste `www/`. `FTP_SERVER_DIR` vaut alors `/www/`, et il faut
-corriger `index.php` a la racine du repo, qui pointe aujourd'hui vers un sous-dossier :
-
-```php
-require __DIR__ . '/wse_laminas/public/index.php';  // actuel
-require __DIR__ . '/public/index.php';              // cible option B
-```
-
-L'option A est plus sure : elle met `config/`, `module/` et `vendor/` hors de la racine web.
+A utiliser systematiquement avant un deploiement qui touche a la structure des
+fichiers. Pour lire le resultat, comparer les lignes `Removing old file` et
+`Transferring file` : un fichier present dans les deux est simplement remplace,
+seul un fichier present uniquement dans la premiere liste est reellement supprime.
 
 ## Fichiers jamais touches par le deploiement
 
-Ils sont exclus du workflow ET absents du repo : ils vivent uniquement sur le serveur.
+Ils sont exclus du miroir ET absents du repo : ils n'existent que sur le serveur.
+Retirer une de ces exclusions entrainerait une perte de donnees, `--delete` etant
+actif.
 
 - `config/autoload/local.php` et `config/autoload/global.php` (identifiants BDD, SMTP)
 - `public/photos/` (uploads utilisateurs)
 - `data/sessions/` (sessions actives)
 
-Une modification de ces fichiers se fait a la main sur le serveur. Les modeles de reference
-sont `config/autoload/local.php.dist` et `config/autoload/global.php` en local.
+Une modification de ces fichiers se fait a la main sur le serveur.
 
-## Preparation serveur (une seule fois)
+## Sensibilite a la casse
 
-1. Verifier que `data/cache/`, `data/sessions/` et `data/DoctrineORMModule/Proxy/` existent
-   et sont accessibles en ecriture par PHP
-2. Verifier l'absence de `config/development.config.php` (mode dev actif = stack traces
-   exposees publiquement)
-3. Premier upload de `vendor/` (61 Mo, ~9600 fichiers) a la main via FileZilla : le premier
-   passage du workflow en FTP fichier par fichier prendrait des heures. Les suivants sont
-   incrementaux et ne renvoient que le diff.
-4. Supprimer les residus recenses lors du comparatif : `module/Game/src/Entity/Register.php`,
-   `module/Faction/view/faction/index backup.phtml`, `public/diag.php`
+Le serveur est sous Linux, le poste de dev sous Windows. Un fichier dont le nom ne
+correspond pas exactement a la classe qu'il declare passe inapercu en local et
+casse l'autoload PSR-4 en production. Composer le signale au build :
+
+```
+Class X located in ./chemin/y.php does not comply with psr-4 autoloading standard. Skipping.
+```
+
+Un avertissement de ce type doit etre corrige avant deploiement : la classe est
+absente du classmap optimise. C'est ce qui est arrive a `SumUpService`, dont le
+fichier s'appelait `SumupService.php`.
 
 ## Rollback
 
 `Actions > Deploiement production > Run workflow` depuis un commit anterieur, ou
 `git revert` puis push. Le workflow est idempotent.
-
-## Si un acces SSH est disponible
-
-OVH fournit SSH sur les offres Pro et superieures. Si c'est le cas, l'etape `lftp` de
-vidage du cache peut etre remplacee par `php bin/clear-config-cache.php`, et le transfert
-FTP par un `rsync -az --delete`, nettement plus rapide sur vendor/.
