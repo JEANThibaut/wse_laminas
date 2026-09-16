@@ -56,7 +56,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          # ftps (explicite) | ftps-legacy (implicite, port 990) | ftp (clair)
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
           # Doit se terminer par un / . Ex : /www/wse_laminas/
           server-dir: ${{ vars.FTP_SERVER_DIR }}
           log-level: standard
