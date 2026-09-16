@@ -9,3 +9,6 @@ phpunit.xml
 config/autoload/global.php
 config/autoload/local.php
 /public/photos
+
+# Snapshot FTP de la prod, usage local uniquement
+/EN-PROD
