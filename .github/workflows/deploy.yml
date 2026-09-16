@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Simulation : liste ce qui serait envoye, sans rien ecrire sur le serveur"
+        type: boolean
+        default: false
 
 # Un seul deploiement a la fois : deux uploads FTP concurrents corrompraient
 # l'etat de synchronisation cote serveur.
@@ -55,6 +60,8 @@ jobs:
           # Doit se terminer par un / . Ex : /www/wse_laminas/
           server-dir: ${{ vars.FTP_SERVER_DIR }}
           log-level: standard
+          # Sur un declenchement manuel, permet de verifier la cible a blanc.
+          dry-run: ${{ inputs.dry_run || false }}
           # Cette liste REMPLACE les exclusions par defaut de l'action :
           # les entrees .git / node_modules doivent donc y figurer.
           exclude: |
@@ -91,6 +98,7 @@ jobs:
       # dans config/application.config.php). Sans cette etape, toute modification
       # de route, de factory ou de module.config.php resterait sans effet.
       - name: Vide le cache de configuration Laminas
+        if: ${{ !inputs.dry_run }}
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
