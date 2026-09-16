@@ -11,15 +11,15 @@ on:
         type: boolean
         default: false
 
-# Un seul deploiement a la fois : deux uploads FTP concurrents corrompraient
-# l'etat de synchronisation cote serveur.
+# Un seul deploiement a la fois : deux synchronisations concurrentes
+# laisseraient le serveur dans un etat incoherent.
 concurrency:
   group: deploy-prod
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Build et envoi FTP
+    name: Build et envoi SFTP
     runs-on: ubuntu-latest
 
     steps:
@@ -50,61 +50,75 @@ jobs:
       - name: Prepare les dossiers runtime
         run: mkdir -p data/cache && touch data/cache/.gitkeep
 
-      - name: Envoi FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # ftps (explicite) | ftps-legacy (implicite, port 990) | ftp (clair)
-          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
-          # Doit se terminer par un / . Ex : /www/wse_laminas/
-          server-dir: ${{ vars.FTP_SERVER_DIR }}
-          log-level: standard
-          # Sur un declenchement manuel, permet de verifier la cible a blanc.
-          dry-run: ${{ inputs.dry_run || false }}
-          # Cette liste REMPLACE les exclusions par defaut de l'action :
-          # les entrees .git / node_modules doivent donc y figurer.
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            .github/**
-            EN-PROD/**
-            doc/**
-            .vscode/**
-            bin/**
-            **/test/**
-            **/tests/**
-            **/*.md
-            **/*.dist
-            config/autoload/local.php
-            config/autoload/global.php
-            config/autoload/*.local.php
-            config/development.config.php
-            config/autoload/laminas-developer-tools.local-development.php
-            data/sessions/**
-            public/photos/**
-            public/diag.php
-            Dockerfile
-            docker-compose.yml
-            phpcs.xml
-            phpunit.xml.dist
-            psalm.xml
-            renovate.json
-            .phpstorm.meta.php
-            .psalm-stubs.phpstub
+      # L'hebergement OVH expose du SFTP (sous-systeme SSH, port 22), pas du
+      # FTPS. lftp parle les deux et fait de la synchronisation incrementale :
+      # seuls les fichiers dont la taille ou la date ont change sont transmis.
+      - name: Envoi SFTP
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+          SFTP_HOST: ${{ secrets.FTP_SERVER }}
+          SFTP_USER: ${{ secrets.FTP_USERNAME }}
+          SFTP_PORT: ${{ vars.SFTP_PORT || '22' }}
+          REMOTE_DIR: ${{ vars.FTP_SERVER_DIR }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp sshpass
+
+          # --delete supprime cote serveur ce qui a disparu du repo. Les
+          # exclusions ci-dessous protegent les fichiers qui n'existent QUE sur
+          # le serveur : les retirer entrainerait une perte de donnees.
+          lftp -u "$SFTP_USER", "sftp://${SFTP_HOST}:${SFTP_PORT}" <<LFTP
+          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          set net:max-retries 3
+          set net:timeout 20
+          set mirror:parallel-transfer-count 4
+          mirror --reverse --delete --verbose $DRY_RUN \
+            --exclude '^\.git' \
+            --exclude '^\.github/' \
+            --exclude '^\.vscode/' \
+            --exclude '^EN-PROD/' \
+            --exclude '^doc/' \
+            --exclude '^bin/' \
+            --exclude '/test/' \
+            --exclude '/tests/' \
+            --exclude '\.md$' \
+            --exclude '\.dist$' \
+            --exclude '^config/autoload/local\.php$' \
+            --exclude '^config/autoload/global\.php$' \
+            --exclude '^config/autoload/.*\.local\.php$' \
+            --exclude '^config/development\.config\.php$' \
+            --exclude '^data/sessions/' \
+            --exclude '^public/photos/' \
+            --exclude '^public/diag\.php$' \
+            --exclude '^Dockerfile$' \
+            --exclude '^docker-compose\.yml$' \
+            --exclude '^phpcs\.xml$' \
+            --exclude '^phpunit\.xml\.dist$' \
+            --exclude '^psalm\.xml$' \
+            --exclude '^renovate\.json$' \
+            --exclude '^\.phpstorm\.meta\.php$' \
+            --exclude '^\.psalm-stubs\.phpstub$' \
+            ./ "$REMOTE_DIR"
+          bye
+          LFTP
 
       # Le cache de config Laminas est actif en prod (config_cache_enabled = true
-      # dans config/application.config.php). Sans cette etape, toute modification
+      # dans config/application.config.php). Sans cette purge, toute modification
       # de route, de factory ou de module.config.php resterait sans effet.
       - name: Vide le cache de configuration Laminas
         if: ${{ !inputs.dry_run }}
         env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+          SFTP_HOST: ${{ secrets.FTP_SERVER }}
+          SFTP_USER: ${{ secrets.FTP_USERNAME }}
+          SFTP_PORT: ${{ vars.SFTP_PORT || '22' }}
+          REMOTE_DIR: ${{ vars.FTP_SERVER_DIR }}
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e "set ssl:verify-certificate no; set ftp:ssl-force true; cd $FTP_SERVER_DIR; glob -a rm -f data/cache/*.php; bye"
+          set -euo pipefail
+          lftp -u "$SFTP_USER", "sftp://${SFTP_HOST}:${SFTP_PORT}" <<LFTP
+          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          cd "$REMOTE_DIR"
+          glob -a rm -f data/cache/*.php
+          bye
+          LFTP
