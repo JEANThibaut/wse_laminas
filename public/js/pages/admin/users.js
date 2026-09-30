@@ -1,34 +1,41 @@
-const table = new DataTable('#userTable', {
-    ajax: '/admin-get-users',
-    columns: [
-        { data: 'lastname' },
-        { data: 'firstname' },
-        {
-            data: 'id',
-            render: function(data, type, row) {
-                return `<button class="btn-primary btn-sm"><a href="/admin-user-profil/${data}">Voir</a></button>`;
-            }
-        }
-    ],
-    perPage: 10,
-    perPageSelect: [5, 10, 25, 50],
-});
+// Recherche AJAX de la liste des utilisateurs (nom, prenom, email)
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('userSearch');
+    const tbody = document.querySelector('#userTable tbody');
+    if (!input || !tbody) return;
 
+    let timer = null;
+    let controller = null;
 
-table.on('init', () => {
-    const layoutRow = document.querySelector('.dt-layout-row');
-    if (layoutRow) {
-        layoutRow.classList.add('row');
-        layoutRow.querySelectorAll('.dt-layout-cell').forEach(cell => {
-            cell.classList.add('col-sm-3');
-        });
+    input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => search(input.value.trim()), 250);
+    });
 
-        const select = document.getElementById('dt-length-0');
-        const input = document.getElementById('dt-search-0');
-        if (input) {
-            input.placeholder = 'Rechercher...';
-          }
-        if (select) select.classList.add('form-select');
-        if (input) input.classList.add('form-control');
+    function search(term) {
+        // Annule la requete precedente : seule la derniere saisie compte
+        if (controller) controller.abort();
+        controller = new AbortController();
+
+        fetch(`${input.dataset.url}?q=${encodeURIComponent(term)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            signal: controller.signal,
+        })
+            .then(res => {
+                // Session expiree : on recharge pour repasser par la connexion
+                if (res.status === 403 || res.redirected) {
+                    window.location.reload();
+                    return null;
+                }
+                if (!res.ok) throw new Error(res.status);
+                return res.text();
+            })
+            .then(html => {
+                if (html !== null) tbody.innerHTML = html;
+            })
+            .catch(err => {
+                if (err.name === 'AbortError') return;
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erreur lors de la recherche.</td></tr>';
+            });
     }
 });

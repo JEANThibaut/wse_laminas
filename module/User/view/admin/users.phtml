@@ -1,25 +1,23 @@
 <div class='card'>
   <h3>Utilisateurs</h3>
+  <div class="row mb-3">
+    <div class="col-lg-4 col-sm-12">
+      <input type="search" id="userSearch" class="form-control" placeholder="Rechercher par nom, prénom ou email" autocomplete="off"
+             data-url="<?= $this->escapeHtmlAttr($this->url('admin-search-users')) ?>">
+    </div>
+  </div>
   <table id="userTable" class="table table-bordered table-striped">
     <thead>
       <tr>
         <th>Nom</th>
         <th>Prénom</th>
-        <th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($users as $user): ?>
-      <tr>
-        <td><?= $this->escapeHtml($user->getLastname()) ?></td>
-        <td><?= $this->escapeHtml($user->getFirstname()) ?></td>
-        <td>
-          <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $user->getIdUser()])) ?>" class="btn btn-sm btn-warning">
-            <i class="fa-solid fa-edit"></i>
-          </a>
-        </td>
-      </tr>
-    <?php endforeach; ?>
+<?= $this->partial('admin/partial/user-rows', ['users' => $users]) ?>
     </tbody>
   </table>
 </div>
+
+<script src="/js/pages/admin/users.js"></script>

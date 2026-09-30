@@ -29,7 +29,7 @@ class UserController extends AbstractActionController
             return $redirect;
         }
         $currentUser = $this->authService->getIdentity();
-        $users = $this->entityManager->getRepository(User::class)->findBy([], ['lastname' => 'ASC']);
+        $users = $this->entityManager->getRepository(User::class)->search('');
         $view = new ViewModel([
             
             'currentUser'=>$currentUser,
@@ -41,8 +41,24 @@ class UserController extends AbstractActionController
         return $view;
     }
 
-    
-     public function editUserAction(){  
+    /**
+     * Recherche AJAX de la liste admin : renvoie uniquement les lignes du tableau.
+     */
+    public function searchUsersAction()
+    {
+        if ($this->authService->requireRoles(['admin'], $this->redirect())) {
+            return $this->getResponse()->setStatusCode(403);
+        }
+        $term = InputSanitizer::cleanString($this->params()->fromQuery('q'));
+        $users = $this->entityManager->getRepository(User::class)->search($term);
+
+        $view = new ViewModel(['users' => $users]);
+        $view->setTemplate('admin/partial/user-rows');
+        $view->setTerminal(true);
+        return $view;
+    }
+
+     public function editUserAction(){
             if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
                 $this->flashMessenger()->addErrorMessage('Accès refusé.');
                 return $redirect;

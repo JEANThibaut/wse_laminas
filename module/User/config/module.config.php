@@ -18,6 +18,16 @@ return [
                     ],
                 ],
             ],
+            'admin-search-users' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/users/search',
+                    'defaults' => [
+                        'controller' => UserController::class,
+                        'action' => 'searchUsers',
+                    ],
+                ],
+            ],
             'admin-edit-user' => [
                 'type' => Segment::class,
                 'options' => [
