@@ -10,6 +10,10 @@ use PHPMailer\PHPMailer\Exception;
 
 class AuthService
 {
+    // Duree de validite d'un lien de reinitialisation, en secondes
+    public const RESET_TOKEN_TTL = 3600;
+    public const PASSWORD_MIN_LENGTH = 8;
+
     private EntityManager $entityManager;
     private AuthenticationService $authenticationService;
     private array $mailSettings;
@@ -75,17 +79,13 @@ class AuthService
             return false;
         }
 
-        // Génère un token de réinitialisation
-        $token = bin2hex(random_bytes(16));
+        // Le token embarque sa date d'expiration ("<timestamp>.<aleatoire>") :
+        // pas besoin de colonne dediee en base
+        $token = (time() + self::RESET_TOKEN_TTL) . '.' . bin2hex(random_bytes(16));
         $user->setResetToken($token);
-        // Si tu as aussi un champ pour la date d'expiration, ajoute-le ici
-        // $user->setPasswordResetTokenExpiry((new \DateTime())->modify('+1 hour'));
         $this->entityManager->flush();
 
-        // Prépare le lien de réinitialisation
-        // $resetLink = 'https://yourdomain.com/reset-password?token=' . $token;
-
-        $resetLink = 'http://www.wolfsofteure.fr/reset-password?token=' . $token;
+        $resetLink = 'https://www.wolfsofteure.fr/reset-password?token=' . urlencode($token);
 
         return $this->sendMail(
             $user->getEmail(),
@@ -155,10 +155,27 @@ class AuthService
         return $password;
     }
 
-    public function resetPassword($email, $newPassword)
+    /**
+     * Retourne l'utilisateur associe a un token de reinitialisation encore valide.
+     * Les tokens sans date d'expiration (ancien format) sont refuses.
+     */
+    public function findUserByResetToken(string $token): ?User
     {
-        // Cherche l'utilisateur par email
-        $user = $this->findUserByEmail($email);
+        if (!preg_match('/\A(\d+)\.[0-9a-f]{32}\z/', $token, $matches)) {
+            return null;
+        }
+        if ((int) $matches[1] < time()) {
+            return null;
+        }
+
+        return $this->entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+    }
+
+    public function resetPassword(string $token, string $newPassword): bool
+    {
+        // L'utilisateur est retrouve par le token recu par mail, jamais par
+        // un email envoye dans le formulaire
+        $user = $this->findUserByResetToken($token);
         if (!$user) {
             return false;
         }

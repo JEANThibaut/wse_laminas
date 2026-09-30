@@ -66,37 +66,55 @@ class AuthController extends AbstractActionController
         
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
-            $email = InputSanitizer::cleanString($data['email'] ?? '');
-            $newPassword = trim($data['new-password'] ?? '');
-                if($newPassword !=""){
-                    $reset = $this->authService->resetPassword($email, $newPassword);
-                    if ($reset) {
-                        $this->flashMessenger()->addSuccessMessage("Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.");
-                        return $this->redirect()->toRoute('login');
-                    } else {
-                        $this->flashMessenger()->addErrorMessage("Erreur lors de la réinitialisation du mot de passe. Le token peut être invalide ou expiré.");
-                    }
-                }else{
-                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $this->authService->sendPasswordResetLink($email);
-                        $this->flashMessenger()->addSuccessMessage("Si cet email est enregistré, un lien de réinitialisation a été envoyé.");
-                        return $this->redirect()->toRoute('home');
-                    } else {
-                        $this->flashMessenger()->addErrorMessage("Veuillez entrer une adresse email valide.");
-                    } 
+            $token = InputSanitizer::cleanString($data['token'] ?? '');
+
+            // Formulaire "nouveau mot de passe" : seul le token recu par mail
+            // identifie le compte
+            if ($token !== '') {
+                $user = $this->authService->findUserByResetToken($token);
+                if (!$user) {
+                    $this->flashMessenger()->addErrorMessage("Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.");
+                    return $this->redirect()->toRoute('reset-password');
                 }
+
+                $newPassword = trim($data['new-password'] ?? '');
+                $confirmPassword = trim($data['confirm-password'] ?? '');
+                $message = null;
+                if (mb_strlen($newPassword) < AuthService::PASSWORD_MIN_LENGTH) {
+                    $message = "Le mot de passe doit contenir au moins " . AuthService::PASSWORD_MIN_LENGTH . " caractères.";
+                } elseif ($newPassword !== $confirmPassword) {
+                    $message = "Les mots de passe ne correspondent pas.";
+                } elseif ($this->authService->resetPassword($token, $newPassword)) {
+                    $this->flashMessenger()->addSuccessMessage("Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.");
+                    return $this->redirect()->toRoute('login');
+                } else {
+                    $message = "Erreur lors de la réinitialisation du mot de passe.";
+                }
+
+                return new ViewModel([
+                    'user' => $user,
+                    'message' => $message,
+                ]);
+            }
+
+            // Formulaire "demande de lien"
+            $email = InputSanitizer::cleanString($data['email'] ?? '');
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->authService->sendPasswordResetLink($email);
+                $this->flashMessenger()->addSuccessMessage("Si cet email est enregistré, un lien de réinitialisation a été envoyé.");
+                return $this->redirect()->toRoute('home');
+            }
+            $this->flashMessenger()->addErrorMessage("Veuillez entrer une adresse email valide.");
         } else {
             $token = InputSanitizer::cleanString($this->params()->fromQuery('token'));
             if ($token !== '') {
-                $user = $this->entityManager->getRepository(User::class)->findOneBy(['resetToken' => $token]);
+                $user = $this->authService->findUserByResetToken($token);
                 if ($user) {
                     return new ViewModel([
                         'user' => $user,
                     ]);
-                } else {
-                    $this->flashMessenger()->addErrorMessage("Token invalide ou expiré.");
-                    return new ViewModel();
                 }
+                $this->flashMessenger()->addErrorMessage("Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.");
             }
         }
         return new ViewModel();
