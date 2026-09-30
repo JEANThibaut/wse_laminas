@@ -12,3 +12,4 @@ config/autoload/local.php
 
 # Snapshot FTP de la prod, usage local uniquement
 /EN-PROD
+/PROD
