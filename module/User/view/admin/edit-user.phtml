@@ -4,7 +4,7 @@ $generatedPasswords = $this->flashMessenger()->setNamespace('generatedPassword')
 <div class="card mt-4">
     <h4>Modifier un utilisateur</h4>
 
-    <?php if ($currentUser && $currentUser->isInRoles('GOD') && !empty($generatedPasswords)): ?>
+    <?php if ($currentUser && $currentUser->isGod() && !empty($generatedPasswords)): ?>
         <div class="alert alert-warning d-flex align-items-center justify-content-between mt-3">
             <div>
                 Nouveau mot de passe généré : <strong id="generatedPasswordValue"><?= $this->escapeHtml($generatedPasswords[0]) ?></strong>
@@ -95,7 +95,7 @@ $generatedPasswords = $this->flashMessenger()->setNamespace('generatedPassword')
                     </button>
                 </form>
             </div>
-            <?php if ($currentUser && $currentUser->isInRoles('GOD')): ?>
+            <?php if ($currentUser && $currentUser->isGod()): ?>
             <div class="form-group ms-2">
                 <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-generate-password')) ?>" class="generate-password-form">
                     <input type="hidden" name="iduser" value="<?= $this->escapeHtmlAttr($user->getIdUser()) ?>">
@@ -151,7 +151,7 @@ $generatedPasswords = $this->flashMessenger()->setNamespace('generatedPassword')
     </div>
 </div>
 
-<?php if ($currentUser && $currentUser->isInRoles('GOD')): ?>
+<?php if ($currentUser && $currentUser->isGod()): ?>
 <div class="modal fade" id="confirmGenerateModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

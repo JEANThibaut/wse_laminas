@@ -173,7 +173,7 @@ class UserController extends AbstractActionController
     public function generatePasswordAction(){
 
         $currentUser = $this->authService->getIdentity();
-        if (!$currentUser || !$currentUser->isInRoles('GOD')) {
+        if (!$currentUser || !$currentUser->isGod()) {
             $this->flashMessenger()->addErrorMessage('Accès refusé.');
             return $this->redirect()->toRoute('admin-users');
         }

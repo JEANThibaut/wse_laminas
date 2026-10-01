@@ -197,23 +197,17 @@ class AuthService
         if (!$user) {
             return $redirectPlugin->toRoute('login');
         }
-        $roles = $user->getRoles();
-        if (is_string($roles)) {
-            $roles = json_decode($roles, true);
-        }
-        if (!is_array($roles)) {
-            $roles = [];
-        }
         // Tout passe si GOD
-        $rolesLower = array_map('strtolower', $roles);
-        if (in_array('god', $rolesLower, true)) {
+        if ($user->isGod()) {
             return null;
         }
-        $rolesAutorisesLower = array_map('strtolower', $rolesAutorises);
-        if (!array_intersect($rolesLower, $rolesAutorisesLower)) {
-            return $redirectPlugin->toRoute('home');
+        foreach ($rolesAutorises as $role) {
+            // "admin" suit la meme regle que le menu d'administration
+            if (strtolower($role) === 'admin' ? $user->hasAdminAccess() : $user->isInRoles($role)) {
+                return null;
+            }
         }
-        return null;
+        return $redirectPlugin->toRoute('home');
     }
 
 

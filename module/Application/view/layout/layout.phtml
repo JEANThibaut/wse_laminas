@@ -177,7 +177,7 @@
             </li>                        
 
         <?php endif; ?>
-            <?php if ($this->currentUser && $this->currentUser->getIsAdmin()) : ?>
+            <?php if ($this->currentUser && $this->currentUser->hasAdminAccess()) : ?>
             <hr>
             <h4>Espace Administration</h4>
             <li class="nav-item">

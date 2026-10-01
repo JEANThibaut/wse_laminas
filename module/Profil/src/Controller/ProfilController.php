@@ -56,7 +56,7 @@ class ProfilController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        if (!$currentUser->getIsAdmin() && $currentUser->getIdUser() !== $user->getIdUser()) {
+        if (!$currentUser->hasAdminAccess() && $currentUser->getIdUser() !== $user->getIdUser()) {
             $this->flashMessenger()->addErrorMessage("Accès refusé.");
             return $this->redirect()->toRoute('home');
         }

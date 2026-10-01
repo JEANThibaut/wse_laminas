@@ -2,7 +2,7 @@
     .card { margin-bottom: 12px; }
 </style>
 
-<?php $isAdmin = $currentUser && $currentUser->getIsAdmin(); ?>
+<?php $isAdmin = $currentUser && $currentUser->hasAdminAccess(); ?>
 
 <?php if ($isAdmin): ?>
     <div class="mb-3">

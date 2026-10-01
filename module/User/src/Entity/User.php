@@ -188,15 +188,34 @@ class User
         return $this;
     }
 
+    /**
+     * Le role est cherche dans le JSON `roles`, sans tenir compte de la casse.
+     */
     public function isInRoles($role): bool
     {
-        $roles = $this->getRoles();
-    
-        if (is_string($roles)) {
-            $roles = json_decode($roles, true);
+        $roles = json_decode((string) $this->getRoles(), true);
+        if (!is_array($roles)) {
+            return false;
         }
-    
-        return is_array($roles) && in_array($role, $roles, true);
+
+        return in_array(strtolower((string) $role), array_map('strtolower', $roles), true);
+    }
+
+    /**
+     * Hierarchie des droits : GOD a tous les droits.
+     */
+    public function isGod(): bool
+    {
+        return $this->isInRoles('god');
+    }
+
+    /**
+     * Droits d'administration : GOD, colonne `admin` (champ "Admin" de la
+     * fiche utilisateur) ou role ADMIN dans le JSON `roles`.
+     */
+    public function hasAdminAccess(): bool
+    {
+        return $this->isGod() || (bool) $this->admin || $this->isInRoles('admin');
     }
     
     public function getResetToken(): ?string
