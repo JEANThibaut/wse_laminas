@@ -11,6 +11,8 @@ class GameRegister
 {
     public const STATUS_ACTIVE = 'active';
     public const STATUS_CANCELLED = 'cancelled';
+    // File d'attente : ne prend pas de place tant que le joueur n'a pas confirme
+    public const STATUS_PENDING = 'pending';
 
     /**
      * @ORM\Id
@@ -114,6 +116,11 @@ public function setStatus($status)
 public function isActive()
 {
     return $this->status === self::STATUS_ACTIVE;
+}
+
+public function isPending()
+{
+    return $this->status === self::STATUS_PENDING;
 }
 
   

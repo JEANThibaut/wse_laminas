@@ -8,15 +8,18 @@ use Game\Entity\Game;
 use Game\Entity\GameRegister;
 use Game\Entity\WaitingList;
 use Actus\Entity\Actus;
+use Game\Service\GameManager;
 class IndexController extends AbstractActionController
 {
     private $authService;
     private $entityManager;
+    private GameManager $gameManager;
 
-    public function __construct($authService, $entityManager)
+    public function __construct($authService, $entityManager, GameManager $gameManager)
     {
         $this->entityManager = $entityManager;
         $this->authService = $authService;
+        $this->gameManager = $gameManager;
     }
 
 
@@ -35,8 +38,10 @@ class IndexController extends AbstractActionController
         }   
         $this->layout()->setVariable('activeMenu', 'home');
         $register = null;
+        $queue = null;
         if($game && $currentUser){
-            $register = $this->entityManager->getRepository(Game::class)->findRegister($game,$currentUser->getIdUser());
+            // Inscription en cours, y compris en file d'attente
+            $register = $this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $currentUser);
             $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
                 'game' => $game->getIdGame(),
                 'status' => GameRegister::STATUS_ACTIVE,
@@ -46,6 +51,18 @@ class IndexController extends AbstractActionController
                 $isRegister = true;
             }
             $isComplete = count($countRegister) >= $game->getPlayerMax();
+
+            // File d'attente : le joueur y est deja, ou y serait place en s'inscrivant
+            $isPending = $register && $register->isPending();
+            if ($isPending || (!$register && $this->gameManager->mustQueue($currentUser))) {
+                $opening = $this->gameManager->getConfirmationOpening($game, $currentUser);
+                $now = new \DateTimeImmutable('now', $opening->getTimezone());
+                $queue = [
+                    'isPending' => $isPending,
+                    'opening' => $opening,
+                    'isOpen' => $now >= $opening && $now < $this->gameManager->getGameStart($game),
+                ];
+            }
         }
 
         $actus = $this->entityManager->getRepository(Actus::class)->findBy(
@@ -63,6 +80,7 @@ class IndexController extends AbstractActionController
             'isComplete'=>$isComplete,
             'actus' => $actus,
             'countRegister'=> $countRegister ?? null,
+            'queue' => $queue,
             // 'isInWaitingList'=>$isInWaitingList,
         ]);
     }

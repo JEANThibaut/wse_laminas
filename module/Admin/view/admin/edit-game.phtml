@@ -87,6 +87,22 @@
         </table>
     <?php endif; ?>
 
+    <h4 class="mt-4">En attente (<?= count($pendingQueue) ?>)</h4>
+    <?= $this->partial('admin/partial/pending-queue', ['pendingQueue' => $pendingQueue, 'withActions' => true]) ?>
+    <div class="mb-3">
+        <?= $this->partial('application/partial/confirm-bulk-action', [
+            'id' => 'confirmGenerateQueue',
+            'buttonClass' => 'btn-warning',
+            'buttonLabel' => "Générer la file d'attente",
+            'title' => "Générer la file d'attente",
+            'message' => "Ces inscrits ont déjà été absents à une partie (hors membres, admins et GOD). Ils perdront leur place et passeront en file d'attente, avec les mêmes règles de confirmation (48 h avant s'ils sont déjà venus, 24 h sinon) :",
+            'users' => array_map(fn ($register) => $register->getUser(), $registersToQueue),
+            'action' => $this->url('admin-generate-queue'),
+            'fields' => ['id' => $game->getIdGame()],
+            'confirmLabel' => 'Je confirme le passage en file d\'attente de ces ' . count($registersToQueue) . ' joueur(s).',
+        ]) ?>
+    </div>
+
     <div class="mt-3">
         <?= $this->partial('application/partial/confirm-bulk-action', [
             'id' => 'confirmUnregisterUnvalidated',

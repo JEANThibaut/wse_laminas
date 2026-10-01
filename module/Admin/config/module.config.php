@@ -72,6 +72,16 @@ return [
                     ],
                 ],
             ],
+            'admin-generate-queue' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/generate-queue',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'generateQueue',
+                    ],
+                ],
+            ],
             'admin-next-games' => [
                 'type' => Literal::class,
                 'options' => [

@@ -1,0 +1,42 @@
+<?php
+/**
+ * File d'attente d'une partie, deja classee par priorite.
+ * Parametres : pendingQueue (GameManager::getPendingQueue), withActions (bool).
+ */
+$withActions = $withActions ?? false;
+?>
+<?php if (empty($pendingQueue)): ?>
+    <p class="text-muted">Personne en file d'attente.</p>
+<?php else: ?>
+    <p class="small text-muted">Classement : le plus de présences d'abord, puis le moins d'absences, puis l'ordre d'inscription.
+    Confirmation ouverte 48 h avant la partie pour les joueurs déjà venus, 24 h avant pour les autres.</p>
+    <table class="table table-striped">
+        <tbody>
+        <?php foreach ($pendingQueue as $rank => $entry): ?>
+            <?php $user = $entry['register']->getUser(); ?>
+            <tr>
+                <td class="align-middle" style="width: 1%;"><?= $rank + 1 ?></td>
+                <td class="text-break">
+                    <div class="fw-semibold">
+                        <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?>
+                        <span class="badge <?= $entry['presences'] > 0 ? 'bg-warning text-dark' : 'bg-danger' ?> ms-1" title="Présences / inscriptions (parties passées)">
+                            <?= $entry['presences'] ?>/<?= $entry['presences'] + $entry['absences'] ?>
+                        </span>
+                    </div>
+                    <div class="small text-muted">Confirmation à partir du <?= $this->escapeHtml($entry['opening']->format('d/m/Y à H\hi')) ?></div>
+                </td>
+                <?php if ($withActions): ?>
+                <td class="text-end align-middle" style="width: 1%;">
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($entry['register']->getIdregister()) ?>">
+                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($entry['register']->getIdregister()) ?>">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>

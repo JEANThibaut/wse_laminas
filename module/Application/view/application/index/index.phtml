@@ -3,7 +3,7 @@
 <div class='card'>
     <?php if($game):?>
 
-  <?php if($isComplete && !$isRegister) : ?>
+  <?php if($isComplete && !$isRegister && !$queue) : ?>
 
 
                   <h4>La prochaine partie est complète!</h4>
@@ -59,7 +59,34 @@
           <div class='row'>
             <div class="col-12 text-center">
               <?php if($this->currentUser):?>
-                  <?php if($this->register): ?>
+                  <?php if($this->register && $this->register->isPending()): ?>
+                    <div class='alert alert-warning'>
+                      <p class="mb-1"><b>Vous êtes en file d'attente</b></p>
+                      <?php if ($queue['isOpen']): ?>
+                        <p class="mb-0">Confirmez votre venue pour obtenir une place, dans la limite des places disponibles.</p>
+                      <?php elseif (new \DateTimeImmutable('now', $queue['opening']->getTimezone()) < $queue['opening']): ?>
+                        <p class="mb-0">Vous pourrez confirmer votre venue à partir du <b><?= $this->escapeHtml($queue['opening']->format('d/m/Y à H\hi')) ?></b>, dans la limite des places disponibles.</p>
+                      <?php else: ?>
+                        <p class="mb-0">La confirmation est fermée pour cette partie.</p>
+                      <?php endif; ?>
+                    </div>
+                    <?php if ($queue['isOpen']): ?>
+                      <?php if ($isComplete): ?>
+                        <p>La partie est complète pour le moment : revenez si une place se libère.</p>
+                      <?php else: ?>
+                        <form action="<?= $this->escapeHtmlAttr($this->url('confirm-pending-register')) ?>" method="post" style="display: inline;">
+                          <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($register->getIdregister()) ?>">
+                          <button type="submit" class="btn btn-success">Confirmer ma venue</button>
+                        </form>
+                      <?php endif; ?>
+                    <?php endif; ?>
+                    <form action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game')) ?>" method="post" style="display: inline;">
+                      <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($register->getIdregister()) ?>">
+                      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#unregisterModal">
+                        Quitter la file d'attente
+                      </button>
+                    </form>
+                  <?php elseif($this->register): ?>
                     <div class='alert alert-success'>
                       <p>Vous êtes inscrit à la partie</p>
                   </div>
@@ -74,11 +101,15 @@
 
                 <div class='row'>
                   <div class="col-12 text-center">
-                      <p>Les inscriptions sont ouvertes ! </p>
+                      <?php if ($queue): ?>
+                        <p>Suite à une absence lors d'une partie précédente, votre inscription passera par la file d'attente.</p>
+                      <?php else: ?>
+                        <p>Les inscriptions sont ouvertes ! </p>
+                      <?php endif; ?>
                   </div>
                     <div class="col-12 text-center">
                       <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#registerModal">
-                        S'inscrire
+                        <?= $queue ? "Rejoindre la file d'attente" : "S'inscrire" ?>
                       </button>
                   </div>  
                 </div>
@@ -151,6 +182,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
         </div>
         <div class="modal-body">
+          <?php if ($register->isPending()): ?>
+          <p>Êtes-vous sûr de vouloir quitter la file d'attente de cette partie ?</p>
+          <?php else: ?>
           <p>Êtes-vous sûr de vouloir vous désinscrire de cette partie ?</p>
           <p>Si la désinscription intervient plus de <b>24h avant</b> la partie, le remboursement sera de <b>9,50 euros</b> et traité sous <b>24 à 48h</b>.</p>
           <div class="form-check mt-3">
@@ -159,6 +193,7 @@
               J'ai lu, compris, et j'accepte les conditions de désinscription et de remboursement.
             </label>
           </div>
+          <?php endif; ?>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -181,6 +216,13 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
         </div>
         <div class="modal-body">
+          <?php if ($queue): ?>
+          <div class="alert alert-warning">
+            <p class="mb-1"><b>Inscription en file d'attente</b></p>
+            <p class="mb-0">Suite à une absence lors d'une partie précédente, votre inscription ne réserve pas de place.
+            Vous pourrez confirmer votre venue à partir du <b><?= $this->escapeHtml($queue['opening']->format('d/m/Y à H\hi')) ?></b>, et vous serez alors inscrit s'il reste des places.</p>
+          </div>
+          <?php endif; ?>
           <p> Les mineurs ne sont passt autorisés à s'inscrire même avec un accompagnant </p>
           <p>Merci de vous présenter à l'accueil entre 8h et 8h30, la grille sera fermée passée cet horaire.</p>
           <p>Nous acceptons les réglementents en espèces et carte bancaire</p>
@@ -195,7 +237,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="submit" class="btn btn-warning">Confirmer l'inscription</button>
+          <button type="submit" class="btn btn-warning"><?= $queue ? "Rejoindre la file d'attente" : "Confirmer l'inscription" ?></button>
         </div>
       </form>
     </div>

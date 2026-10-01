@@ -89,7 +89,8 @@ public function getFirstMissingArrivedNumber($excludedRegister, $gameId): int
 }
 
 /**
- * Inscriptions actives d'une partie dont le joueur n'a pas valide son email.
+ * Inscriptions d'une partie (inscrits et file d'attente) dont le joueur n'a
+ * pas valide son email.
  */
 public function findUnvalidatedRegisters($game): array
 {
@@ -98,10 +99,10 @@ public function findUnvalidatedRegisters($game): array
         ->from(GameRegister::class, 'r')
         ->join('r.user', 'u')
         ->where('r.game = :game')
-        ->andWhere('r.status = :status')
+        ->andWhere('r.status IN (:statuses)')
         ->andWhere('u.mailValidation = false')
         ->setParameter('game', $game)
-        ->setParameter('status', GameRegister::STATUS_ACTIVE)
+        ->setParameter('statuses', [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING])
         ->orderBy('u.lastname', 'ASC')
         ->addOrderBy('u.firstname', 'ASC')
         ->getQuery()
@@ -114,9 +115,9 @@ public function findUnvalidatedRegisters($game): array
  * 'registered' et 'validated' (joueur present, paid = 1) ne portent que sur
  * les inscriptions non membres ; 'total' compte toutes les inscriptions.
  */
-public function getParticipationStatsByUser(): array
+public function getParticipationStatsByUser(?int $userId = null): array
 {
-    $rows = $this->_em->createQueryBuilder()
+    $qb = $this->_em->createQueryBuilder()
         ->select('IDENTITY(r.user) AS iduser')
         ->addSelect('COUNT(r.idregister) AS total')
         ->addSelect('SUM(CASE WHEN r.member = 0 THEN 1 ELSE 0 END) AS registered')
@@ -127,9 +128,11 @@ public function getParticipationStatsByUser(): array
         ->andWhere('g.date < :today')
         ->setParameter('status', GameRegister::STATUS_ACTIVE)
         ->setParameter('today', new \DateTime('today'))
-        ->groupBy('r.user')
-        ->getQuery()
-        ->getArrayResult();
+        ->groupBy('r.user');
+    if ($userId !== null) {
+        $qb->andWhere('r.user = :user')->setParameter('user', $userId);
+    }
+    $rows = $qb->getQuery()->getArrayResult();
 
     $stats = [];
     foreach ($rows as $row) {
@@ -140,6 +143,59 @@ public function getParticipationStatsByUser(): array
         ];
     }
     return $stats;
+}
+
+/**
+ * Nombre d'inscrits qui occupent une place (hors file d'attente).
+ */
+public function countActiveRegisters($game): int
+{
+    return (int) $this->_em->createQueryBuilder()
+        ->select('COUNT(r.idregister)')
+        ->from(GameRegister::class, 'r')
+        ->where('r.game = :game')
+        ->andWhere('r.status = :status')
+        ->setParameter('game', $game)
+        ->setParameter('status', GameRegister::STATUS_ACTIVE)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+/**
+ * Inscription en cours (inscrit ou en file d'attente) d'un joueur a une partie.
+ */
+public function findCurrentRegister($game, $user): ?GameRegister
+{
+    return $this->_em->createQueryBuilder()
+        ->select('r')
+        ->from(GameRegister::class, 'r')
+        ->where('r.game = :game')
+        ->andWhere('r.user = :user')
+        ->andWhere('r.status IN (:statuses)')
+        ->setParameter('game', $game)
+        ->setParameter('user', $user)
+        ->setParameter('statuses', [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING])
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getOneOrNullResult();
+}
+
+/**
+ * File d'attente d'une partie, sans ordre particulier (le classement est
+ * fait par GameManager::sortPendingByPriority).
+ */
+public function findPendingRegisters($game): array
+{
+    return $this->_em->createQueryBuilder()
+        ->select('r', 'u')
+        ->from(GameRegister::class, 'r')
+        ->join('r.user', 'u')
+        ->where('r.game = :game')
+        ->andWhere('r.status = :status')
+        ->setParameter('game', $game)
+        ->setParameter('status', GameRegister::STATUS_PENDING)
+        ->getQuery()
+        ->getResult();
 }
 
 

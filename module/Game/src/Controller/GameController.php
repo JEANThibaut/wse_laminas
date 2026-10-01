@@ -11,6 +11,7 @@ use Game\Entity\GameRegister;
 use Game\Entity\PaymentTransaction;
 use Game\Entity\WaitingList;
 use Game\Form\GameForm;
+use Game\Service\GameManager;
 use User\Entity\User;
 
 class GameController extends AbstractActionController
@@ -55,25 +56,25 @@ class GameController extends AbstractActionController
             return $this->redirect()->toRoute('home');
         }
 
-        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
-            'user' => $user,
-            'game' => $game,
-            'status' => GameRegister::STATUS_ACTIVE,
-        ]);
-
-        if ($register) {
-            $this->flashMessenger()->addSuccessMessage('Vous êtes déjà inscrit à cette partie.');
-            return $this->redirect()->toRoute('home');
-        }
-
         // Ancien flux de paiement en ligne temporairement mis de cote.
-        $registered = $this->gameManager->registerInGame($game, $currentUser);
-        if (! $registered) {
-            $this->flashMessenger()->addErrorMessage('L\'inscription n\'a pas pu être finalisée.');
-            return $this->redirect()->toRoute('home');
+        switch ($this->gameManager->registerInGame($game, $currentUser)) {
+            case GameManager::RESULT_REGISTERED:
+                $this->flashMessenger()->addSuccessMessage('Votre inscription est enregistrée.');
+                break;
+            case GameManager::RESULT_QUEUED:
+                $this->flashMessenger()->addWarningMessage(
+                    "Vous êtes en file d'attente : vous pourrez confirmer votre venue à partir du "
+                    . $this->gameManager->getConfirmationOpening($game, $user)->format('d/m/Y à H\hi')
+                    . ", dans la limite des places disponibles."
+                );
+                break;
+            case GameManager::RESULT_ALREADY:
+                $this->flashMessenger()->addSuccessMessage('Vous êtes déjà inscrit à cette partie.');
+                break;
+            case GameManager::RESULT_FULL:
+                $this->flashMessenger()->addErrorMessage('La partie est complète.');
+                break;
         }
-
-        $this->flashMessenger()->addSuccessMessage('Votre inscription est enregistrée.');
         return $this->redirect()->toRoute('home');
 
         if (! $this->sumupService->hasValidConfiguration()) {
@@ -343,8 +344,49 @@ class GameController extends AbstractActionController
 
     
     
+    /**
+     * Un joueur en file d'attente confirme sa venue.
+     */
+    public function confirmPendingAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        if (! $currentUser) {
+            return $this->redirect()->toRoute('login');
+        }
+        if (! $this->getRequest()->isPost()) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
+            'idregister' => InputSanitizer::cleanInt($this->params()->fromPost('id')),
+            'status' => GameRegister::STATUS_PENDING,
+        ]);
+        if (! $register || (int) $register->getUser()->getIdUser() !== (int) $currentUser->getIdUser()) {
+            $this->flashMessenger()->addErrorMessage("Aucune inscription en file d'attente à confirmer.");
+            return $this->redirect()->toRoute('home');
+        }
+
+        switch ($this->gameManager->confirmPendingRegister($register)) {
+            case GameManager::RESULT_CONFIRMED:
+                $this->flashMessenger()->addSuccessMessage('Votre venue est confirmée : vous êtes inscrit à la partie !');
+                break;
+            case GameManager::RESULT_NOT_OPEN:
+                $this->flashMessenger()->addErrorMessage(
+                    'La confirmation ouvre le '
+                    . $this->gameManager->getConfirmationOpening($register->getGame(), $register->getUser())->format('d/m/Y à H\hi') . '.'
+                );
+                break;
+            case GameManager::RESULT_FULL:
+                $this->flashMessenger()->addErrorMessage("Il n'y a plus de place pour le moment. Vous restez en file d'attente.");
+                break;
+            default:
+                $this->flashMessenger()->addErrorMessage("La confirmation n'est plus possible pour cette partie.");
+        }
+        return $this->redirect()->toRoute('home');
+    }
+
     public function unregisterInGameAction(){
-  
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $currentUser = $this->authService->getIdentity();
@@ -353,9 +395,10 @@ class GameController extends AbstractActionController
                 return $this->redirect()->toRoute('login');
             }
             $id = InputSanitizer::cleanInt($this->params()->fromPost('id'));
+            // Inscrit ou en file d'attente
             $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
                 'idregister' => $id,
-                'status' => GameRegister::STATUS_ACTIVE,
+                'status' => [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING],
             ]);
             if($register){
                 $registerUser = $register->getUser();

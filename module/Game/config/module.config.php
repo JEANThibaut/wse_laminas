@@ -42,6 +42,16 @@ return [
                     ],
                 ],
             ],
+            'confirm-pending-register' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/confirm-pending-register',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'confirmPending',
+                    ],
+                ],
+            ],
             'unregister-in-game' => [
                 'type' => Literal::class,
                 'options' => [

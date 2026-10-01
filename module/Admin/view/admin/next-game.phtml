@@ -11,6 +11,11 @@
             Validé
         </button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queue" type="button" role="tab">
+            En attente (<?= count($pendingQueue) ?>)
+        </button>
+    </li>
 </ul>
 
 <div class="tab-content" id="registerTabsContent">
@@ -57,6 +62,11 @@
                 </div>
             <?php endif; ?>
         <?php endforeach; ?>
+    </div>
+
+    <!-- TAB 3 : FILE D'ATTENTE -->
+    <div class="tab-pane fade" id="queue" role="tabpanel">
+        <?= $this->partial('admin/partial/pending-queue', ['pendingQueue' => $pendingQueue]) ?>
     </div>
 
 </div>
