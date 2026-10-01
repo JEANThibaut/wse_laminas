@@ -20,6 +20,9 @@ jobs:
   deploy:
     name: Build et envoi SFTP
     runs-on: ubuntu-latest
+    # Un deploiement normal prend moins de 5 minutes : au-dela, quelque chose
+    # bloque et le job ne doit pas tourner jusqu'a la limite de 6 h
+    timeout-minutes: 15
 
     steps:
       - name: Recupere le code
@@ -61,8 +64,13 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp sshpass
+          # Sans limite, lftp reessaie indefiniment et en silence quand la
+          # connexion echoue (mot de passe refuse, hote injoignable...)
           lftp -u "$SFTP_USER", "sftp://${SFTP_HOST}:${SFTP_PORT}" <<LFTP
-          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
+          set net:max-retries 2
+          set net:timeout 20
+          set net:reconnect-interval-base 5
           echo "----- racine du compte -----"
           ls
           echo "----- /www -----"
@@ -93,9 +101,10 @@ jobs:
           # exclusions ci-dessous protegent les fichiers qui n'existent QUE sur
           # le serveur : les retirer entrainerait une perte de donnees.
           lftp -u "$SFTP_USER", "sftp://${SFTP_HOST}:${SFTP_PORT}" <<LFTP
-          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          set sftp:connect-program "sshpass -e ssh -a -x -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
           set net:max-retries 3
           set net:timeout 20
+          set net:reconnect-interval-base 5
           set mirror:parallel-transfer-count 4
           mirror --reverse --delete --verbose $DRY_RUN \
             --exclude '^\.git' \
