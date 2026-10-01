@@ -110,25 +110,31 @@ public function findUnvalidatedRegisters($game): array
 }
 
 /**
- * Participation par utilisateur sur les parties deja passees, hors
- * desinscriptions : [iduser => ['registered' => n, 'validated' => n, 'total' => n]].
- * 'registered' et 'validated' (joueur present, paid = 1) ne portent que sur
- * les inscriptions non membres ; 'total' compte toutes les inscriptions.
+ * Participation par utilisateur : [iduser => ['registered' => n, 'validated' => n, 'total' => n]].
+ * Seules les inscriptions actives comptent (ni desinscriptions, ni file d'attente).
+ * 'registered' : inscriptions non membres (member != 1) ; 'validated' : parmi
+ * elles, les presences (paid = 1), le reste etant des absences ; 'total' :
+ * toutes les inscriptions actives.
+ *
+ * @param bool $pastOnly limiter aux parties deja passees (file d'attente : une
+ *                       inscription a une partie a venir n'est pas une absence)
  */
-public function getParticipationStatsByUser(?int $userId = null): array
+public function getParticipationStatsByUser(?int $userId = null, bool $pastOnly = false): array
 {
     $qb = $this->_em->createQueryBuilder()
         ->select('IDENTITY(r.user) AS iduser')
         ->addSelect('COUNT(r.idregister) AS total')
-        ->addSelect('SUM(CASE WHEN r.member = 0 THEN 1 ELSE 0 END) AS registered')
-        ->addSelect('SUM(CASE WHEN r.member = 0 AND r.paid = 1 THEN 1 ELSE 0 END) AS validated')
+        ->addSelect('SUM(CASE WHEN r.member <> 1 THEN 1 ELSE 0 END) AS registered')
+        ->addSelect('SUM(CASE WHEN r.member <> 1 AND r.paid = 1 THEN 1 ELSE 0 END) AS validated')
         ->from(GameRegister::class, 'r')
-        ->join('r.game', 'g')
         ->where('r.status = :status')
-        ->andWhere('g.date < :today')
         ->setParameter('status', GameRegister::STATUS_ACTIVE)
-        ->setParameter('today', new \DateTime('today'))
         ->groupBy('r.user');
+    if ($pastOnly) {
+        $qb->join('r.game', 'g')
+            ->andWhere('g.date < :today')
+            ->setParameter('today', new \DateTime('today'));
+    }
     if ($userId !== null) {
         $qb->andWhere('r.user = :user')->setParameter('user', $userId);
     }

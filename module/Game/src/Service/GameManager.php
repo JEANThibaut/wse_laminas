@@ -65,15 +65,15 @@ class GameManager
     private const CONFIRM_HOURS_NEVER_CAME = 24;
 
     /**
-     * Presences et absences d'un joueur sur les parties passees (inscriptions
-     * non membres, hors desinscriptions et file d'attente).
+     * Presences (paid = 1) et absences (paid = 0) d'un joueur sur les parties
+     * passees, inscriptions actives non membres (member != 1).
      *
      * @return array{presences: int, absences: int}
      */
     public function getAttendance(User $user): array
     {
         $stats = $this->entityManager->getRepository(GameRegister::class)
-            ->getParticipationStatsByUser($user->getIdUser())[$user->getIdUser()] ?? null;
+            ->getParticipationStatsByUser($user->getIdUser(), true)[$user->getIdUser()] ?? null;
         $presences = $stats['validated'] ?? 0;
 
         return [
@@ -103,7 +103,7 @@ class GameManager
     public function findRegistersToQueue(Game $game): array
     {
         $repository = $this->entityManager->getRepository(GameRegister::class);
-        $stats = $repository->getParticipationStatsByUser();
+        $stats = $repository->getParticipationStatsByUser(null, true);
         $registers = $repository->findBy(['game' => $game, 'status' => GameRegister::STATUS_ACTIVE], ['idregister' => 'ASC']);
 
         return array_values(array_filter($registers, function (GameRegister $register) use ($stats) {
@@ -256,7 +256,7 @@ class GameManager
      */
     public function getPendingQueue(Game $game): array
     {
-        $stats = $this->entityManager->getRepository(GameRegister::class)->getParticipationStatsByUser();
+        $stats = $this->entityManager->getRepository(GameRegister::class)->getParticipationStatsByUser(null, true);
         $queue = [];
         foreach ($this->entityManager->getRepository(GameRegister::class)->findPendingRegisters($game) as $register) {
             $stat = $stats[$register->getUser()->getIdUser()] ?? ['registered' => 0, 'validated' => 0];

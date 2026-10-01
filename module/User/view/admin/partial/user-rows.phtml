@@ -5,15 +5,15 @@
 <?php endif; ?>
 <?php foreach ($users as $user): ?>
 <?php
-    // Parties passees, hors desinscriptions. Les membres ne sont pas pointes a
-    // l'arrivee : on affiche seulement leur nombre d'inscriptions.
+    // Inscriptions actives (member != 1) : presences (paid = 1) / inscriptions.
+    // Les membres ne sont pas pointes : on affiche leur nombre d'inscriptions.
     $stat = $stats[$user->getIdUser()] ?? ['registered' => 0, 'validated' => 0, 'total' => 0];
     if ($user->getIsMember()) {
         $badgeText = $stat['total'] . ' inscr.';
-        $badgeTitle = 'Parties inscrites (parties passées)';
+        $badgeTitle = "Nombre d'inscriptions";
     } else {
         $badgeText = $stat['validated'] . '/' . $stat['registered'];
-        $badgeTitle = 'Présences / inscriptions (parties passées)';
+        $badgeTitle = 'Présences (payé) / inscriptions';
     }
 
     if ($user->getIsMember() || $stat['registered'] === 0) {
