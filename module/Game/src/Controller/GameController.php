@@ -42,6 +42,9 @@ class GameController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage('Vous devez être connecté pour vous inscrire.');
             return $this->redirect()->toRoute('login');
         }
+        if ($redirect = $this->requireValidatedEmail($currentUser)) {
+            return $redirect;
+        }
 
         $id = InputSanitizer::cleanInt($this->params()->fromQuery('id'));
         $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);
@@ -345,6 +348,18 @@ class GameController extends AbstractActionController
     
     
     /**
+     * L'inscription a une partie exige une adresse email validee.
+     */
+    private function requireValidatedEmail(User $user)
+    {
+        if ($user->isMailValidated()) {
+            return null;
+        }
+        $this->flashMessenger()->addErrorMessage("Validez votre adresse email avant de vous inscrire à une partie.");
+        return $this->redirect()->toRoute('home');
+    }
+
+    /**
      * Un joueur en file d'attente confirme sa venue.
      */
     public function confirmPendingAction()
@@ -355,6 +370,9 @@ class GameController extends AbstractActionController
         }
         if (! $this->getRequest()->isPost()) {
             return $this->redirect()->toRoute('home');
+        }
+        if ($redirect = $this->requireValidatedEmail($currentUser)) {
+            return $redirect;
         }
 
         $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
@@ -458,8 +476,14 @@ class GameController extends AbstractActionController
 
 
     public function registerInWaitingListAction(){
-        
+
         $currentUser = $this->authService->getIdentity();
+        if (! $currentUser) {
+            return $this->redirect()->toRoute('login');
+        }
+        if ($redirect = $this->requireValidatedEmail($currentUser)) {
+            return $redirect;
+        }
         $id = InputSanitizer::cleanInt($this->params()->fromQuery('id'));
         $waitingList  = $this->entityManager->getRepository(WaitingList::class)->findBy(['game_id'=>$id]);
          $game = $this->entityManager->getRepository(Game::class)->findOneBy(['idgame'=>$id]);

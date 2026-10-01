@@ -173,6 +173,22 @@ class AuthService
         return $user;
     }
 
+    /**
+     * L'adresse est-elle deja utilisee par un autre compte (casse ignoree) ?
+     */
+    public function isEmailTakenByAnother(string $email, User $user): bool
+    {
+        return (int) $this->entityManager->createQueryBuilder()
+            ->select('COUNT(u.iduser)')
+            ->from(User::class, 'u')
+            ->where('LOWER(u.email) = LOWER(:email)')
+            ->andWhere('u.iduser <> :id')
+            ->setParameter('email', trim($email))
+            ->setParameter('id', $user->getIdUser())
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
+    }
+
     public function markEmailValidated(User $user): void
     {
         if (!$user->isMailValidated()) {
@@ -227,10 +243,7 @@ class AuthService
                 $mail->Body = "Bonjour " . $user->getFirstname() . ",\n\n"
                     . "Merci de confirmer votre adresse email en cliquant sur ce lien :\n"
                     . $buildLink($this->createEmailValidationParams($user)) . "\n\n"
-                    . "La validation de votre adresse est désormais obligatoire pour vous inscrire aux parties.\n"
-                    // Echeances exceptionnelles de la mise en place (octobre 2026)
-                    . "Si vous êtes inscrit à la partie du 11 octobre, validez avant le 8 octobre à 0h01, sinon vous serez désinscrit.\n"
-                    . "Les comptes non validés le 19 octobre à 0h01 seront désactivés.\n\n"
+                    . "La validation de votre adresse est obligatoire pour vous inscrire aux parties.\n\n"
                     . "Ce lien est valable " . intdiv(self::EMAIL_VALIDATION_TTL, 86400) . " jours.\n\n"
                     . "L'équipe Wolf Soft Eure";
                 $mail->send();

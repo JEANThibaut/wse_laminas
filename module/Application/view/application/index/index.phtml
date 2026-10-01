@@ -1,3 +1,23 @@
+<?php
+// L'inscription aux parties exige une adresse email validee
+$emailValidated = !$this->currentUser || $this->currentUser->isMailValidated();
+?>
+<?php if (!$emailValidated): ?>
+<div class="alert alert-danger">
+  <h5 class="alert-heading">Validez votre adresse email</h5>
+  <p>Pour vous inscrire aux parties, vous devez valider votre adresse email.
+  Vérifiez qu'elle est correcte (vous pouvez la modifier), puis cliquez sur le bouton : vous recevrez un lien de validation.</p>
+  <form method="post" action="<?= $this->escapeHtmlAttr($this->url('send-validation-email')) ?>" class="row g-2">
+    <div class="col-md-6 col-12">
+      <input type="email" name="email" class="form-control" required autocomplete="email"
+             value="<?= $this->escapeHtmlAttr($this->currentUser->getEmail()) ?>">
+    </div>
+    <div class="col-md-auto col-12">
+      <button type="submit" class="btn btn-danger w-100">Envoyer le lien de validation</button>
+    </div>
+  </form>
+</div>
+<?php endif; ?>
 
 
 <div class='card'>
@@ -70,7 +90,7 @@
                         <p class="mb-0">La confirmation est fermée pour cette partie.</p>
                       <?php endif; ?>
                     </div>
-                    <?php if ($queue['isOpen']): ?>
+                    <?php if ($queue['isOpen'] && $emailValidated): ?>
                       <?php if ($isComplete): ?>
                         <p>La partie est complète pour le moment : revenez si une place se libère.</p>
                       <?php else: ?>
@@ -99,6 +119,9 @@
                   <?php else: ?>   
 
 
+                <?php if (!$emailValidated): ?>
+                  <p>Validez votre adresse email (encart ci-dessus) pour pouvoir vous inscrire.</p>
+                <?php else: ?>
                 <div class='row'>
                   <div class="col-12 text-center">
                       <?php if ($queue): ?>
@@ -113,6 +136,7 @@
                       </button>
                   </div>  
                 </div>
+                <?php endif; ?>
                     
             
                   <?php endif; ?>      
@@ -186,13 +210,6 @@
           <p>Êtes-vous sûr de vouloir quitter la file d'attente de cette partie ?</p>
           <?php else: ?>
           <p>Êtes-vous sûr de vouloir vous désinscrire de cette partie ?</p>
-          <p>Si la désinscription intervient plus de <b>24h avant</b> la partie, le remboursement sera de <b>9,50 euros</b> et traité sous <b>24 à 48h</b>.</p>
-          <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" value="1" id="unregisterRefundAccepted" required>
-            <label class="form-check-label" for="unregisterRefundAccepted">
-              J'ai lu, compris, et j'accepte les conditions de désinscription et de remboursement.
-            </label>
-          </div>
           <?php endif; ?>
         </div>
         <div class="modal-footer">
@@ -205,7 +222,7 @@
 </div>
 <?php endif ;?>
 
-<?php if ($this->currentUser && $game && !$this->register): ?>
+<?php if ($this->currentUser && $emailValidated && $game && !$this->register): ?>
 <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

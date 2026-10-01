@@ -94,8 +94,15 @@ class User
         return $this->email;
     }
 
+    /**
+     * Changer d'adresse annule la validation : la nouvelle doit etre validee.
+     */
     public function setEmail(string $email): self
     {
+        if ($this->email !== null && mb_strtolower(trim($this->email)) !== mb_strtolower(trim($email))) {
+            $this->mailValidation = false;
+            $this->dateValidation = null;
+        }
         $this->email = $email;
         return $this;
     }

@@ -9,6 +9,7 @@ use Application\Service\AuthService;
 use User\Entity\User;
 use Application\Form\RegisterForm;
 use Application\Util\InputSanitizer;
+use Laminas\Session\Container;
 
 class AuthController extends AbstractActionController
 {
@@ -121,6 +122,60 @@ class AuthController extends AbstractActionController
     }
 
 
+    // Delai minimum entre deux envois du lien de validation depuis l'accueil
+    private const VALIDATION_RESEND_DELAY = 60;
+
+    /**
+     * Encart de l'accueil : corrige eventuellement l'adresse puis envoie le
+     * lien de validation a l'adresse du compte.
+     */
+    public function sendValidationEmailAction()
+    {
+        $user = $this->authService->getIdentity();
+        if (!$user) {
+            return $this->redirect()->toRoute('login');
+        }
+        if (!$this->getRequest()->isPost() || $user->isMailValidated()) {
+            return $this->redirect()->toRoute('home');
+        }
+
+        $session = new Container('EmailValidation');
+        if (time() - (int) ($session->lastSent ?? 0) < self::VALIDATION_RESEND_DELAY) {
+            $this->flashMessenger()->addErrorMessage('Un lien vient de vous être envoyé. Patientez une minute avant de le redemander.');
+            return $this->redirect()->toRoute('home');
+        }
+
+        $email = InputSanitizer::cleanString($this->params()->fromPost('email', ''));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->flashMessenger()->addErrorMessage('Veuillez entrer une adresse email valide.');
+            return $this->redirect()->toRoute('home');
+        }
+        if ($this->authService->isEmailTakenByAnother($email, $user)) {
+            $this->flashMessenger()->addErrorMessage('Cette adresse email est déjà utilisée par un autre compte.');
+            return $this->redirect()->toRoute('home');
+        }
+        // Une nouvelle adresse remplace l'ancienne (et reste a valider)
+        $user->setEmail($email);
+        $this->entityManager->flush();
+
+        if ($this->sendValidationLink($user)) {
+            $session->lastSent = time();
+            $this->flashMessenger()->addSuccessMessage('Un lien de validation a été envoyé à ' . $user->getEmail() . '. Pensez à vérifier vos spams.');
+        } else {
+            $this->flashMessenger()->addErrorMessage("L'envoi du mail a échoué. Réessayez dans quelques minutes.");
+        }
+        return $this->redirect()->toRoute('home');
+    }
+
+    private function sendValidationLink(User $user): bool
+    {
+        $result = $this->authService->sendEmailValidationLinks(
+            [$user],
+            fn (array $params) => $this->url()->fromRoute('validate-email', [], ['force_canonical' => true, 'query' => $params])
+        );
+        return $result['sent'] === 1;
+    }
+
     /**
      * Arrivee du lien de validation envoye par mail.
      */
@@ -210,6 +265,9 @@ class AuthController extends AbstractActionController
                 ]);
                 if(!$newUser) {
                     $this->flashMessenger()->addErrorMessage("Erreur lors de la création de l'utilisateur.");
+                } else {
+                    // Tout nouveau compte doit valider son adresse : le lien part tout de suite
+                    $this->sendValidationLink($newUser);
                 }
                 // Connexion automatique
                 if ($this->authService->login($mail, $password)) {
