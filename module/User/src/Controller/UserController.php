@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use User\Service\UserManager;
 use User\Entity\User;
+use Game\Entity\GameRegister;
 use Application\Util\InputSanitizer;
 
 class UserController extends AbstractActionController
@@ -29,11 +30,12 @@ class UserController extends AbstractActionController
             return $redirect;
         }
         $currentUser = $this->authService->getIdentity();
-        $users = $this->entityManager->getRepository(User::class)->search('');
+        $userRepository = $this->entityManager->getRepository(User::class);
         $view = new ViewModel([
-            
-            'currentUser'=>$currentUser,
-            'users'=>$users
+            'currentUser' => $currentUser,
+            'users' => $userRepository->search('', true),
+            'inactiveUsers' => $userRepository->search('', false),
+            'stats' => $this->getParticipationStats(),
         ]);
         $this->layout()->setVariable('activeMenu', 'admin-users');
         $view->setTemplate('admin/users');
@@ -43,6 +45,7 @@ class UserController extends AbstractActionController
 
     /**
      * Recherche AJAX de la liste admin : renvoie uniquement les lignes du tableau.
+     * ?status=inactive cible les comptes desactives, sinon les comptes actifs.
      */
     public function searchUsersAction()
     {
@@ -50,12 +53,21 @@ class UserController extends AbstractActionController
             return $this->getResponse()->setStatusCode(403);
         }
         $term = InputSanitizer::cleanString($this->params()->fromQuery('q'));
-        $users = $this->entityManager->getRepository(User::class)->search($term);
+        $active = $this->params()->fromQuery('status') !== 'inactive';
+        $users = $this->entityManager->getRepository(User::class)->search($term, $active);
 
-        $view = new ViewModel(['users' => $users]);
+        $view = new ViewModel([
+            'users' => $users,
+            'stats' => $this->getParticipationStats(),
+        ]);
         $view->setTemplate('admin/partial/user-rows');
         $view->setTerminal(true);
         return $view;
+    }
+
+    private function getParticipationStats(): array
+    {
+        return $this->entityManager->getRepository(GameRegister::class)->getParticipationStatsByUser();
     }
 
      public function editUserAction(){

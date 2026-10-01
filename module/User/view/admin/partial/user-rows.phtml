@@ -4,9 +4,25 @@
       </tr>
 <?php endif; ?>
 <?php foreach ($users as $user): ?>
-      <tr>
+<?php
+    // Parties passees : validees (numero d'arrivee) / inscrites (hors desinscriptions)
+    $stat = $stats[$user->getIdUser()] ?? ['registered' => 0, 'validated' => 0];
+    if ($stat['registered'] === 0) {
+        $badgeClass = 'bg-secondary';
+    } elseif ($stat['validated'] === $stat['registered']) {
+        $badgeClass = 'bg-success';
+    } elseif ($stat['validated'] === 0) {
+        $badgeClass = 'bg-danger';
+    } else {
+        $badgeClass = 'bg-warning text-dark';
+    }
+?>
+      <tr data-user-row>
         <td class="text-break">
-          <div class="fw-semibold"><?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?></div>
+          <div class="fw-semibold">
+            <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?>
+            <span class="badge <?= $badgeClass ?> ms-1" title="Parties validées / parties inscrites (parties passées)"><?= $stat['validated'] ?>/<?= $stat['registered'] ?></span>
+          </div>
           <div class="small text-muted"><?= $this->escapeHtml($user->getEmail()) ?></div>
         </td>
         <td class="text-end align-middle" style="width: 1%;">
