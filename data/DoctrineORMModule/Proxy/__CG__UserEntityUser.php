@@ -444,6 +444,28 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function isGod(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isGod', []);
+
+        return parent::isGod();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasAdminAccess(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'hasAdminAccess', []);
+
+        return parent::hasAdminAccess();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getResetToken(): ?string
     {
 
