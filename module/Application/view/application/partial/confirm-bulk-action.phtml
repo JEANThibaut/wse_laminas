@@ -26,11 +26,14 @@ $buttonClass = $buttonClass ?? 'btn-danger';
         </div>
         <div class="modal-body">
           <p><?= $this->escapeHtml($message) ?></p>
-          <ul class="small">
-            <?php foreach ($users as $user): ?>
-              <li><?= $this->escapeHtml($user->getLastname() . ' ' . $user->getFirstname()) ?> <span class="text-muted">(<?= $this->escapeHtml($user->getEmail()) ?>)</span></li>
-            <?php endforeach; ?>
-          </ul>
+          <?php // Liste scrollable : le formulaire autour du corps empeche modal-dialog-scrollable de jouer ?>
+          <div class="border rounded p-2" style="max-height: 40vh; overflow-y: auto;">
+            <ul class="small mb-0">
+              <?php foreach ($users as $user): ?>
+                <li><?= $this->escapeHtml($user->getLastname() . ' ' . $user->getFirstname()) ?> <span class="text-muted">(<?= $this->escapeHtml($user->getEmail()) ?>)</span></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
           <div class="form-check mt-3">
             <input class="form-check-input" type="checkbox" value="1" id="<?= $this->escapeHtmlAttr($id) ?>-check" required>
             <label class="form-check-label fw-semibold" for="<?= $this->escapeHtmlAttr($id) ?>-check">
