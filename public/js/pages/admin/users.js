@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => {
                 if (err.name === 'AbortError') return;
-                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erreur lors de la recherche.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="2" class="text-center text-danger">Erreur lors de la recherche.</td></tr>';
             });
     }
 });

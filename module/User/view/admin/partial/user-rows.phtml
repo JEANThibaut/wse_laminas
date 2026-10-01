@@ -1,16 +1,15 @@
 <?php if (empty($users)): ?>
       <tr>
-        <td colspan="3" class="text-center text-muted">Aucun utilisateur trouvé.</td>
+        <td colspan="2" class="text-center text-muted">Aucun utilisateur trouvé.</td>
       </tr>
 <?php endif; ?>
 <?php foreach ($users as $user): ?>
       <tr>
-        <td>
-          <?= $this->escapeHtml($user->getLastname()) ?>
+        <td class="text-break">
+          <div class="fw-semibold"><?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?></div>
           <div class="small text-muted"><?= $this->escapeHtml($user->getEmail()) ?></div>
         </td>
-        <td><?= $this->escapeHtml($user->getFirstname()) ?></td>
-        <td>
+        <td class="text-end align-middle" style="width: 1%;">
           <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $user->getIdUser()])) ?>" class="btn btn-sm btn-warning">
             <i class="fa-solid fa-edit"></i>
           </a>
