@@ -44,6 +44,18 @@ $sections = [
     </div>
 <?php endforeach; ?>
   </div>
+
+  <div class="mt-3">
+    <?= $this->partial('application/partial/confirm-bulk-action', [
+        'id' => 'confirmDeactivateUnvalidated',
+        'buttonLabel' => 'Désactiver les comptes sans email validé',
+        'title' => 'Désactiver les comptes sans email validé',
+        'message' => "Ces comptes actifs n'ont pas validé leur adresse email. Ils seront désactivés (membres, admins et GOD ne sont jamais concernés) :",
+        'users' => $unvalidatedToDeactivate,
+        'action' => $this->url('admin-deactivate-unvalidated'),
+        'confirmLabel' => 'Je confirme la désactivation de ces ' . count($unvalidatedToDeactivate) . ' compte(s).',
+    ]) ?>
+  </div>
 </div>
 
 <script src="/js/pages/admin/users.js"></script>

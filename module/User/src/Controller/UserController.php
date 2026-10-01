@@ -37,6 +37,7 @@ class UserController extends AbstractActionController
             'users' => $userRepository->search('', UserRepository::SCOPE_PLAYERS),
             'members' => $userRepository->search('', UserRepository::SCOPE_MEMBERS),
             'inactiveUsers' => $userRepository->search('', UserRepository::SCOPE_INACTIVE),
+            'unvalidatedToDeactivate' => $userRepository->findUnvalidatedToDeactivate(),
             'stats' => $this->getParticipationStats(),
         ]);
         $this->layout()->setVariable('activeMenu', 'admin-users');
@@ -68,6 +69,30 @@ class UserController extends AbstractActionController
         $view->setTemplate('admin/partial/user-rows');
         $view->setTerminal(true);
         return $view;
+    }
+
+    /**
+     * Desactive tous les comptes actifs sans email valide, hors membres,
+     * admins et GOD.
+     */
+    public function deactivateUnvalidatedAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        if (!$this->getRequest()->isPost()) {
+            return $this->redirect()->toRoute('admin-users');
+        }
+
+        $users = $this->entityManager->getRepository(User::class)->findUnvalidatedToDeactivate();
+        foreach ($users as $user) {
+            $user->setIsActive(false);
+        }
+        $this->entityManager->flush();
+
+        $this->flashMessenger()->addSuccessMessage(count($users) . ' compte(s) sans email validé désactivé(s).');
+        return $this->redirect()->toRoute('admin-users');
     }
 
     private function getParticipationStats(): array

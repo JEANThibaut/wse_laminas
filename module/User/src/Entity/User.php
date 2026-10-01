@@ -56,6 +56,34 @@ class User
     /** @ORM\Column(type="integer", nullable=true) */
     private $faction;
 
+    /** @ORM\Column(name="mail_validation", type="boolean", options={"default": 0}) */
+    private $mailValidation = false;
+
+    /** @ORM\Column(name="date_validation", type="datetime", nullable=true) */
+    private $dateValidation;
+
+    public function isMailValidated(): bool
+    {
+        return (bool) $this->mailValidation;
+    }
+
+    public function setMailValidation(bool $mailValidation): self
+    {
+        $this->mailValidation = $mailValidation;
+        return $this;
+    }
+
+    public function getDateValidation(): ?\DateTimeInterface
+    {
+        return $this->dateValidation;
+    }
+
+    public function setDateValidation(?\DateTimeInterface $dateValidation): self
+    {
+        $this->dateValidation = $dateValidation;
+        return $this;
+    }
+
     public function getIdUser(): ?int
     {
         return $this->iduser;

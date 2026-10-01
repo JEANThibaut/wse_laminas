@@ -89,6 +89,26 @@ public function getFirstMissingArrivedNumber($excludedRegister, $gameId): int
 }
 
 /**
+ * Inscriptions actives d'une partie dont le joueur n'a pas valide son email.
+ */
+public function findUnvalidatedRegisters($game): array
+{
+    return $this->_em->createQueryBuilder()
+        ->select('r', 'u')
+        ->from(GameRegister::class, 'r')
+        ->join('r.user', 'u')
+        ->where('r.game = :game')
+        ->andWhere('r.status = :status')
+        ->andWhere('u.mailValidation = false')
+        ->setParameter('game', $game)
+        ->setParameter('status', GameRegister::STATUS_ACTIVE)
+        ->orderBy('u.lastname', 'ASC')
+        ->addOrderBy('u.firstname', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
+
+/**
  * Participation par utilisateur sur les parties deja passees, hors
  * desinscriptions : [iduser => ['registered' => n, 'validated' => n, 'total' => n]].
  * 'registered' et 'validated' (joueur present, paid = 1) ne portent que sur

@@ -97,7 +97,8 @@ class AdminController extends AbstractActionController
 
         $view = new ViewModel([
             "game"=>$game,
-            'players'=>$players
+            'players'=>$players,
+            'unvalidatedRegisters' => $this->entityManager->getRepository(GameRegister::class)->findUnvalidatedRegisters($game),
         ]);
         $view->setTemplate('admin/edit-game');
         return $view;
@@ -163,6 +164,38 @@ class AdminController extends AbstractActionController
         }
 
         return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
+    }
+
+    /**
+     * Desinscrit d'une partie tous les joueurs dont l'email n'est pas valide.
+     * Aucun remboursement n'est declenche.
+     */
+    public function unregisterUnvalidatedAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $game = $this->entityManager->getRepository(Game::class)->find(InputSanitizer::cleanInt($request->getPost('id')));
+        if (!$game) {
+            $this->flashMessenger()->addErrorMessage('Partie introuvable.');
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $registers = $this->entityManager->getRepository(GameRegister::class)->findUnvalidatedRegisters($game);
+        foreach ($registers as $register) {
+            $register->setStatus(GameRegister::STATUS_CANCELLED);
+            $register->setArrivedNumber(0);
+        }
+        $this->entityManager->flush();
+
+        $this->flashMessenger()->addSuccessMessage(count($registers) . ' joueur(s) sans email validé désinscrit(s) de la partie.');
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
     }
 
     public function nextGameAction()

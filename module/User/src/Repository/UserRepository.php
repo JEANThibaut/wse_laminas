@@ -9,6 +9,25 @@ class UserRepository extends EntityRepository
     public const SCOPE_INACTIVE = 'inactive';
 
     /**
+     * Comptes actifs dont l'email n'est pas valide, hors membres, admins et GOD :
+     * ceux que la desactivation des comptes non valides doit viser.
+     */
+    public function findUnvalidatedToDeactivate(): array
+    {
+        $users = $this->createQueryBuilder('u')
+            ->where('u.isActive IS NULL OR u.isActive <> 0')
+            ->andWhere('u.mailValidation = false')
+            ->andWhere('u.member = false')
+            ->orderBy('u.lastname', 'ASC')
+            ->addOrderBy('u.firstname', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        // Les droits admin/GOD se lisent aussi dans le JSON roles : meme regle que partout
+        return array_values(array_filter($users, fn ($user) => !$user->hasAdminAccess()));
+    }
+
+    /**
      * Utilisateurs dont le nom, le prenom ou l'email contient le terme
      * (insensible a la casse), tries par nom. Terme vide : tous les utilisateurs.
      * Un compte est desactive uniquement si isActive vaut explicitement 0.

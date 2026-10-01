@@ -62,6 +62,16 @@ return [
                     ],
                 ],
             ],
+            'admin-unregister-unvalidated' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/unregister-unvalidated',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'unregisterUnvalidated',
+                    ],
+                ],
+            ],
             'admin-next-games' => [
                 'type' => Literal::class,
                 'options' => [

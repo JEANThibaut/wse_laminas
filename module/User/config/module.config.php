@@ -28,6 +28,16 @@ return [
                     ],
                 ],
             ],
+            'admin-deactivate-unvalidated' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/users/deactivate-unvalidated',
+                    'defaults' => [
+                        'controller' => UserController::class,
+                        'action' => 'deactivateUnvalidated',
+                    ],
+                ],
+            ],
             'admin-edit-user' => [
                 'type' => Segment::class,
                 'options' => [

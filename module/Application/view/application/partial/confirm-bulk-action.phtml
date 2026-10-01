@@ -1,0 +1,48 @@
+<?php
+/**
+ * Bouton + fenetre de confirmation pour une action de masse irreversible.
+ * Parametres : id, buttonLabel, title, message, users (User[]), action (URL),
+ * fields (champs caches [nom => valeur]), confirmLabel.
+ */
+$users = $users ?? [];
+$fields = $fields ?? [];
+?>
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#<?= $this->escapeHtmlAttr($id) ?>" <?= empty($users) ? 'disabled' : '' ?>>
+  <?= $this->escapeHtml($buttonLabel) ?> (<?= count($users) ?>)
+</button>
+
+<?php if (!empty($users)): ?>
+<div class="modal fade" id="<?= $this->escapeHtmlAttr($id) ?>" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <form method="post" action="<?= $this->escapeHtmlAttr($action) ?>">
+        <?php foreach ($fields as $name => $value): ?>
+          <input type="hidden" name="<?= $this->escapeHtmlAttr($name) ?>" value="<?= $this->escapeHtmlAttr($value) ?>">
+        <?php endforeach; ?>
+        <div class="modal-header">
+          <h5 class="modal-title"><?= $this->escapeHtml($title) ?></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <p><?= $this->escapeHtml($message) ?></p>
+          <ul class="small">
+            <?php foreach ($users as $user): ?>
+              <li><?= $this->escapeHtml($user->getLastname() . ' ' . $user->getFirstname()) ?> <span class="text-muted">(<?= $this->escapeHtml($user->getEmail()) ?>)</span></li>
+            <?php endforeach; ?>
+          </ul>
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" value="1" id="<?= $this->escapeHtmlAttr($id) ?>-check" required>
+            <label class="form-check-label fw-semibold" for="<?= $this->escapeHtmlAttr($id) ?>-check">
+              <?= $this->escapeHtml($confirmLabel) ?>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-danger">Confirmer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
