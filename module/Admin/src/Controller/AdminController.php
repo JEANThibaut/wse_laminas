@@ -124,6 +124,47 @@ class AdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin-games');
     }
 
+    /**
+     * Desinscription d'un joueur par un admin, depuis la fiche d'une partie.
+     * Distincte de la desinscription par le joueur lui-meme : aucun
+     * remboursement n'est declenche automatiquement.
+     */
+    public function unregisterPlayerAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $id = InputSanitizer::cleanInt($request->getPost('id'));
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
+            'idregister' => $id,
+            'status' => GameRegister::STATUS_ACTIVE,
+        ]);
+        if (!$register) {
+            $this->flashMessenger()->addErrorMessage('Inscription introuvable.');
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $register->setStatus(GameRegister::STATUS_CANCELLED);
+        $register->setArrivedNumber(0);
+        $this->entityManager->flush();
+
+        $user = $register->getUser();
+        $this->flashMessenger()->addSuccessMessage(
+            $user->getFirstname() . ' ' . $user->getLastname() . ' a été désinscrit de la partie.'
+        );
+        if ((int) $register->getPaid() === 1) {
+            $this->flashMessenger()->addWarningMessage("Cette inscription était payée : le remboursement éventuel est à faire manuellement.");
+        }
+
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
+    }
+
     public function nextGameAction()
     {
 

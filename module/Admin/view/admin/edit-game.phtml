@@ -74,7 +74,7 @@
              
                     <td>
    
-                                                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('unregister-in-game', ['id' => $player->getIdregister()])) ?>" class="delete-form">
+                                                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
                                                         <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
                                                         <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
                                 <i class="fa-solid fa-trash"></i>

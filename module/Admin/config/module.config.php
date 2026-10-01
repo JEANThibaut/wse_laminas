@@ -52,6 +52,16 @@ return [
                     ],
                 ],
             ],
+            'admin-unregister-player' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/unregister-player',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'unregisterPlayer',
+                    ],
+                ],
+            ],
             'admin-next-games' => [
                 'type' => Literal::class,
                 'options' => [
