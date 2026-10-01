@@ -72,6 +72,16 @@ return [
                     ],
                 ],
             ],
+            'admin-confirm-pending' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/confirm-pending',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'confirmPending',
+                    ],
+                ],
+            ],
             'admin-generate-queue' => [
                 'type' => Literal::class,
                 'options' => [

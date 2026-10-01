@@ -26,8 +26,14 @@ $withActions = $withActions ?? false;
                     <div class="small text-muted">Confirmation à partir du <?= $this->escapeHtml($entry['opening']->format('d/m/Y à H\hi')) ?></div>
                 </td>
                 <?php if ($withActions): ?>
-                <td class="text-end align-middle" style="width: 1%;">
-                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
+                <td class="text-end align-middle text-nowrap" style="width: 1%;">
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-confirm-pending')) ?>" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($entry['register']->getIdregister()) ?>">
+                        <button type="submit" class="btn btn-sm btn-success" title="Inscrire à la partie">
+                            <i class="fa-solid fa-user-check"></i> Inscrire
+                        </button>
+                    </form>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form d-inline">
                         <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($entry['register']->getIdregister()) ?>">
                         <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($entry['register']->getIdregister()) ?>">
                             <i class="fa-solid fa-trash"></i>

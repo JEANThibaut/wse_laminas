@@ -214,6 +214,24 @@ class GameManager
             return self::RESULT_CLOSED;
         }
 
+        return $this->activatePendingRegister($register);
+    }
+
+    /**
+     * Inscription depuis la file d'attente par un admin : sans condition de
+     * date, mais dans la limite des places.
+     *
+     * @return string self::RESULT_*
+     */
+    public function adminConfirmPendingRegister(GameRegister $register): string
+    {
+        return $this->activatePendingRegister($register);
+    }
+
+    private function activatePendingRegister(GameRegister $register): string
+    {
+        $game = $register->getGame();
+
         return $this->entityManager->wrapInTransaction(function () use ($register, $game) {
             $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
             $this->entityManager->refresh($register);

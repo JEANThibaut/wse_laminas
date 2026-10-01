@@ -8,6 +8,7 @@ use Game\Entity\Game;
 use Game\Entity\GameRegister;
 use User\Entity\User;
 use Application\Util\InputSanitizer;
+use Game\Service\GameManager;
 
 class AdminController extends AbstractActionController
 {
@@ -198,6 +199,44 @@ class AdminController extends AbstractActionController
 
         $this->flashMessenger()->addSuccessMessage(count($registers) . ' joueur(s) sans email validé désinscrit(s) de la partie.');
         return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
+    }
+
+    /**
+     * Inscrit un joueur depuis la file d'attente, dans la limite des places.
+     */
+    public function confirmPendingAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
+            'idregister' => InputSanitizer::cleanInt($request->getPost('id')),
+            'status' => GameRegister::STATUS_PENDING,
+        ]);
+        if (!$register) {
+            $this->flashMessenger()->addErrorMessage("Inscription en file d'attente introuvable.");
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $user = $register->getUser();
+        $name = $user->getFirstname() . ' ' . $user->getLastname();
+        switch ($this->gameManager->adminConfirmPendingRegister($register)) {
+            case GameManager::RESULT_CONFIRMED:
+                $this->flashMessenger()->addSuccessMessage($name . ' est inscrit à la partie.');
+                break;
+            case GameManager::RESULT_FULL:
+                $this->flashMessenger()->addErrorMessage("La partie est complète : libérez une place avant d'inscrire " . $name . '.');
+                break;
+            default:
+                $this->flashMessenger()->addErrorMessage($name . " n'est plus en file d'attente.");
+        }
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
     }
 
     /**
