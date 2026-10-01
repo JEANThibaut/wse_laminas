@@ -2,12 +2,13 @@
 /**
  * Bouton + fenetre de confirmation pour une action de masse irreversible.
  * Parametres : id, buttonLabel, title, message, users (User[]), action (URL),
- * fields (champs caches [nom => valeur]), confirmLabel.
+ * fields (champs caches [nom => valeur]), confirmLabel, buttonClass (defaut btn-danger).
  */
 $users = $users ?? [];
 $fields = $fields ?? [];
+$buttonClass = $buttonClass ?? 'btn-danger';
 ?>
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#<?= $this->escapeHtmlAttr($id) ?>" <?= empty($users) ? 'disabled' : '' ?>>
+<button type="button" class="btn <?= $this->escapeHtmlAttr($buttonClass) ?>" data-bs-toggle="modal" data-bs-target="#<?= $this->escapeHtmlAttr($id) ?>" <?= empty($users) ? 'disabled' : '' ?>>
   <?= $this->escapeHtml($buttonLabel) ?> (<?= count($users) ?>)
 </button>
 
@@ -39,7 +40,7 @@ $fields = $fields ?? [];
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="submit" class="btn btn-danger">Confirmer</button>
+          <button type="submit" class="btn <?= $this->escapeHtmlAttr($buttonClass) ?>">Confirmer</button>
         </div>
       </form>
     </div>

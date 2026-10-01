@@ -60,6 +60,16 @@ return [
                     ],
                 ],
             ],
+            'validate-email' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/validate-email',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action'     => 'validateEmail',
+                    ],
+                ],
+            ],
             'faq' => [
                 'type'    => Literal::class,
                 'options' => [

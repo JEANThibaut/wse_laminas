@@ -38,6 +38,7 @@ class UserController extends AbstractActionController
             'members' => $userRepository->search('', UserRepository::SCOPE_MEMBERS),
             'inactiveUsers' => $userRepository->search('', UserRepository::SCOPE_INACTIVE),
             'unvalidatedToDeactivate' => $userRepository->findUnvalidatedToDeactivate(),
+            'unvalidatedActive' => $userRepository->findUnvalidatedActive(),
             'stats' => $this->getParticipationStats(),
         ]);
         $this->layout()->setVariable('activeMenu', 'admin-users');
@@ -92,6 +93,35 @@ class UserController extends AbstractActionController
         $this->entityManager->flush();
 
         $this->flashMessenger()->addSuccessMessage(count($users) . ' compte(s) sans email validé désactivé(s).');
+        return $this->redirect()->toRoute('admin-users');
+    }
+
+    /**
+     * Envoie le lien de validation a tous les comptes actifs dont l'email
+     * n'est pas encore valide.
+     */
+    public function sendValidationEmailsAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        if (!$this->getRequest()->isPost()) {
+            return $this->redirect()->toRoute('admin-users');
+        }
+
+        $users = $this->entityManager->getRepository(User::class)->findUnvalidatedActive();
+        $result = $this->authService->sendEmailValidationLinks(
+            $users,
+            fn (array $params) => $this->url()->fromRoute('validate-email', [], ['force_canonical' => true, 'query' => $params])
+        );
+
+        $this->flashMessenger()->addSuccessMessage($result['sent'] . ' mail(s) de validation envoyé(s).');
+        if ($result['failed']) {
+            $this->flashMessenger()->addErrorMessage(
+                count($result['failed']) . ' envoi(s) en échec : ' . implode(', ', $result['failed'])
+            );
+        }
         return $this->redirect()->toRoute('admin-users');
     }
 

@@ -67,10 +67,10 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'resetToken', '' . "\0" . 'User\\Entity\\User' . "\0" . 'faction'];
+            return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'resetToken', '' . "\0" . 'User\\Entity\\User' . "\0" . 'faction', '' . "\0" . 'User\\Entity\\User' . "\0" . 'mailValidation', '' . "\0" . 'User\\Entity\\User' . "\0" . 'dateValidation'];
         }
 
-        return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'resetToken', '' . "\0" . 'User\\Entity\\User' . "\0" . 'faction'];
+        return ['__isInitialized__', '' . "\0" . 'User\\Entity\\User' . "\0" . 'iduser', '' . "\0" . 'User\\Entity\\User' . "\0" . 'email', '' . "\0" . 'User\\Entity\\User' . "\0" . 'roles', '' . "\0" . 'User\\Entity\\User' . "\0" . 'password', '' . "\0" . 'User\\Entity\\User' . "\0" . 'firstname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'lastname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'member', '' . "\0" . 'User\\Entity\\User' . "\0" . 'admin', '' . "\0" . 'User\\Entity\\User' . "\0" . 'blacklist', '' . "\0" . 'User\\Entity\\User' . "\0" . 'isActive', '' . "\0" . 'User\\Entity\\User' . "\0" . 'birthdate', '' . "\0" . 'User\\Entity\\User' . "\0" . 'nickname', '' . "\0" . 'User\\Entity\\User' . "\0" . 'resetToken', '' . "\0" . 'User\\Entity\\User' . "\0" . 'faction', '' . "\0" . 'User\\Entity\\User' . "\0" . 'mailValidation', '' . "\0" . 'User\\Entity\\User' . "\0" . 'dateValidation'];
     }
 
     /**
@@ -177,6 +177,50 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     }
 
     
+    /**
+     * {@inheritDoc}
+     */
+    public function isMailValidated(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isMailValidated', []);
+
+        return parent::isMailValidated();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMailValidation(bool $mailValidation): \User\Entity\User
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setMailValidation', [$mailValidation]);
+
+        return parent::setMailValidation($mailValidation);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDateValidation(): ?\DateTimeInterface
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getDateValidation', []);
+
+        return parent::getDateValidation();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDateValidation(?\DateTimeInterface $dateValidation): \User\Entity\User
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setDateValidation', [$dateValidation]);
+
+        return parent::setDateValidation($dateValidation);
+    }
+
     /**
      * {@inheritDoc}
      */

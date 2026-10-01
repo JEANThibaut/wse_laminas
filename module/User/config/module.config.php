@@ -28,6 +28,16 @@ return [
                     ],
                 ],
             ],
+            'admin-send-validation-emails' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/users/send-validation-emails',
+                    'defaults' => [
+                        'controller' => UserController::class,
+                        'action' => 'sendValidationEmails',
+                    ],
+                ],
+            ],
             'admin-deactivate-unvalidated' => [
                 'type' => Literal::class,
                 'options' => [

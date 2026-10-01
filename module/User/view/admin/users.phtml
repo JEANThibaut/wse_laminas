@@ -45,7 +45,17 @@ $sections = [
 <?php endforeach; ?>
   </div>
 
-  <div class="mt-3">
+  <div class="mt-3 d-flex flex-wrap gap-2">
+    <?= $this->partial('application/partial/confirm-bulk-action', [
+        'id' => 'confirmSendValidationEmails',
+        'buttonClass' => 'btn-primary',
+        'buttonLabel' => 'Envoyer le mail de validation',
+        'title' => 'Envoyer le mail de validation',
+        'message' => "Ces comptes actifs n'ont pas encore validé leur adresse email. Chacun recevra un mail avec son lien de validation (un nouveau clic renverra le mail à ceux qui n'ont toujours pas validé) :",
+        'users' => $unvalidatedActive,
+        'action' => $this->url('admin-send-validation-emails'),
+        'confirmLabel' => "Je confirme l'envoi de " . count($unvalidatedActive) . ' mail(s).',
+    ]) ?>
     <?= $this->partial('application/partial/confirm-bulk-action', [
         'id' => 'confirmDeactivateUnvalidated',
         'buttonLabel' => 'Désactiver les comptes sans email validé',

@@ -121,6 +121,27 @@ class AuthController extends AbstractActionController
     }
 
 
+    /**
+     * Arrivee du lien de validation envoye par mail.
+     */
+    public function validateEmailAction()
+    {
+        $user = $this->authService->findUserByEmailValidation(
+            InputSanitizer::cleanInt($this->params()->fromQuery('u')),
+            InputSanitizer::cleanInt($this->params()->fromQuery('e')),
+            InputSanitizer::cleanString($this->params()->fromQuery('s'))
+        );
+
+        if (!$user) {
+            $this->flashMessenger()->addErrorMessage("Ce lien de validation est invalide ou a expiré.");
+            return $this->redirect()->toRoute('home');
+        }
+
+        $this->authService->markEmailValidated($user);
+        $this->flashMessenger()->addSuccessMessage('Votre adresse email ' . $user->getEmail() . ' est validée. Merci !');
+        return $this->redirect()->toRoute('home');
+    }
+
      public function registerAction()
     {   
         // $form = new RegisterForm();
