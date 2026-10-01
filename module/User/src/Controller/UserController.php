@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use User\Service\UserManager;
 use User\Entity\User;
+use User\Repository\UserRepository;
 use Game\Entity\GameRegister;
 use Application\Util\InputSanitizer;
 
@@ -33,8 +34,9 @@ class UserController extends AbstractActionController
         $userRepository = $this->entityManager->getRepository(User::class);
         $view = new ViewModel([
             'currentUser' => $currentUser,
-            'users' => $userRepository->search('', true),
-            'inactiveUsers' => $userRepository->search('', false),
+            'users' => $userRepository->search('', UserRepository::SCOPE_PLAYERS),
+            'members' => $userRepository->search('', UserRepository::SCOPE_MEMBERS),
+            'inactiveUsers' => $userRepository->search('', UserRepository::SCOPE_INACTIVE),
             'stats' => $this->getParticipationStats(),
         ]);
         $this->layout()->setVariable('activeMenu', 'admin-users');
@@ -45,7 +47,7 @@ class UserController extends AbstractActionController
 
     /**
      * Recherche AJAX de la liste admin : renvoie uniquement les lignes du tableau.
-     * ?status=inactive cible les comptes desactives, sinon les comptes actifs.
+     * ?status= players (defaut), members ou inactive : la liste a filtrer.
      */
     public function searchUsersAction()
     {
@@ -53,8 +55,11 @@ class UserController extends AbstractActionController
             return $this->getResponse()->setStatusCode(403);
         }
         $term = InputSanitizer::cleanString($this->params()->fromQuery('q'));
-        $active = $this->params()->fromQuery('status') !== 'inactive';
-        $users = $this->entityManager->getRepository(User::class)->search($term, $active);
+        $scope = $this->params()->fromQuery('status');
+        if (!in_array($scope, [UserRepository::SCOPE_MEMBERS, UserRepository::SCOPE_INACTIVE], true)) {
+            $scope = UserRepository::SCOPE_PLAYERS;
+        }
+        $users = $this->entityManager->getRepository(User::class)->search($term, $scope);
 
         $view = new ViewModel([
             'users' => $users,

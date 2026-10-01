@@ -1,9 +1,8 @@
 // Recherche AJAX de la liste des utilisateurs (nom, prenom, email), appliquee
-// a la fois aux comptes actifs et aux comptes desactives
+// a chaque liste de la page : joueurs, membres et comptes desactives
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('userSearch');
     const lists = document.querySelectorAll('tbody[data-status]');
-    const inactiveCount = document.getElementById('inactiveCount');
     if (!input || !lists.length) return;
 
     let timer = null;
@@ -41,8 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(html => {
                     if (html === null) return;
                     tbody.innerHTML = html;
-                    if (tbody.dataset.status === 'inactive' && inactiveCount) {
-                        inactiveCount.textContent = tbody.querySelectorAll('[data-user-row]').length;
+                    const counter = document.querySelector(`[data-count-for="${tbody.dataset.status}"]`);
+                    if (counter) {
+                        counter.textContent = tbody.querySelectorAll('[data-user-row]').length;
                     }
                 })
                 .catch(err => {

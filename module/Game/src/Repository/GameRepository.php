@@ -90,15 +90,17 @@ public function getFirstMissingArrivedNumber($excludedRegister, $gameId): int
 
 /**
  * Participation par utilisateur sur les parties deja passees, hors
- * desinscriptions : [iduser => ['registered' => n, 'validated' => n]].
- * Une inscription est validee quand un numero d'arrivee lui a ete attribue.
+ * desinscriptions : [iduser => ['registered' => n, 'validated' => n, 'total' => n]].
+ * 'registered' et 'validated' (joueur present, paid = 1) ne portent que sur
+ * les inscriptions non membres ; 'total' compte toutes les inscriptions.
  */
 public function getParticipationStatsByUser(): array
 {
     $rows = $this->_em->createQueryBuilder()
         ->select('IDENTITY(r.user) AS iduser')
-        ->addSelect('COUNT(r.idregister) AS registered')
-        ->addSelect('SUM(CASE WHEN r.arrived_number > 0 THEN 1 ELSE 0 END) AS validated')
+        ->addSelect('COUNT(r.idregister) AS total')
+        ->addSelect('SUM(CASE WHEN r.member = 0 THEN 1 ELSE 0 END) AS registered')
+        ->addSelect('SUM(CASE WHEN r.member = 0 AND r.paid = 1 THEN 1 ELSE 0 END) AS validated')
         ->from(GameRegister::class, 'r')
         ->join('r.game', 'g')
         ->where('r.status = :status')
@@ -114,6 +116,7 @@ public function getParticipationStatsByUser(): array
         $stats[(int) $row['iduser']] = [
             'registered' => (int) $row['registered'],
             'validated' => (int) $row['validated'],
+            'total' => (int) $row['total'],
         ];
     }
     return $stats;

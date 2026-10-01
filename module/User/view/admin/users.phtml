@@ -1,3 +1,10 @@
+<?php
+// Listes repliees sous la liste principale des joueurs
+$sections = [
+    ['status' => 'members', 'title' => 'Membres', 'users' => $members],
+    ['status' => 'inactive', 'title' => 'Comptes désactivés', 'users' => $inactiveUsers],
+];
+?>
 <div class='card'>
   <h3>Utilisateurs</h3>
   <div class="row mb-3">
@@ -9,31 +16,33 @@
   <table id="userTable" class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th colspan="2">Utilisateur</th>
+        <th colspan="2">Joueurs</th>
       </tr>
     </thead>
-    <tbody data-status="active">
+    <tbody data-status="players">
 <?= $this->partial('admin/partial/user-rows', ['users' => $users, 'stats' => $stats]) ?>
     </tbody>
   </table>
 
-  <div class="accordion mt-3" id="inactiveUsersAccordion">
+  <div class="accordion mt-3" id="userSectionsAccordion">
+<?php foreach ($sections as $section): ?>
     <div class="accordion-item">
       <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#inactiveUsers" aria-expanded="false" aria-controls="inactiveUsers">
-          Comptes désactivés (<span id="inactiveCount"><?= count($inactiveUsers) ?></span>)
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#users-<?= $section['status'] ?>" aria-expanded="false" aria-controls="users-<?= $section['status'] ?>">
+          <?= $this->escapeHtml($section['title']) ?> (<span data-count-for="<?= $section['status'] ?>"><?= count($section['users']) ?></span>)
         </button>
       </h2>
-      <div id="inactiveUsers" class="accordion-collapse collapse" data-bs-parent="#inactiveUsersAccordion">
+      <div id="users-<?= $section['status'] ?>" class="accordion-collapse collapse">
         <div class="accordion-body p-0">
-          <table id="userTableInactive" class="table table-bordered table-striped mb-0">
-            <tbody data-status="inactive">
-<?= $this->partial('admin/partial/user-rows', ['users' => $inactiveUsers, 'stats' => $stats]) ?>
+          <table class="table table-bordered table-striped mb-0">
+            <tbody data-status="<?= $section['status'] ?>">
+<?= $this->partial('admin/partial/user-rows', ['users' => $section['users'], 'stats' => $stats]) ?>
             </tbody>
           </table>
         </div>
       </div>
     </div>
+<?php endforeach; ?>
   </div>
 </div>
 
