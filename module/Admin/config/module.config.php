@@ -92,6 +92,16 @@ return [
                     ],
                 ],
             ],
+            'admin-stats' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/stats',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'stats',
+                    ],
+                ],
+            ],
             'admin-next-games' => [
                 'type' => Literal::class,
                 'options' => [

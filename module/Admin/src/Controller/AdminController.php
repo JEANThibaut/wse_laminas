@@ -264,6 +264,28 @@ class AdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
     }
 
+    /**
+     * Statistiques du site, reservees au GOD.
+     */
+    public function statsAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        if (!$currentUser || !$currentUser->isGod()) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $this->redirect()->toRoute('home');
+        }
+
+        $mail = $this->entityManager->getRepository(User::class)->countMailValidation();
+        $mail['percent'] = $mail['total'] > 0 ? round($mail['validated'] * 100 / $mail['total'], 1) : 0;
+
+        $view = new ViewModel([
+            'mail' => $mail,
+        ]);
+        $this->layout()->setVariable('activeMenu', 'admin-stats');
+        $view->setTemplate('admin/stats');
+        return $view;
+    }
+
     public function nextGameAction()
     {
 

@@ -1,0 +1,15 @@
+<div class="card">
+    <h4>Validation des adresses email</h4>
+    <p class="text-muted mb-2">Comptes actifs (les comptes désactivés ne sont pas comptés).</p>
+
+    <div class="display-6"><?= $this->escapeHtml(number_format($mail['percent'], 1, ',', ' ')) ?> %</div>
+    <div class="progress my-2" style="height: 20px;" role="progressbar" aria-label="Emails validés"
+         aria-valuenow="<?= $this->escapeHtmlAttr($mail['percent']) ?>" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar bg-success" style="width: <?= $this->escapeHtmlAttr($mail['percent']) ?>%"></div>
+    </div>
+    <p class="mb-0">
+        <?= $this->escapeHtml($mail['validated']) ?> email(s) validé(s)
+        sur <?= $this->escapeHtml($mail['total']) ?> compte(s) actif(s),
+        soit <?= $this->escapeHtml($mail['total'] - $mail['validated']) ?> non validé(s).
+    </p>
+</div>

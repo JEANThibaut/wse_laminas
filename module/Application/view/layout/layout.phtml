@@ -204,6 +204,16 @@
                 Les actualités
                 </a>
             </li>
+            <?php if ($this->currentUser->isGod()) : ?>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-stats') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-stats')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Stats
+                </a>
+            </li>
+            <?php endif; ?>
         <?php endif; ?>
     </ul>
 

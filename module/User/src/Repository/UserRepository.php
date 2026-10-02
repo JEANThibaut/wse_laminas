@@ -23,6 +23,26 @@ class UserRepository extends EntityRepository
     }
 
     /**
+     * Nombre de comptes actifs et, parmi eux, de comptes a l'email valide.
+     *
+     * @return array{total: int, validated: int}
+     */
+    public function countMailValidation(): array
+    {
+        $row = $this->createQueryBuilder('u')
+            ->select('COUNT(u.iduser) AS total')
+            ->addSelect('SUM(CASE WHEN u.mailValidation = true THEN 1 ELSE 0 END) AS validated')
+            ->where('u.isActive IS NULL OR u.isActive <> 0')
+            ->getQuery()
+            ->getSingleResult();
+
+        return [
+            'total' => (int) $row['total'],
+            'validated' => (int) $row['validated'],
+        ];
+    }
+
+    /**
      * Comptes actifs dont l'email n'est pas valide, hors membres, admins et GOD :
      * ceux que la desactivation des comptes non valides doit viser.
      */
