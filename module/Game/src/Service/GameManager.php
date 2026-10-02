@@ -88,6 +88,11 @@ class GameManager
      */
     public function mustQueue(User $user): bool
     {
+        // Desactive pour l'instant : la file d'attente se gere a la main
+        // depuis la fiche d'une partie, le temps de fiabiliser le comptage des
+        // absences.
+        return false;
+
         if ($user->getIsMember() || $user->hasAdminAccess()) {
             return false;
         }

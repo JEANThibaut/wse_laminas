@@ -89,6 +89,7 @@ $emailValidated = !$this->currentUser || $this->currentUser->isMailValidated();
                       <?php else: ?>
                         <p class="mb-0">La confirmation est fermée pour cette partie.</p>
                       <?php endif; ?>
+                      <p class="mb-0 mt-1">Merci de nous contacter en cas de question.</p>
                     </div>
                     <?php if ($queue['isOpen'] && $emailValidated): ?>
                       <?php if ($isComplete): ?>

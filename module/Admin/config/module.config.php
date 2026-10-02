@@ -62,6 +62,16 @@ return [
                     ],
                 ],
             ],
+            'admin-queue-player' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/queue-player',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'queuePlayer',
+                    ],
+                ],
+            ],
             'admin-unregister-unvalidated' => [
                 'type' => Literal::class,
                 'options' => [

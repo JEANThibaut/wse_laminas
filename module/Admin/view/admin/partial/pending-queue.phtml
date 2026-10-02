@@ -23,6 +23,7 @@ $withActions = $withActions ?? false;
                             <?= $entry['presences'] ?>/<?= $entry['presences'] + $entry['absences'] ?>
                         </span>
                     </div>
+                    <div class="small text-muted"><?= $this->escapeHtml($user->getEmail()) ?></div>
                     <div class="small text-muted">Confirmation à partir du <?= $this->escapeHtml($entry['opening']->format('d/m/Y à H\hi')) ?></div>
                 </td>
                 <?php if ($withActions): ?>

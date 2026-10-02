@@ -61,25 +61,34 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Nom</th>
-                <th>Email</th>
-
+                <th>Joueur</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($players as $player): ?>
                 <tr>
-                    <td><?= $this->escapeHtml($player->getUser()->getFirstname()) ?></td>
-                    <td><?= $this->escapeHtml($player->getUser()->getLastname()) ?></td>
-             
+                    <td class="text-break">
+                        <div class="fw-semibold">
+                            <?= $this->escapeHtml($player->getUser()->getFirstname() . ' ' . $player->getUser()->getLastname()) ?>
+                        </div>
+                        <div class="small text-muted"><?= $this->escapeHtml($player->getUser()->getEmail()) ?></div>
+                    </td>
                     <td>
-   
-                                                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
-                                                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
-                                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
+                        <div class="d-flex justify-content-end" style="gap: 0.5rem;">
+                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-queue-player')) ?>">
+                                <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
+                                <button type="submit" class="btn btn-sm btn-warning" title="Mettre en file d'attente" aria-label="Mettre en file d'attente">
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                </button>
+                            </form>
+                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
+                                <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
+                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>" title="Désinscrire" aria-label="Désinscrire">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -89,19 +98,8 @@
 
     <h4 class="mt-4">En attente (<?= count($pendingQueue) ?>)</h4>
     <?= $this->partial('admin/partial/pending-queue', ['pendingQueue' => $pendingQueue, 'withActions' => true]) ?>
-    <div class="mb-3">
-        <?= $this->partial('application/partial/confirm-bulk-action', [
-            'id' => 'confirmGenerateQueue',
-            'buttonClass' => 'btn-warning',
-            'buttonLabel' => "Générer la file d'attente",
-            'title' => "Générer la file d'attente",
-            'message' => "Ces inscrits ont déjà été absents à une partie (hors membres, admins et GOD). Ils perdront leur place et passeront en file d'attente, avec les mêmes règles de confirmation (48 h avant s'ils sont déjà venus, 24 h sinon) :",
-            'users' => array_map(fn ($register) => $register->getUser(), $registersToQueue),
-            'action' => $this->url('admin-generate-queue'),
-            'fields' => ['id' => $game->getIdGame()],
-            'confirmLabel' => 'Je confirme le passage en file d\'attente de ces ' . count($registersToQueue) . ' joueur(s).',
-        ]) ?>
-    </div>
+    <?php /* "Generer la file d'attente" (critere des absences) desactive pour
+             l'instant : la file se gere a la main, joueur par joueur. */ ?>
 
     <div class="mt-3">
         <?= $this->partial('application/partial/confirm-bulk-action', [
