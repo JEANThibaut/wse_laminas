@@ -19,7 +19,10 @@ projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 
 ## Ce que fait le workflow
 
-1. Checkout de la branche choisie au lancement (`main` par defaut)
+1. Checkout de la branche choisie au lancement (`main` par defaut), historique
+   complet, puis `git restore-mtime` : chaque fichier reprend la date de son
+   dernier commit. Sans ca, le checkout date tout de l'instant present et
+   `lftp` renvoie l'integralite du projet a chaque deploiement
 2. `composer install --no-dev --optimize-autoloader` (vendor/ est construit par la
    CI, il n'est pas dans le repo)
 3. `php -l` sur `module/`, `config/` et `public/` : un fichier casse arrete tout
