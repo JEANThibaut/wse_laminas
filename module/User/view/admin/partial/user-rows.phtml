@@ -29,7 +29,7 @@
       <tr data-user-row>
         <td class="text-break">
           <div class="fw-semibold">
-            <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?>
+            <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?><?= $this->mailCheck($user) ?>
             <span class="badge <?= $badgeClass ?> ms-1" title="<?= $this->escapeHtmlAttr($badgeTitle) ?>"><?= $this->escapeHtml($badgeText) ?></span>
           </div>
           <div class="small text-muted"><?= $this->escapeHtml($user->getEmail()) ?></div>

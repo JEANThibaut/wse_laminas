@@ -18,7 +18,7 @@ $withActions = $withActions ?? false;
                 <td class="align-middle" style="width: 1%;"><?= $rank + 1 ?></td>
                 <td class="text-break">
                     <div class="fw-semibold">
-                        <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?>
+                        <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?><?= $this->mailCheck($user) ?>
                         <span class="badge <?= $entry['presences'] > 0 ? 'bg-warning text-dark' : 'bg-danger' ?> ms-1" title="Présences / inscriptions (parties passées)">
                             <?= $entry['presences'] ?>/<?= $entry['presences'] + $entry['absences'] ?>
                         </span>

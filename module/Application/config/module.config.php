@@ -146,6 +146,15 @@ return [
         ],
     ],
 
+    'view_helpers' => [
+        'aliases' => [
+            'mailCheck' => View\Helper\MailCheck::class,
+        ],
+        'factories' => [
+            View\Helper\MailCheck::class => InvokableFactory::class,
+        ],
+    ],
+
     'session_config' => [
         'cookie_lifetime' => 315360000, // 10 ans (en secondes)
         'gc_maxlifetime'  => 315360000, // 10 ans aussi

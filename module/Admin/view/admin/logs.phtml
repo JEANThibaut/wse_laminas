@@ -55,7 +55,7 @@ $stateClasses = [
                             <td class="text-break">
                                 <?php if ($user): ?>
                                     <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $user->getIdUser()])) ?>">
-                                        <?= $this->escapeHtml($user->getFirstname() . ' ' . $user->getLastname()) ?>
+                                        <?= $this->escapeHtml($user->getFirstname() . ' ' . $user->getLastname()) ?><?= $this->mailCheck($user) ?>
                                     </a>
                                 <?php endif; ?>
                                 <div class="small text-muted"><?= $this->escapeHtml($log->getEmail()) ?></div>
@@ -89,7 +89,7 @@ $stateClasses = [
                         <tr>
                             <td class="text-break">
                                 <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $seen['iduser']])) ?>">
-                                    <?= $this->escapeHtml($seen['firstname'] . ' ' . $seen['lastname']) ?>
+                                    <?= $this->escapeHtml($seen['firstname'] . ' ' . $seen['lastname']) ?><?= $this->mailCheck($seen['mailValidated']) ?>
                                 </a>
                                 <div class="small text-muted"><?= $this->escapeHtml($seen['email']) ?></div>
                             </td>

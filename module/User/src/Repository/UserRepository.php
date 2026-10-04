@@ -28,13 +28,13 @@ class UserRepository extends EntityRepository
      * mappee sur l'entite : son absence ne doit pas casser le chargement des
      * comptes. Elle est lue ici en SQL direct ; liste vide si elle n'existe pas.
      *
-     * @return array<int, array{iduser: int, firstname: string, lastname: string, email: string, lastSeenAt: \DateTimeImmutable}>
+     * @return array<int, array{iduser: int, firstname: string, lastname: string, email: string, mailValidated: bool, lastSeenAt: \DateTimeImmutable}>
      */
     public function findLastSeen(int $limit = 100): array
     {
         try {
             $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
-                'SELECT iduser, firstname, lastname, email, last_seen_at FROM user
+                'SELECT iduser, firstname, lastname, email, mail_validation, last_seen_at FROM user
                  WHERE last_seen_at IS NOT NULL ORDER BY last_seen_at DESC LIMIT ' . (int) $limit
             );
         } catch (\Throwable $e) {
@@ -46,6 +46,7 @@ class UserRepository extends EntityRepository
             'firstname' => $row['firstname'],
             'lastname' => $row['lastname'],
             'email' => $row['email'],
+            'mailValidated' => (bool) $row['mail_validation'],
             'lastSeenAt' => new \DateTimeImmutable($row['last_seen_at']),
         ], $rows);
     }

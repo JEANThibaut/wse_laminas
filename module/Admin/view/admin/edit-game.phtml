@@ -70,7 +70,7 @@
                 <tr>
                     <td class="text-break">
                         <div class="fw-semibold">
-                            <?= $this->escapeHtml($player->getUser()->getFirstname() . ' ' . $player->getUser()->getLastname()) ?>
+                            <?= $this->escapeHtml($player->getUser()->getFirstname() . ' ' . $player->getUser()->getLastname()) ?><?= $this->mailCheck($player->getUser()) ?>
                         </div>
                         <div class="small text-muted"><?= $this->escapeHtml($player->getUser()->getEmail()) ?></div>
                     </td>
