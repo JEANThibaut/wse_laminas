@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\GameRegister;
+use User\Entity\LoginLog;
 use User\Entity\User;
 use Application\Util\InputSanitizer;
 use Game\Service\GameManager;
@@ -318,6 +319,34 @@ class AdminController extends AbstractActionController
         ]);
         $this->layout()->setVariable('activeMenu', 'admin-stats');
         $view->setTemplate('admin/stats');
+        return $view;
+    }
+
+    /**
+     * Journal des connexions et dernieres visites, reserve au GOD.
+     */
+    public function logsAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        if (!$currentUser || !$currentUser->isGod()) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $this->redirect()->toRoute('home');
+        }
+
+        $term = InputSanitizer::cleanString($this->params()->fromQuery('q', ''));
+        $state = InputSanitizer::cleanString($this->params()->fromQuery('state', ''));
+        if (!array_key_exists($state, LoginLog::STATE_LABELS)) {
+            $state = '';
+        }
+
+        $view = new ViewModel([
+            'term' => $term,
+            'state' => $state,
+            'logs' => $this->entityManager->getRepository(LoginLog::class)->findLatest($term, $state),
+            'lastSeenUsers' => $this->entityManager->getRepository(User::class)->findLastSeen(),
+        ]);
+        $this->layout()->setVariable('activeMenu', 'admin-logs');
+        $view->setTemplate('admin/logs');
         return $view;
     }
 

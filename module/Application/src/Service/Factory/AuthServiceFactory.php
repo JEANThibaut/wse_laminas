@@ -16,7 +16,8 @@ class AuthServiceFactory implements FactoryInterface
         $authenticationService = $container->get(AuthenticationService::class);
         $config = $container->get('config');
         $mailSettings = $config['mail_settings'] ?? [];
+        $trustedProxies = $config['trusted_proxies'] ?? [];
 
-        return new AuthService($entityManager, $authenticationService, $mailSettings);
+        return new AuthService($entityManager, $authenticationService, $mailSettings, $trustedProxies);
     }
 }

@@ -1,0 +1,103 @@
+<?php
+use User\Entity\LoginLog;
+
+$stateClasses = [
+    LoginLog::STATE_SUCCESS => 'text-bg-success',
+    LoginLog::STATE_SIGNUP => 'text-bg-primary',
+    LoginLog::STATE_WRONG_PASSWORD => 'text-bg-danger',
+    LoginLog::STATE_UNKNOWN_EMAIL => 'text-bg-warning',
+    LoginLog::STATE_LOGOUT => 'text-bg-secondary',
+];
+?>
+<div class="card">
+    <h4>Connexions</h4>
+    <p class="text-muted mb-2">Les 200 derniers événements, conservés 6 mois.</p>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-sm-6">
+            <input type="search" name="q" class="form-control" placeholder="Nom, email ou IP"
+                   value="<?= $this->escapeHtmlAttr($term) ?>">
+        </div>
+        <div class="col-sm-4">
+            <select name="state" class="form-select">
+                <option value="">Tous les états</option>
+                <?php foreach (LoginLog::STATE_LABELS as $value => $label): ?>
+                    <option value="<?= $this->escapeHtmlAttr($value) ?>" <?= $state === $value ? 'selected' : '' ?>>
+                        <?= $this->escapeHtml($label) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-warning w-100">Filtrer</button>
+        </div>
+    </form>
+
+    <?php if (empty($logs)): ?>
+        <p class="text-muted">Aucune connexion enregistrée.</p>
+    <?php else: ?>
+        <div class="table-responsive">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Compte</th>
+                        <th>État</th>
+                        <th>IP</th>
+                        <th>Navigateur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($logs as $log): ?>
+                        <?php $user = $log->getUser(); ?>
+                        <tr>
+                            <td class="text-nowrap"><?= $this->escapeHtml($log->getCreatedAt()->format('d/m/Y H:i')) ?></td>
+                            <td class="text-break">
+                                <?php if ($user): ?>
+                                    <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $user->getIdUser()])) ?>">
+                                        <?= $this->escapeHtml($user->getFirstname() . ' ' . $user->getLastname()) ?>
+                                    </a>
+                                <?php endif; ?>
+                                <div class="small text-muted"><?= $this->escapeHtml($log->getEmail()) ?></div>
+                            </td>
+                            <td>
+                                <span class="badge <?= $this->escapeHtmlAttr($stateClasses[$log->getState()] ?? 'text-bg-light') ?>">
+                                    <?= $this->escapeHtml($log->getStateLabel()) ?>
+                                </span>
+                            </td>
+                            <td class="text-nowrap"><?= $this->escapeHtml($log->getIp()) ?></td>
+                            <td class="small text-muted text-break"><?= $this->escapeHtml($log->getUserAgent() ?? '') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>
+
+<div class="card mt-4">
+    <h4>Dernières visites</h4>
+    <p class="text-muted mb-2">Dernier passage avec une session ouverte, à l'heure près.</p>
+
+    <?php if (empty($lastSeenUsers)): ?>
+        <p class="text-muted">Aucune visite enregistrée.</p>
+    <?php else: ?>
+        <div class="table-responsive">
+            <table class="table table-striped table-sm">
+                <tbody>
+                    <?php foreach ($lastSeenUsers as $seen): ?>
+                        <tr>
+                            <td class="text-break">
+                                <a href="<?= $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $seen['iduser']])) ?>">
+                                    <?= $this->escapeHtml($seen['firstname'] . ' ' . $seen['lastname']) ?>
+                                </a>
+                                <div class="small text-muted"><?= $this->escapeHtml($seen['email']) ?></div>
+                            </td>
+                            <td class="text-nowrap text-end"><?= $this->escapeHtml($seen['lastSeenAt']->format('d/m/Y H:i')) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>

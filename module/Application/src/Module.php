@@ -36,7 +36,12 @@ class Module
 
 
         $eventManager = $application->getEventManager();
-    
+
+        // Derniere visite des comptes connectes (session ouverte sans repasser par le login)
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+            $e->getApplication()->getServiceManager()->get(AppAuthService::class)->touchLastSeen();
+        }, 100);
+
         $eventManager->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $e) {
             $response = $e->getResponse();
             if ($response instanceof \Laminas\Http\Response) {

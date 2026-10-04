@@ -3,7 +3,10 @@ namespace Application\Service;
 
 use Doctrine\ORM\EntityManager;
 use Laminas\Authentication\AuthenticationService;
+use Laminas\Http\PhpEnvironment\Request;
 use Laminas\Mvc\Controller\Plugin\Redirect;
+use Application\Util\ClientIp;
+use User\Entity\LoginLog;
 use User\Entity\User;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -19,12 +22,15 @@ class AuthService
     private EntityManager $entityManager;
     private AuthenticationService $authenticationService;
     private array $mailSettings;
+    // Proxies publics de l'hebergeur dont on croit X-Forwarded-For (cf. ClientIp)
+    private array $trustedProxies;
 
-    public function __construct(EntityManager $entityManager, AuthenticationService $authenticationService, array $mailSettings = [])
+    public function __construct(EntityManager $entityManager, AuthenticationService $authenticationService, array $mailSettings = [], array $trustedProxies = [])
     {
         $this->entityManager = $entityManager;
         $this->authenticationService = $authenticationService;
         $this->mailSettings = $mailSettings;
+        $this->trustedProxies = $trustedProxies;
     }
 
     private function findUserByEmail(string $email): ?User
@@ -40,26 +46,87 @@ class AuthService
             ->getOneOrNullResult();
     }
 
-    public function login(string $email, string $password): bool
+    /**
+     * @param Request|null $request pour journaliser l'IP et le navigateur
+     * @param bool $afterSignup connexion automatique juste apres l'inscription
+     */
+    public function login(string $email, string $password, ?Request $request = null, bool $afterSignup = false): bool
     {
         // Cherche l'utilisateur par email
         $user = $this->findUserByEmail($email);
         if (!$user) {
+            $this->logLogin(LoginLog::STATE_UNKNOWN_EMAIL, $email, null, $request);
             return false;
         }
 
         if (password_verify($password, $user->getPassword())) {
             // store only the user id in session so we can re-hydrate on each request
             $this->authenticationService->getStorage()->write($user->getIdUser());
+            $this->logLogin($afterSignup ? LoginLog::STATE_SIGNUP : LoginLog::STATE_SUCCESS, $email, $user, $request);
             return true;
         }
 
+        $this->logLogin(LoginLog::STATE_WRONG_PASSWORD, $email, $user, $request);
         return false;
     }
 
-    public function logout(): void
+    public function logout(?Request $request = null): void
     {
+        $user = $this->getIdentity();
+        if ($user) {
+            $this->logLogin(LoginLog::STATE_LOGOUT, $user->getEmail(), $user, $request);
+        }
         $this->authenticationService->clearIdentity();
+    }
+
+    /**
+     * Journalise un evenement de connexion et purge les logs expires.
+     * En SQL direct et sans jamais lever d'exception : un probleme de log ne
+     * doit pas empecher de se connecter.
+     */
+    private function logLogin(string $state, string $email, ?User $user, ?Request $request): void
+    {
+        $server = $request ? $request->getServer()->toArray() : [];
+        try {
+            $connection = $this->entityManager->getConnection();
+            $connection->insert('login_log', [
+                'user_id' => $user ? $user->getIdUser() : null,
+                'email' => mb_substr(trim($email), 0, 180),
+                'state' => $state,
+                'ip' => mb_substr(ClientIp::resolve($server, $this->trustedProxies), 0, 45),
+                'user_agent' => $this->truncateOrNull($server['HTTP_USER_AGENT'] ?? null),
+                'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ]);
+            $this->entityManager->getRepository(LoginLog::class)->purgeExpired();
+        } catch (\Throwable $e) {
+            error_log('login_log : ' . $e->getMessage());
+        }
+    }
+
+    private function truncateOrNull($value): ?string
+    {
+        return ($value === null || $value === '') ? null : mb_substr((string) $value, 0, 255);
+    }
+
+    /**
+     * Date de derniere visite du compte connecte, ecrite au plus une fois par
+     * heure. Ne leve jamais d'exception.
+     */
+    public function touchLastSeen(): void
+    {
+        $id = $this->authenticationService->getIdentity();
+        if (!$id) {
+            return;
+        }
+        try {
+            $now = new \DateTime();
+            $this->entityManager->getConnection()->executeStatement(
+                'UPDATE user SET last_seen_at = ? WHERE iduser = ? AND (last_seen_at IS NULL OR last_seen_at < ?)',
+                [$now->format('Y-m-d H:i:s'), (int) $id, (clone $now)->modify('-1 hour')->format('Y-m-d H:i:s')]
+            );
+        } catch (\Throwable $e) {
+            error_log('last_seen_at : ' . $e->getMessage());
+        }
     }
 
     public function getIdentity()

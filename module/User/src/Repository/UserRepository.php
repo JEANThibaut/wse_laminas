@@ -23,6 +23,34 @@ class UserRepository extends EntityRepository
     }
 
     /**
+     * Comptes deja vus avec une session ouverte, du plus recent au plus ancien.
+     * La colonne last_seen_at (ecrite par AuthService::touchLastSeen) n'est pas
+     * mappee sur l'entite : son absence ne doit pas casser le chargement des
+     * comptes. Elle est lue ici en SQL direct ; liste vide si elle n'existe pas.
+     *
+     * @return array<int, array{iduser: int, firstname: string, lastname: string, email: string, lastSeenAt: \DateTimeImmutable}>
+     */
+    public function findLastSeen(int $limit = 100): array
+    {
+        try {
+            $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
+                'SELECT iduser, firstname, lastname, email, last_seen_at FROM user
+                 WHERE last_seen_at IS NOT NULL ORDER BY last_seen_at DESC LIMIT ' . (int) $limit
+            );
+        } catch (\Throwable $e) {
+            return [];
+        }
+
+        return array_map(fn ($row) => [
+            'iduser' => (int) $row['iduser'],
+            'firstname' => $row['firstname'],
+            'lastname' => $row['lastname'],
+            'email' => $row['email'],
+            'lastSeenAt' => new \DateTimeImmutable($row['last_seen_at']),
+        ], $rows);
+    }
+
+    /**
      * Nombre de comptes actifs et, parmi eux, de comptes a l'email valide.
      *
      * @return array{total: int, validated: int}

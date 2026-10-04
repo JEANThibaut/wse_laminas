@@ -37,7 +37,7 @@ class AuthController extends AbstractActionController
             $password = $data['password'] ?? '';
 
             if (filter_var($email, FILTER_VALIDATE_EMAIL) && !empty($password)) {
-                if ($this->authService->login($email, $password)) {
+                if ($this->authService->login($email, $password, $this->getRequest())) {
                     $this->flashMessenger()->addSuccessMessage("Connexion réussie.");
                     return $this->redirect()->toRoute('home');
                 } else {
@@ -57,7 +57,7 @@ class AuthController extends AbstractActionController
 
     public function logoutAction()
     {
-        $this->authService->logout();
+        $this->authService->logout($this->getRequest());
         $this->flashMessenger()->addSuccessMessage("Déconnexion réussie.");
         return $this->redirect()->toRoute('home');
     }
@@ -270,7 +270,7 @@ class AuthController extends AbstractActionController
                     $this->sendValidationLink($newUser);
                 }
                 // Connexion automatique
-                if ($this->authService->login($mail, $password)) {
+                if ($this->authService->login($mail, $password, $this->getRequest(), true)) {
                     $this->flashMessenger()->addSuccessMessage("Inscription et connexion réussies.");
                     return $this->redirect()->toRoute('home');
                 } else {

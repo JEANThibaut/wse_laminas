@@ -112,6 +112,16 @@ return [
                     ],
                 ],
             ],
+            'admin-logs' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/logs',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'logs',
+                    ],
+                ],
+            ],
             'admin-next-games' => [
                 'type' => Literal::class,
                 'options' => [

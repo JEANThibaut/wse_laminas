@@ -47,4 +47,11 @@ return [
 	//         // 'amount_non_member' => 10,
 	//     ],
 	// ],
+
+	// Proxies publics de l'hebergeur dont on croit l'en-tete X-Forwarded-For pour
+	// retrouver l'IP du client (journal des connexions). Les proxies en IP
+	// privee sont reconnus sans rien declarer. IP ou plages CIDR.
+	// 'trusted_proxies' => [
+	//     '213.186.33.0/24',
+	// ],
 ];
