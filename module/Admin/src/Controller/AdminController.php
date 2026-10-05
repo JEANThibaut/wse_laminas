@@ -450,6 +450,8 @@ class AdminController extends AbstractActionController
             'configured' => $this->pushService->isConfigured(),
             'targets' => self::PUSH_TARGETS,
             'categories' => PushService::CATEGORY_LABELS,
+            'preferenceColumns' => $this->pushService->hasPreferenceColumns(),
+            'myPreferences' => $this->pushService->getPreferences($currentUser),
             'players' => $this->findActivePlayers(),
             'nextGame' => $nextGame,
             'mySubscriptions' => $this->pushService->isConfigured()

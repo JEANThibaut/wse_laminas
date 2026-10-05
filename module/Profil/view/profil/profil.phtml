@@ -41,33 +41,61 @@
 
 <?php if ($notificationPreferences !== null): ?>
     <?php // Notifications : visible seulement si le compte y a acces (GOD en phase de test) ?>
-    <div class='card mt-3' id="notificationSettings">
-        <h4><i class="fa-solid fa-bell me-2"></i>Notifications</h4>
+    <style>
+        #notificationSettings .notif-row { cursor: pointer; gap: 0.85rem; padding: 0.85rem 0.75rem; }
+        #notificationSettings .notif-icon {
+            width: 2.5rem; height: 2.5rem; flex-shrink: 0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: #212529; color: #ffc107; font-size: 1.05rem;
+        }
+        #notificationSettings .notif-switch { margin: 0; padding: 0; min-height: 0; }
+        #notificationSettings .notif-switch .form-check-input {
+            width: 3.1rem; height: 1.7rem; margin: 0; float: none; cursor: pointer;
+        }
+        #notificationSettings .notif-switch .form-check-input:checked { background-color: #198754; border-color: #198754; }
+        #notificationSettings .notif-switch .form-check-input:focus { box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25); }
+        #notificationSettings .notif-saved { opacity: 0; transition: opacity 0.3s; }
+        #notificationSettings .notif-saved.show { opacity: 1; }
+    </style>
+    <div class="card mt-3" id="notificationSettings">
+        <h4 class="mb-3"><i class="fa-solid fa-bell me-2"></i>Notifications</h4>
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3" style="gap: 0.5rem;">
-            <span class="small text-muted" id="pushDeviceStatus">Cet appareil : vérification…</span>
-            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#pushModal">
-                Gérer sur cet appareil
+        <div class="d-flex align-items-center border rounded px-3 py-2 mb-3" style="gap: 0.75rem;">
+            <i class="fa-solid fa-mobile-screen-button text-muted"></i>
+            <span class="small flex-grow-1" id="pushDeviceStatus">Cet appareil : vérification…</span>
+            <button type="button" class="btn btn-sm btn-outline-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#pushModal">
+                Gérer
             </button>
         </div>
 
-        <div class="form-check form-switch mb-2">
-            <input class="form-check-input" type="checkbox" role="switch" id="notifyGames" data-category="games"
-                   <?= $notificationPreferences['games'] ? 'checked' : '' ?>>
-            <label class="form-check-label" for="notifyGames">
-                <b>Parties</b>
-                <span class="d-block small text-muted">Nouvelles parties, file d'attente, annulations…</span>
-            </label>
+        <div class="list-group">
+            <?php
+            $notificationRows = [
+                'games' => ['fa-crosshairs', 'Parties', "Nouvelles parties, file d'attente, annulations…"],
+                'news' => ['fa-newspaper', 'Actualités', 'Les nouvelles du club.'],
+            ];
+            ?>
+            <?php foreach ($notificationRows as $category => [$icon, $title, $description]): ?>
+                <label class="list-group-item notif-row d-flex align-items-center" for="notify-<?= $category ?>">
+                    <span class="notif-icon"><i class="fa-solid <?= $icon ?>"></i></span>
+                    <span class="flex-grow-1">
+                        <span class="d-block fw-semibold"><?= $this->escapeHtml($title) ?></span>
+                        <span class="d-block small text-muted"><?= $this->escapeHtml($description) ?></span>
+                        <span class="small text-success notif-saved" data-saved-for="<?= $category ?>">
+                            <i class="fa-solid fa-check"></i> Enregistré
+                        </span>
+                    </span>
+                    <span class="form-check form-switch notif-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="notify-<?= $category ?>"
+                               data-category="<?= $category ?>" aria-label="<?= $this->escapeHtmlAttr($title) ?>"
+                               <?= $notificationPreferences[$category] ? 'checked' : '' ?>>
+                    </span>
+                </label>
+            <?php endforeach; ?>
         </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="notifyNews" data-category="news"
-                   <?= $notificationPreferences['news'] ? 'checked' : '' ?>>
-            <label class="form-check-label" for="notifyNews">
-                <b>Actualités</b>
-                <span class="d-block small text-muted">Les nouvelles du club.</span>
-            </label>
-        </div>
-        <p class="small text-muted mt-2 mb-0">Ces choix valent pour tous vos appareils.</p>
+
+        <div class="alert alert-danger small py-2 mt-3 mb-0 d-none" id="notificationError" role="alert"></div>
+        <p class="small text-muted mt-3 mb-0">Ces choix valent pour tous vos appareils.</p>
     </div>
 <?php endif; ?>
 

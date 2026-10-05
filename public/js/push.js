@@ -70,10 +70,12 @@
             credentials: 'same-origin',
             body: JSON.stringify(body),
         });
+        const data = await response.json().catch(() => ({}));
         if (!response.ok) {
-            throw new Error('HTTP ' + response.status);
+            // Message du serveur quand il y en a un (migration manquante, acces refuse...)
+            throw new Error(data.error || 'Erreur serveur (HTTP ' + response.status + ').');
         }
-        return response.json();
+        return data;
     }
 
     async function currentSubscription() {
@@ -179,15 +181,29 @@
     });
 
     // Interrupteurs Parties / Actualites du profil
-    document.querySelectorAll('#notificationSettings [data-category]').forEach((input) => {
+    const settingsError = document.getElementById('notificationError');
+    document.querySelectorAll('#notificationSettings input[data-category]').forEach((input) => {
+        const saved = document.querySelector(`[data-saved-for="${input.dataset.category}"]`);
         input.addEventListener('change', async () => {
             input.disabled = true;
+            settingsError?.classList.add('d-none');
             try {
-                await post(modal.dataset.preferencesUrl, { category: input.dataset.category, enabled: input.checked });
+                const data = await post(modal.dataset.preferencesUrl, { category: input.dataset.category, enabled: input.checked });
+                // L'etat affiche suit ce que le serveur a reellement enregistre
+                if (data.preferences && input.dataset.category in data.preferences) {
+                    input.checked = data.preferences[input.dataset.category];
+                }
+                if (saved) {
+                    saved.classList.add('show');
+                    setTimeout(() => saved.classList.remove('show'), 2000);
+                }
             } catch (error) {
                 console.warn('Notifications :', error);
                 input.checked = !input.checked;
-                alert("Le réglage n'a pas pu être enregistré. Réessayez dans un instant.");
+                if (settingsError) {
+                    settingsError.textContent = "Réglage non enregistré : " + error.message;
+                    settingsError.classList.remove('d-none');
+                }
             } finally {
                 input.disabled = false;
             }

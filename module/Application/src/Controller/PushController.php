@@ -62,7 +62,11 @@ class PushController extends AbstractActionController
         if (!array_key_exists($category, PushService::CATEGORY_LABELS) || !isset($data['enabled'])) {
             return $this->json(400, ['error' => 'Préférence invalide.']);
         }
-        $this->pushService->setPreference($user, $category, (bool) $data['enabled']);
+        try {
+            $this->pushService->setPreference($user, $category, (bool) $data['enabled']);
+        } catch (\RuntimeException $e) {
+            return $this->json(503, ['error' => $e->getMessage()]);
+        }
         return $this->json(200, ['ok' => true, 'preferences' => $this->pushService->getPreferences($user)]);
     }
 

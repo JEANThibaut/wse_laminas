@@ -88,7 +88,8 @@ class PushService
     }
 
     /**
-     * Notifications souhaitees par le joueur, par categorie (tout active par defaut).
+     * Notifications souhaitees par le joueur, par categorie (tout coupe par defaut :
+     * le joueur active lui-meme ce qu'il veut recevoir dans son profil).
      * Colonnes ENUM('true','false') de la table user, lues en SQL direct : non
      * mappees sur l'entite, leur absence ne casse pas le chargement des comptes.
      *
@@ -96,7 +97,7 @@ class PushService
      */
     public function getPreferences(User $user): array
     {
-        $preferences = array_fill_keys(array_keys(self::CATEGORY_LABELS), true);
+        $preferences = array_fill_keys(array_keys(self::CATEGORY_LABELS), false);
         try {
             $row = $this->entityManager->getConnection()->fetchAssociative(
                 'SELECT ' . implode(', ', self::CATEGORY_COLUMNS) . ' FROM user WHERE iduser = ?',
@@ -115,10 +116,35 @@ class PushService
         return $preferences;
     }
 
+    /**
+     * Les colonnes de preferences existent-elles dans la table user ?
+     * (migration doc/migrations/2026-10-05_user_notification.sql jouee)
+     */
+    public function hasPreferenceColumns(): bool
+    {
+        try {
+            $this->entityManager->getConnection()->fetchOne(
+                'SELECT ' . implode(', ', self::CATEGORY_COLUMNS) . ' FROM user LIMIT 1'
+            );
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @throws \RuntimeException si les colonnes n'existent pas encore
+     */
     public function setPreference(User $user, string $category, bool $enabled): void
     {
         if (!isset(self::CATEGORY_COLUMNS[$category])) {
             throw new \InvalidArgumentException('Categorie de notification inconnue : ' . $category);
+        }
+        if (!$this->hasPreferenceColumns()) {
+            throw new \RuntimeException(
+                'Les colonnes notification_partie et notification_actu manquent dans la table user : '
+                . 'la migration 2026-10-05_user_notification.sql n\'a pas été jouée.'
+            );
         }
         $this->entityManager->getConnection()->executeStatement(
             'UPDATE user SET ' . self::CATEGORY_COLUMNS[$category] . ' = ? WHERE iduser = ?',

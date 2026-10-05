@@ -15,7 +15,20 @@
             <?php if ($mySubscriptions === 0): ?>
                 (activez les notifications depuis votre profil)
             <?php endif; ?>
+            <?php if ($preferenceColumns): ?>
+                <br>Vos préférences :
+                <?php foreach ($categories as $value => $label): ?>
+                    <?= $this->escapeHtml($label) ?> <b><?= $myPreferences[$value] ? 'activé' : 'coupé' ?></b><?= $value !== array_key_last($categories) ? ',' : '' ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
+        <?php if (!$preferenceColumns): ?>
+            <div class="alert alert-warning py-2 small">
+                Les colonnes <code>notification_partie</code> et <code>notification_actu</code> n'existent pas dans la table
+                <code>user</code> : les interrupteurs du profil ne peuvent pas s'enregistrer et tout le monde reçoit tout.
+                Lancez <code>doc/migrations/2026-10-05_user_notification.sql</code> dans phpMyAdmin.
+            </div>
+        <?php endif; ?>
 
         <form method="post">
             <div class="mb-3">
