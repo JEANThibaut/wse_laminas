@@ -1,12 +1,23 @@
 <?php $activeMenu = $this->layout()->getVariable('activeMenu') ?? ''; ?>
 <?php $disablePtr = $this->layout()->getVariable('disablePtr') ?? false; ?>
 <?php $isFunny = true; ?>
+<?php // Application installable : uniquement les comptes autorises (config 'pwa') ?>
+<?php $pwa = $this->pwaAccess($this->currentUser); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->headTitle('Wolf Soft Eure') ?>
+
+    <?php if ($pwa): ?>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#212529">
+    <link rel="apple-touch-icon" href="/images/pwa/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="WSE">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <?php endif; ?>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -227,6 +238,15 @@
 
     <?php if ($this->currentUser): ?>
 
+        <?php if ($pwa): ?>
+        <?php // Affiche par pwa.js seulement si l'installation est possible sur cet appareil ?>
+        <div class="mb-2">
+            <button type="button" class="btn btn-outline-light w-100 d-none" id="pwaInstallButton">
+                <i class="fa-solid fa-mobile-screen-button me-2"></i>Installer l'application
+            </button>
+        </div>
+        <?php endif; ?>
+
         <div class="mb-3">
             <a class="btn btn-outline-danger w-100" href="<?= $this->escapeHtmlAttr($this->url('logout')) ?>">Se déconnecter</a>
         </div>
@@ -285,6 +305,33 @@
 
 <!-- Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php if ($pwa): ?>
+<!-- Installation sur iPhone / iPad : Apple ne permet que l'ajout manuel a l'ecran d'accueil -->
+<div class="modal fade" id="pwaIosModal" tabindex="-1" aria-labelledby="pwaIosModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pwaIosModalTitle">Installer l'application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Sur iPhone et iPad, l'installation se fait depuis le menu Partager du navigateur :</p>
+                <ol class="mb-0">
+                    <li class="mb-2">
+                        Touchez le bouton <b>Partager</b> <i class="fa-solid fa-arrow-up-from-bracket"></i> :
+                        en bas de l'écran dans <b>Safari</b> (en haut sur iPad),
+                        à droite de la barre d'adresse dans <b>Chrome</b>.
+                    </li>
+                    <li class="mb-2">Faites défiler puis touchez <b>Sur l'écran d'accueil</b> <i class="fa-regular fa-square-plus"></i>.</li>
+                    <li>Touchez <b>Ajouter</b> : l'icône WSE apparaît avec vos applications.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/pwa.js"></script>
+<?php endif; ?>
 
 <!-- Custom scripts -->
 <?= $this->inlineScript()

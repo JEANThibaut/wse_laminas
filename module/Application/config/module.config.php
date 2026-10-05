@@ -149,10 +149,20 @@ return [
     'view_helpers' => [
         'aliases' => [
             'mailCheck' => View\Helper\MailCheck::class,
+            'pwaAccess' => View\Helper\PwaAccess::class,
         ],
         'factories' => [
             View\Helper\MailCheck::class => InvokableFactory::class,
+            View\Helper\PwaAccess::class => View\Helper\Factory\PwaAccessFactory::class,
         ],
+    ],
+
+    // Application installable (PWA). En phase de test : manifeste, service
+    // worker et bouton "Installer l'application" ne sont servis qu'aux comptes
+    // de allowed_emails. Passer restricted a false pour l'ouvrir a tous.
+    'pwa' => [
+        'restricted' => true,
+        'allowed_emails' => ['thibaut-jean@live.fr'],
     ],
 
     'session_config' => [
