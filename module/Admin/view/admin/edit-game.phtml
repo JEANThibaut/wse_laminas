@@ -53,7 +53,12 @@
     </form>
 </div>
 <div class="card mt-4">
-    <h4>Joueurs inscrits (<?= $this->escapeHtml(count($players)) ?>/<?= $this->escapeHtml($game->getPlayerMax()) ?>)</h4>
+    <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: 0.5rem;">
+        <h4 class="mb-0">Joueurs inscrits (<?= $this->escapeHtml(count($players)) ?>/<?= $this->escapeHtml($game->getPlayerMax()) ?>)</h4>
+        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addPlayerModal">
+            <i class="fa-solid fa-user-plus"></i> Ajouter un joueur
+        </button>
+    </div>
 
     <?php if (count($players) == 0): ?>
         <p>Aucun joueur inscrit pour cette partie.</p>
@@ -112,6 +117,49 @@
             'fields' => ['id' => $game->getIdGame()],
             'confirmLabel' => 'Je confirme la désinscription de ces ' . count($unvalidatedRegisters) . ' joueur(s).',
         ]) ?>
+    </div>
+</div>
+
+<div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPlayerModalTitle">Ajouter un joueur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="px-3 pt-3">
+                <p class="small text-muted mb-2">
+                    Inscription directe, même si la partie est complète. Un joueur en file d'attente s'inscrit depuis la file.
+                </p>
+                <input type="search" class="form-control" id="addPlayerSearch" placeholder="Nom, prénom ou email" autocomplete="off">
+            </div>
+            <div class="modal-body">
+                <?php if (empty($addablePlayers)): ?>
+                    <p class="text-muted mb-0">Tous les joueurs sont déjà inscrits.</p>
+                <?php else: ?>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-add-player')) ?>">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($game->getIdGame()) ?>">
+                        <ul class="list-group" id="addPlayerList">
+                            <?php foreach ($addablePlayers as $candidate): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center" style="gap: 0.5rem;"
+                                    data-search="<?= $this->escapeHtmlAttr($candidate->getLastname() . ' ' . $candidate->getFirstname() . ' ' . $candidate->getEmail()) ?>">
+                                    <div class="text-break">
+                                        <div class="fw-semibold">
+                                            <?= $this->escapeHtml($candidate->getLastname() . ' ' . $candidate->getFirstname()) ?><?= $this->mailCheck($candidate) ?>
+                                        </div>
+                                        <div class="small text-muted"><?= $this->escapeHtml($candidate->getEmail()) ?></div>
+                                    </div>
+                                    <button type="submit" name="user_id" value="<?= $this->escapeHtmlAttr($candidate->getIdUser()) ?>" class="btn btn-sm btn-success text-nowrap">
+                                        Inscrire
+                                    </button>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <p class="text-muted mt-2 mb-0 d-none" id="addPlayerEmpty">Aucun joueur ne correspond.</p>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 

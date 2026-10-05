@@ -1,6 +1,7 @@
 <?php
 namespace User\Repository;
 use Doctrine\ORM\EntityRepository;
+use Game\Entity\GameRegister;
 
 class UserRepository extends EntityRepository
 {
@@ -16,6 +17,31 @@ class UserRepository extends EntityRepository
         return $this->createQueryBuilder('u')
             ->where('u.isActive IS NULL OR u.isActive <> 0')
             ->andWhere('u.mailValidation = false')
+            ->orderBy('u.lastname', 'ASC')
+            ->addOrderBy('u.firstname', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Comptes actifs qu'un admin peut inscrire a une partie : ni deja inscrits,
+     * ni deja en file d'attente (ceux-la s'inscrivent depuis la file). Tries par nom.
+     */
+    public function findAddableToGame($game): array
+    {
+        $registered = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(GameRegister::class, 'r')
+            ->where('r.user = u')
+            ->andWhere('r.game = :game')
+            ->andWhere('r.status IN (:statuses)')
+            ->getDQL();
+
+        return $this->createQueryBuilder('u')
+            ->where('u.isActive IS NULL OR u.isActive <> 0')
+            ->andWhere("NOT EXISTS ($registered)")
+            ->setParameter('game', $game)
+            ->setParameter('statuses', [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING])
             ->orderBy('u.lastname', 'ASC')
             ->addOrderBy('u.firstname', 'ASC')
             ->getQuery()

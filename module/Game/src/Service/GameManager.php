@@ -224,13 +224,61 @@ class GameManager
 
     /**
      * Inscription depuis la file d'attente par un admin : sans condition de
-     * date, mais dans la limite des places.
+     * date ni limite de places, comme adminAddPlayer.
      *
-     * @return string self::RESULT_*
+     * @return string self::RESULT_CONFIRMED ou RESULT_ALREADY (plus en file d'attente)
      */
     public function adminConfirmPendingRegister(GameRegister $register): string
     {
-        return $this->activatePendingRegister($register);
+        $game = $register->getGame();
+
+        return $this->entityManager->wrapInTransaction(function () use ($register, $game) {
+            $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
+            $this->entityManager->refresh($register);
+            if (!$register->isPending()) {
+                return self::RESULT_ALREADY;
+            }
+            $register->setStatus(GameRegister::STATUS_ACTIVE);
+            $this->entityManager->flush();
+
+            return self::RESULT_CONFIRMED;
+        });
+    }
+
+    /**
+     * Inscription manuelle d'un joueur par un admin, sans limite de places ni
+     * condition de date. Un joueur en file d'attente y est directement inscrit.
+     *
+     * @return string self::RESULT_REGISTERED, RESULT_CONFIRMED (sorti de la
+     *                file d'attente) ou RESULT_ALREADY
+     */
+    public function adminAddPlayer(Game $game, User $user): string
+    {
+        return $this->entityManager->wrapInTransaction(function () use ($game, $user) {
+            $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
+
+            $register = $this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $user);
+            if ($register && $register->isPending()) {
+                $register->setStatus(GameRegister::STATUS_ACTIVE);
+                $this->entityManager->flush();
+                return self::RESULT_CONFIRMED;
+            }
+            if ($register) {
+                return self::RESULT_ALREADY;
+            }
+
+            $register = new GameRegister();
+            $register->setUser($user);
+            $register->setGame($game);
+            $register->setPaid(0);
+            $register->setArrivedNumber(0);
+            $register->setMember($user->getIsMember());
+            $register->setStatus(GameRegister::STATUS_ACTIVE);
+            $this->entityManager->persist($register);
+            $this->entityManager->flush();
+
+            return self::RESULT_REGISTERED;
+        });
     }
 
     private function activatePendingRegister(GameRegister $register): string

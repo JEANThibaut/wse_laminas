@@ -62,6 +62,16 @@ return [
                     ],
                 ],
             ],
+            'admin-add-player' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/add-player',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'addPlayer',
+                    ],
+                ],
+            ],
             'admin-queue-player' => [
                 'type' => Literal::class,
                 'options' => [

@@ -103,6 +103,7 @@ class AdminController extends AbstractActionController
             'unvalidatedRegisters' => $this->entityManager->getRepository(GameRegister::class)->findUnvalidatedRegisters($game),
             'pendingQueue' => $this->gameManager->getPendingQueue($game),
             'registersToQueue' => $this->gameManager->findRegistersToQueue($game),
+            'addablePlayers' => $this->entityManager->getRepository(User::class)->findAddableToGame($game),
         ]);
         $view->setTemplate('admin/edit-game');
         return $view;
@@ -168,6 +169,62 @@ class AdminController extends AbstractActionController
         }
 
         return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
+    }
+
+    /**
+     * Inscription manuelle d'un joueur par un admin, meme si la partie est
+     * complete. Un joueur en file d'attente y est directement inscrit.
+     */
+    public function addPlayerAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $game = $this->entityManager->getRepository(Game::class)->find(InputSanitizer::cleanInt($request->getPost('id')));
+        if (!$game) {
+            $this->flashMessenger()->addErrorMessage('Partie introuvable.');
+            return $this->redirect()->toRoute('admin-games');
+        }
+        $user = $this->entityManager->getRepository(User::class)->find(InputSanitizer::cleanInt($request->getPost('user_id')));
+        if (!$user) {
+            $this->flashMessenger()->addErrorMessage('Joueur introuvable.');
+            return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
+        }
+
+        $name = $user->getFirstname() . ' ' . $user->getLastname();
+        switch ($this->gameManager->adminAddPlayer($game, $user)) {
+            case GameManager::RESULT_REGISTERED:
+            case GameManager::RESULT_CONFIRMED:
+                $this->flashMessenger()->addSuccessMessage($name . ' est inscrit à la partie.');
+                $this->warnIfOverQuota($game);
+                if (!$user->isMailValidated()) {
+                    $this->flashMessenger()->addWarningMessage($name . " n'a pas validé son adresse email.");
+                }
+                break;
+            default:
+                $this->flashMessenger()->addErrorMessage($name . ' est déjà inscrit à cette partie.');
+        }
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
+    }
+
+    /**
+     * Les inscriptions par un admin ignorent la limite de places : le signaler
+     * quand elle est depassee.
+     */
+    private function warnIfOverQuota(Game $game): void
+    {
+        $count = $this->entityManager->getRepository(GameRegister::class)->countActiveRegisters($game);
+        if ($count > $game->getPlayerMax()) {
+            $this->flashMessenger()->addWarningMessage(
+                'La partie dépasse le nombre maximum de joueurs : ' . $count . '/' . $game->getPlayerMax() . '.'
+            );
+        }
     }
 
     /**
@@ -265,9 +322,7 @@ class AdminController extends AbstractActionController
         switch ($this->gameManager->adminConfirmPendingRegister($register)) {
             case GameManager::RESULT_CONFIRMED:
                 $this->flashMessenger()->addSuccessMessage($name . ' est inscrit à la partie.');
-                break;
-            case GameManager::RESULT_FULL:
-                $this->flashMessenger()->addErrorMessage("La partie est complète : libérez une place avant d'inscrire " . $name . '.');
+                $this->warnIfOverQuota($register->getGame());
                 break;
             default:
                 $this->flashMessenger()->addErrorMessage($name . " n'est plus en file d'attente.");
