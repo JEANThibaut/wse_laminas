@@ -1,5 +1,6 @@
-// Notifications : fenetre #pushModal (activation sur cet appareil), etat et
-// interrupteurs du profil (#notificationSettings). Charge uniquement pour les
+// Notifications : fenetre #pushModal (activation sur cet appareil) et ligne
+// d'etat du profil (#pushDeviceStatus). Les interrupteurs du profil ont leur
+// propre script (notification-settings.js). Charge uniquement pour les
 // comptes autorises, apres pwa.js qui enregistre le service worker.
 // Chaque etat s'explique en deux phrases maximum.
 (function () {
@@ -178,36 +179,6 @@
         if (!activatedInModal) {
             storage.set(PROMPT_KEY, String(Date.now()));
         }
-    });
-
-    // Interrupteurs Parties / Actualites du profil
-    const settingsError = document.getElementById('notificationError');
-    document.querySelectorAll('#notificationSettings input[data-category]').forEach((input) => {
-        const saved = document.querySelector(`[data-saved-for="${input.dataset.category}"]`);
-        input.addEventListener('change', async () => {
-            input.disabled = true;
-            settingsError?.classList.add('d-none');
-            try {
-                const data = await post(modal.dataset.preferencesUrl, { category: input.dataset.category, enabled: input.checked });
-                // L'etat affiche suit ce que le serveur a reellement enregistre
-                if (data.preferences && input.dataset.category in data.preferences) {
-                    input.checked = data.preferences[input.dataset.category];
-                }
-                if (saved) {
-                    saved.classList.add('show');
-                    setTimeout(() => saved.classList.remove('show'), 2000);
-                }
-            } catch (error) {
-                console.warn('Notifications :', error);
-                input.checked = !input.checked;
-                if (settingsError) {
-                    settingsError.textContent = "Réglage non enregistré : " + error.message;
-                    settingsError.classList.remove('d-none');
-                }
-            } finally {
-                input.disabled = false;
-            }
-        });
     });
 
     // A l'ouverture : etat de l'appareil, et proposition d'activer si c'est possible

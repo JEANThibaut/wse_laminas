@@ -54,8 +54,6 @@
         }
         #notificationSettings .notif-switch .form-check-input:checked { background-color: #198754; border-color: #198754; }
         #notificationSettings .notif-switch .form-check-input:focus { box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25); }
-        #notificationSettings .notif-saved { opacity: 0; transition: opacity 0.3s; }
-        #notificationSettings .notif-saved.show { opacity: 1; }
     </style>
     <div class="card mt-3" id="notificationSettings">
         <h4 class="mb-3"><i class="fa-solid fa-bell me-2"></i>Notifications</h4>
@@ -76,27 +74,29 @@
             ];
             ?>
             <?php foreach ($notificationRows as $category => [$icon, $title, $description]): ?>
-                <label class="list-group-item notif-row d-flex align-items-center" for="notify-<?= $category ?>">
+                <label class="list-group-item notif-row d-flex align-items-center" for="notify-<?= $category ?>" data-notification-row>
                     <span class="notif-icon"><i class="fa-solid <?= $icon ?>"></i></span>
                     <span class="flex-grow-1">
                         <span class="d-block fw-semibold"><?= $this->escapeHtml($title) ?></span>
                         <span class="d-block small text-muted"><?= $this->escapeHtml($description) ?></span>
-                        <span class="small text-success notif-saved" data-saved-for="<?= $category ?>">
-                            <i class="fa-solid fa-check"></i> Enregistré
-                        </span>
+                        <span class="d-block small" data-notification-status aria-live="polite"></span>
                     </span>
                     <span class="form-check form-switch notif-switch">
+                        <?php // Enregistrement AJAX par interrupteur : public/js/notification-settings.js ?>
                         <input class="form-check-input" type="checkbox" role="switch" id="notify-<?= $category ?>"
-                               data-category="<?= $category ?>" aria-label="<?= $this->escapeHtmlAttr($title) ?>"
+                               data-notification-category="<?= $category ?>"
+                               data-url="<?= $this->escapeHtmlAttr($this->url('push-preferences')) ?>"
+                               aria-label="<?= $this->escapeHtmlAttr($title) ?>"
                                <?= $notificationPreferences[$category] ? 'checked' : '' ?>>
                     </span>
                 </label>
             <?php endforeach; ?>
         </div>
 
-        <div class="alert alert-danger small py-2 mt-3 mb-0 d-none" id="notificationError" role="alert"></div>
         <p class="small text-muted mt-3 mb-0">Ces choix valent pour tous vos appareils.</p>
     </div>
+    <?php $settingsJs = 'public/js/notification-settings.js'; ?>
+    <script src="/js/notification-settings.js?v=<?= (int) (@filemtime($settingsJs) ?: time()) ?>"></script>
 <?php endif; ?>
 
 <?php if ($registers): ?>
