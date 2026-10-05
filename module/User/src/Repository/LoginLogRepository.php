@@ -36,6 +36,23 @@ class LoginLogRepository extends EntityRepository
     }
 
     /**
+     * Nombre d'evenements dans les etats donnes depuis une date.
+     *
+     * @param string[] $states LoginLog::STATE_*
+     */
+    public function countSince(array $states, \DateTimeInterface $since): int
+    {
+        return (int) $this->createQueryBuilder('l')
+            ->select('COUNT(l.id)')
+            ->where('l.state IN (:states)')
+            ->andWhere('l.createdAt >= :since')
+            ->setParameter('states', $states)
+            ->setParameter('since', $since)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * Supprime les logs plus anciens que la duree de conservation.
      */
     public function purgeExpired(): int

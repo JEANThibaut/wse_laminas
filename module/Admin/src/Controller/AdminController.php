@@ -394,11 +394,26 @@ class AdminController extends AbstractActionController
             $state = '';
         }
 
+        $logRepository = $this->entityManager->getRepository(LoginLog::class);
+        $lastSeenUsers = $this->entityManager->getRepository(User::class)->findLastSeen();
+        $dayAgo = new \DateTimeImmutable('-24 hours');
+
         $view = new ViewModel([
             'term' => $term,
             'state' => $state,
-            'logs' => $this->entityManager->getRepository(LoginLog::class)->findLatest($term, $state),
-            'lastSeenUsers' => $this->entityManager->getRepository(User::class)->findLastSeen(),
+            'logs' => $logRepository->findLatest($term, $state),
+            'lastSeenUsers' => $lastSeenUsers,
+            'summary' => [
+                'loginsToday' => $logRepository->countSince(
+                    [LoginLog::STATE_SUCCESS, LoginLog::STATE_SIGNUP],
+                    new \DateTimeImmutable('today')
+                ),
+                'failuresWeek' => $logRepository->countSince(
+                    [LoginLog::STATE_WRONG_PASSWORD, LoginLog::STATE_UNKNOWN_EMAIL],
+                    new \DateTimeImmutable('-7 days')
+                ),
+                'activeDay' => count(array_filter($lastSeenUsers, fn ($seen) => $seen['lastSeenAt'] >= $dayAgo)),
+            ],
         ]);
         $this->layout()->setVariable('activeMenu', 'admin-logs');
         $view->setTemplate('admin/logs');

@@ -125,6 +125,40 @@ class LoginLog
         return $this->userAgent;
     }
 
+    /**
+     * Appareil et navigateur en clair ("iPhone · Safari"), deduits du user-agent.
+     * Approximatif : sert a reperer d'un coup d'oeil, pas a identifier.
+     */
+    public function getDeviceLabel(): string
+    {
+        $ua = (string) $this->userAgent;
+        if ($ua === '') {
+            return 'Appareil inconnu';
+        }
+
+        $devices = [
+            'iPhone' => 'iPhone', 'iPad' => 'iPad', 'Android' => 'Android',
+            'Windows' => 'Windows', 'Macintosh' => 'Mac', 'Linux' => 'Linux',
+        ];
+        // Ordre important : Edge et Opera se declarent aussi Chrome, Chrome se declare Safari
+        $browsers = [
+            'Edg/' => 'Edge', 'OPR/' => 'Opera', 'SamsungBrowser' => 'Samsung',
+            'Firefox' => 'Firefox', 'FxiOS' => 'Firefox', 'CriOS' => 'Chrome',
+            'Chrome' => 'Chrome', 'Safari' => 'Safari',
+        ];
+
+        $parts = [];
+        foreach ([$devices, $browsers] as $patterns) {
+            foreach ($patterns as $needle => $label) {
+                if (stripos($ua, $needle) !== false) {
+                    $parts[] = $label;
+                    break;
+                }
+            }
+        }
+        return $parts ? implode(' · ', $parts) : 'Autre';
+    }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
