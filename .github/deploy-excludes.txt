@@ -1,0 +1,38 @@
+# Chemins jamais envoyes NI supprimes sur le serveur (expressions regulieres
+# sur le chemin relatif, syntaxe des --exclude de lftp mirror). Source unique
+# pour l'envoi complet et l'envoi partiel (.github/scripts/deploy-plan.py).
+#
+# ATTENTION : certains fichiers n'existent QUE sur le serveur (config,
+# photos, sessions). Retirer leur exclusion les ferait supprimer par l'envoi
+# complet (--delete) : perte de donnees.
+
+# Outillage et documentation, inutiles en production
+^\.git
+^\.github/
+^\.vscode/
+^EN-PROD/
+^doc/
+^bin/
+/test/
+/tests/
+\.md$
+\.dist$
+^Dockerfile$
+^docker-compose\.yml$
+^phpcs\.xml$
+^phpunit\.xml\.dist$
+^psalm\.xml$
+^renovate\.json$
+^\.phpstorm\.meta\.php$
+^\.psalm-stubs\.phpstub$
+
+# N'existent que sur le serveur
+^config/autoload/local\.php$
+^config/autoload/global\.php$
+^config/autoload/.*\.local\.php$
+^config/development\.config\.php$
+^data/sessions/
+^public/photos/
+
+# Commit deploye, ecrit a part a la fin de chaque deploiement
+^\.deployed-commit$

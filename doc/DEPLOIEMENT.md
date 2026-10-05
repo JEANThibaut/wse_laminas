@@ -20,16 +20,31 @@ projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 ## Ce que fait le workflow
 
 1. Checkout de la branche choisie au lancement (`main` par defaut), historique
-   complet, puis `git restore-mtime` : chaque fichier reprend la date de son
-   dernier commit. Sans ca, le checkout date tout de l'instant present et
-   `lftp` renvoie l'integralite du projet a chaque deploiement
+   complet (necessaire a l'envoi partiel)
 2. `composer install --no-dev --optimize-autoloader` (vendor/ est construit par la
    CI, il n'est pas dans le repo)
 3. `php -l` sur `module/`, `config/` et `public/` : un fichier casse arrete tout
-4. Inspection de l'arborescence distante (diagnostic en lecture seule)
-5. `lftp mirror --reverse --delete` : seuls les fichiers modifies remontent, et ce
-   qui a disparu du repo est supprime cote serveur. C'est aussi ce qui invalide le
-   cache de config Laminas, `data/cache/` ne contenant que `.gitkeep` dans le repo
+4. Generation de `config/autoload/push.global.php` depuis les secrets VAPID
+5. Lecture de `.deployed-commit` sur le serveur : le commit deploye la derniere fois
+6. `.github/scripts/deploy-plan.py` decide de l'envoi et l'affiche dans le journal :
+   - **partiel** (cas normal) : seuls les fichiers ajoutes, modifies ou supprimes
+     depuis ce commit (`git diff`), plus a chaque fois `vendor/autoload.php`,
+     `vendor/composer/` (la table des classes inclut les modules) et
+     `push.global.php`. Tout `vendor/` si `composer.json` ou `composer.lock` a
+     change. Le cache de config Laminas (`data/cache/*.php`) est supprime
+     explicitement, sinon une nouvelle route serait ignoree
+   - **complet** (`lftp mirror --reverse --delete`, l'ancien fonctionnement) :
+     case "Envoi complet" cochee, pas de `.deployed-commit`, commit inconnu, ou
+     commit deploye plus recent que celui envoye (retour arriere)
+7. `.deployed-commit` est ecrit **en dernier**, seulement si tout l'envoi a reussi :
+   apres un echec, le deploiement suivant repart de l'ancien commit et renvoie tout
+   ce qui manque
+
+Les exclusions (fichiers jamais envoyes ni supprimes) sont dans
+`.github/deploy-excludes.txt`, source unique des deux modes.
+
+Un fichier modifie a la main sur le serveur n'est plus ecrase tant qu'il ne change
+pas dans le repo : cocher "Envoi complet" pour tout resynchroniser.
 
 ## Configuration GitHub
 
@@ -60,7 +75,8 @@ Passer par l'interface web, ou prefixer la commande par `MSYS_NO_PATHCONV=1`.
 ## Mode simulation
 
 `Actions > Deploiement production > Run workflow`, cocher **dry_run**. Le log liste
-tout ce qui serait envoye et supprime, sans ecrire une ligne sur le serveur.
+tout ce qui serait envoye et supprime, sans ecrire une ligne sur le serveur (etape
+"Prepare l'envoi" en partiel, "Envoi SFTP" en complet).
 
 A utiliser systematiquement avant un deploiement qui touche a la structure des
 fichiers. Pour lire le resultat, comparer les lignes `Removing old file` et
