@@ -69,7 +69,8 @@ $emailValidated = !$this->currentUser || $this->currentUser->isMailValidated();
                     <h4>La prochaine partie est complète!</h4>
                 <?php else : ?>    
                     <h4>Prochaine partie du <?= $this->escapeHtml($game->getDate()->format('d/m/Y')) ?> </h4>
-                    <?php if($countRegister): ?>
+                    <?php // Nombre d'inscrits : reserve aux joueurs connectes ?>
+                    <?php if($this->currentUser && $countRegister): ?>
                       <?php if(count($countRegister)>0): ?>  
                       <p>  <?= $this->escapeHtml(count($countRegister)) ?> joueurs inscrits ! </p>
                       <?php endif; ?>
