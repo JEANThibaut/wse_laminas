@@ -37,7 +37,9 @@ projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 
 Secrets : `FTP_SERVER` (hote SFTP OVH), `FTP_USERNAME`, `FTP_PASSWORD`.
 
-Secrets des notifications : `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`. Le workflow en
+Notifications : `VAPID_PUBLIC_KEY` (secret ou variable) et `VAPID_PRIVATE_KEY`
+(**secret obligatoirement** : le depot est public, ses journaux aussi, et seuls les
+secrets y sont masques ; une variable s'afficherait en clair). Le workflow en
 genere `config/autoload/push.global.php` (jamais commite), charge par Laminas comme
 tout `*.global.php`. Sans ces deux secrets, le fichier n'est pas cree et les
 notifications restent desactivees. Ne jamais changer ces cles une fois en service :

@@ -72,13 +72,21 @@ jobs:
       # la config a la main sur le serveur. Laminas charge tout
       # config/autoload/*.global.php. Sans les deux secrets, aucun fichier :
       # les notifications restent desactivees.
+      # Depot public : les journaux sont lisibles par tous. La cle publique peut
+      # etre une variable (elle n'a rien de secret), la cle privee DOIT etre un
+      # secret, seul type masque dans les journaux.
       - name: Genere la config des notifications
         env:
-          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY || vars.VAPID_PUBLIC_KEY }}
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: |
-          if [ -z "$VAPID_PUBLIC_KEY" ] || [ -z "$VAPID_PRIVATE_KEY" ]; then
-            echo "Secrets VAPID absents : notifications desactivees"
+          if [ -z "$VAPID_PUBLIC_KEY" ]; then
+            echo "VAPID_PUBLIC_KEY absente (secret ou variable) : notifications desactivees"
+            exit 0
+          fi
+          if [ -z "$VAPID_PRIVATE_KEY" ]; then
+            echo "Secret VAPID_PRIVATE_KEY absent : notifications desactivees."
+            echo "Il doit etre dans l'onglet Secrets (pas Variables) de Settings > Secrets and variables > Actions."
             exit 0
           fi
           # Valeurs lues par PHP depuis l'environnement et echappees par
