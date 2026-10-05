@@ -33,9 +33,14 @@ $parisTz = new \DateTimeZone('Europe/Paris');
         <?php else: ?>
             <h4>Prochaine partie du <?= $this->escapeHtml($game->getDate()->format('d/m/Y')) ?></h4>
         <?php endif; ?>
-        <?php // Pas de nombre d'inscrits sur l'accueil ; la longueur de la file seulement pour qui y a acces (admins) ?>
-        <?php if ($queueAvailable && $queueCount > 0): ?>
-            <p class="mb-0"><?= $this->escapeHtml($queueCount) ?> joueur<?= $queueCount > 1 ? 's' : '' ?> en file d'attente.</p>
+        <?php // Chiffres (inscrits, file d'attente) : admins seulement, jamais les joueurs ni les visiteurs ?>
+        <?php if ($this->currentUser && $this->currentUser->hasAdminAccess()): ?>
+            <p class="mb-0">
+                <?= $this->escapeHtml($registeredCount) ?> joueur<?= $registeredCount > 1 ? 's' : '' ?> inscrit<?= $registeredCount > 1 ? 's' : '' ?>
+                <?php if ($queueCount > 0): ?>
+                    · <?= $this->escapeHtml($queueCount) ?> en file d'attente
+                <?php endif; ?>
+            </p>
         <?php endif; ?>
         <hr>
         <div class='row'>
