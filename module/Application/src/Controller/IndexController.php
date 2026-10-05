@@ -32,13 +32,11 @@ class IndexController extends AbstractActionController
         $this->layout()->setVariable('activeMenu', 'home');
 
         $register = null;
-        $registeredCount = 0;
         $isComplete = false;
         // File d'attente : visible seulement des comptes autorises (admins en phase de test)
         $queueAvailable = false;
         $queueStatus = null;
         if ($game) {
-            $registeredCount = $this->entityManager->getRepository(GameRegister::class)->countActiveRegisters($game);
             // Complete aussi quand les places restantes sont proposees a la file
             $isComplete = $this->gameManager->isFull($game);
 
@@ -62,7 +60,6 @@ class IndexController extends AbstractActionController
             'game' => $game,
             'currentUser' => $currentUser,
             'register' => $register,
-            'registeredCount' => $registeredCount,
             'isComplete' => $isComplete,
             'queueAvailable' => $queueAvailable,
             'queueStatus' => $queueStatus,
