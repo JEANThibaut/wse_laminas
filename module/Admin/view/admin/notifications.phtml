@@ -10,14 +10,24 @@
         </div>
     <?php else: ?>
         <div class="alert alert-info py-2 small">
-            <b>Mode test :</b> seuls les comptes autorisés reçoivent, quels que soient les destinataires choisis.
+            <b>Mode test :</b> seuls les comptes GOD reçoivent, quels que soient les destinataires choisis.
             <br>Vos appareils abonnés : <b><?= $this->escapeHtml($mySubscriptions) ?></b>
             <?php if ($mySubscriptions === 0): ?>
-                (activez les notifications depuis le menu, bouton « Notifications »)
+                (activez les notifications depuis votre profil)
             <?php endif; ?>
         </div>
 
         <form method="post">
+            <div class="mb-3">
+                <label for="pushCategory" class="form-label">Type</label>
+                <select name="category" id="pushCategory" class="form-select" required>
+                    <?php foreach ($categories as $value => $label): ?>
+                        <option value="<?= $this->escapeHtmlAttr($value) ?>"><?= $this->escapeHtml($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="form-text">Seuls les joueurs qui ont laissé ce type activé dans leur profil reçoivent.</div>
+            </div>
+
             <div class="mb-3">
                 <label for="pushTarget" class="form-label">Destinataires</label>
                 <select name="target" id="pushTarget" class="form-select" required>

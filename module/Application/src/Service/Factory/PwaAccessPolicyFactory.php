@@ -12,9 +12,6 @@ class PwaAccessPolicyFactory implements FactoryInterface
         $config = $container->get('config')['pwa'] ?? [];
 
         // Sans config explicite, on reste en mode restreint
-        return new PwaAccessPolicy(
-            (bool) ($config['restricted'] ?? true),
-            (array) ($config['allowed_emails'] ?? [])
-        );
+        return new PwaAccessPolicy((bool) ($config['restricted'] ?? true));
     }
 }

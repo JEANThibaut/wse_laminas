@@ -40,6 +40,16 @@ return [
                     ],
                 ],
             ],
+            'push-preferences' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/push/preferences',
+                    'defaults' => [
+                        'controller' => Controller\PushController::class,
+                        'action'     => 'preferences',
+                    ],
+                ],
+            ],
             'login' => [
                 'type' => Literal::class,
                 'options' => [
@@ -183,14 +193,13 @@ return [
     ],
 
     // Application installable (PWA) et notifications. En phase de test :
-    // manifeste, service worker, boutons "Installer l'application" et
-    // "Notifications", abonnements et envois sont reserves aux comptes de
-    // allowed_emails. Passer restricted a false pour l'ouvrir a tous.
-    // Les cles VAPID des notifications ('push' => ['vapid' => ...]) sont dans
-    // config/autoload/global.php, jamais dans le repo.
+    // manifeste, service worker, bouton "Installer l'application",
+    // notifications du profil, abonnements et envois sont reserves aux comptes
+    // GOD. Passer restricted a false pour l'ouvrir a tous.
+    // Les cles VAPID ('push' => ['vapid' => ...]) sont generees au deploiement
+    // depuis les secrets GitHub (config/autoload/push.global.php), jamais dans le repo.
     'pwa' => [
         'restricted' => true,
-        'allowed_emails' => ['thibaut-jean@live.fr'],
     ],
 
     'session_config' => [

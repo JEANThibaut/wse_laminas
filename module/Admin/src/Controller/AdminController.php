@@ -401,7 +401,6 @@ class AdminController extends AbstractActionController
             return $this->redirect()->toRoute('home');
         }
 
-        $userRepository = $this->entityManager->getRepository(User::class);
         $nextGame = $this->entityManager->getRepository(Game::class)->findNextGame();
         $request = $this->getRequest();
 
@@ -410,15 +409,17 @@ class AdminController extends AbstractActionController
             $title = trim($data['title'] ?? '');
             $body = trim($data['body'] ?? '');
             $target = $data['target'] ?? '';
+            $category = $data['category'] ?? '';
             $url = trim($data['url'] ?? '') ?: '/';
 
-            if ($title === '' || $body === '' || !array_key_exists($target, self::PUSH_TARGETS)) {
-                $this->flashMessenger()->addErrorMessage('Titre, message et destinataires sont obligatoires.');
+            if ($title === '' || $body === '' || !array_key_exists($target, self::PUSH_TARGETS)
+                || !array_key_exists($category, PushService::CATEGORY_LABELS)) {
+                $this->flashMessenger()->addErrorMessage('Type, titre, message et destinataires sont obligatoires.');
                 return $this->redirect()->toRoute('admin-notifications');
             }
 
             $recipients = $this->findPushRecipients($target, $currentUser, $nextGame, InputSanitizer::cleanInt($data['user_id'] ?? 0));
-            $report = $this->pushService->send($recipients, $title, $body, $url);
+            $report = $this->pushService->send($recipients, $category, $title, $body, $url);
 
             if ($report['devices'] === 0) {
                 $this->flashMessenger()->addWarningMessage("Aucun appareil abonné parmi les destinataires : rien n'a été envoyé.");
@@ -429,7 +430,12 @@ class AdminController extends AbstractActionController
                 );
             }
             if ($report['skipped'] > 0) {
-                $this->flashMessenger()->addMessage($report['skipped'] . ' joueur(s) écarté(s) : mode test, seuls les comptes autorisés reçoivent.');
+                $this->flashMessenger()->addMessage($report['skipped'] . ' joueur(s) écarté(s) : mode test, seuls les comptes GOD reçoivent.');
+            }
+            if ($report['optedOut'] > 0) {
+                $this->flashMessenger()->addMessage(
+                    $report['optedOut'] . ' joueur(s) ont coupé les notifications « ' . PushService::CATEGORY_LABELS[$category] . ' » dans leur profil.'
+                );
             }
             if ($report['removed'] > 0) {
                 $this->flashMessenger()->addMessage($report['removed'] . ' abonnement(s) expiré(s) supprimé(s).');
@@ -443,6 +449,7 @@ class AdminController extends AbstractActionController
         $view = new ViewModel([
             'configured' => $this->pushService->isConfigured(),
             'targets' => self::PUSH_TARGETS,
+            'categories' => PushService::CATEGORY_LABELS,
             'players' => $this->findActivePlayers(),
             'nextGame' => $nextGame,
             'mySubscriptions' => $this->pushService->isConfigured()

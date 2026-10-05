@@ -7,6 +7,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 use Application\Service\AuthService;
+use Application\Service\PushService;
 
 
 class ProfilControllerFactory implements FactoryInterface
@@ -16,6 +17,7 @@ class ProfilControllerFactory implements FactoryInterface
         $authService = $container->get(AuthService::class);
         $entityManager = $container->get(EntityManager::class);
         $repliqueManager = $container->get(RepliqueManager::class);
-        return new ProfilController($entityManager,$authService,$repliqueManager);
+        $pushService = $container->get(PushService::class);
+        return new ProfilController($entityManager,$authService,$repliqueManager,$pushService);
     }
 }

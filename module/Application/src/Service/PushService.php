@@ -18,6 +18,21 @@ class PushService
     public const TITLE_MAX = 60;
     public const BODY_MAX = 200;
 
+    // Categories de notification, coupables une a une dans le profil
+    // Gestion des parties : nouvelles parties, file d'attente, annulations...
+    public const CATEGORY_GAMES = 'games';
+    // Actualites du club
+    public const CATEGORY_NEWS = 'news';
+    public const CATEGORY_LABELS = [
+        self::CATEGORY_GAMES => 'Parties',
+        self::CATEGORY_NEWS => 'Actualités',
+    ];
+    // Colonne ENUM('true','false') de la table user pour chaque categorie
+    private const CATEGORY_COLUMNS = [
+        self::CATEGORY_GAMES => 'notification_partie',
+        self::CATEGORY_NEWS => 'notification_actu',
+    ];
+
     private EntityManager $entityManager;
     private PwaAccessPolicy $policy;
     /** @var array{subject?: string, public_key?: string, private_key?: string} */
@@ -73,6 +88,45 @@ class PushService
     }
 
     /**
+     * Notifications souhaitees par le joueur, par categorie (tout active par defaut).
+     * Colonnes ENUM('true','false') de la table user, lues en SQL direct : non
+     * mappees sur l'entite, leur absence ne casse pas le chargement des comptes.
+     *
+     * @return array<string, bool> self::CATEGORY_* => active
+     */
+    public function getPreferences(User $user): array
+    {
+        $preferences = array_fill_keys(array_keys(self::CATEGORY_LABELS), true);
+        try {
+            $row = $this->entityManager->getConnection()->fetchAssociative(
+                'SELECT ' . implode(', ', self::CATEGORY_COLUMNS) . ' FROM user WHERE iduser = ?',
+                [$user->getIdUser()]
+            );
+        } catch (\Throwable $e) {
+            // Colonnes pas encore creees (migration non jouee) : valeurs par defaut
+            error_log('preferences de notification : ' . $e->getMessage());
+            return $preferences;
+        }
+        foreach (self::CATEGORY_COLUMNS as $category => $column) {
+            if ($row && isset($row[$column])) {
+                $preferences[$category] = $row[$column] === 'true';
+            }
+        }
+        return $preferences;
+    }
+
+    public function setPreference(User $user, string $category, bool $enabled): void
+    {
+        if (!isset(self::CATEGORY_COLUMNS[$category])) {
+            throw new \InvalidArgumentException('Categorie de notification inconnue : ' . $category);
+        }
+        $this->entityManager->getConnection()->executeStatement(
+            'UPDATE user SET ' . self::CATEGORY_COLUMNS[$category] . ' = ? WHERE iduser = ?',
+            [$enabled ? 'true' : 'false', $user->getIdUser()]
+        );
+    }
+
+    /**
      * Comptes autorises qui ont au moins un appareil abonne, parmi ceux donnes.
      *
      * @param User[] $users
@@ -96,13 +150,15 @@ class PushService
     }
 
     /**
-     * Envoie une notification a tous les appareils des comptes donnes.
-     * Les comptes non autorises sont ecartes, les abonnements expires supprimes.
+     * Envoie une notification d'une categorie a tous les appareils des comptes
+     * donnes. Sont ecartes : les comptes non autorises, ceux qui ont coupe
+     * cette categorie dans leur profil. Les abonnements expires sont supprimes.
      *
      * @param User[] $users
-     * @return array{requested: int, skipped: int, recipients: int, devices: int, sent: int, failed: int, removed: int, errors: string[]}
+     * @param string $category self::CATEGORY_GAMES ou CATEGORY_NEWS
+     * @return array{requested: int, skipped: int, optedOut: int, recipients: int, devices: int, sent: int, failed: int, removed: int, errors: string[]}
      */
-    public function send(array $users, string $title, string $body, string $url = '/'): array
+    public function send(array $users, string $category, string $title, string $body, string $url = '/'): array
     {
         // Un meme compte peut arriver plusieurs fois (inscrit et en file, par exemple)
         $unique = [];
@@ -110,10 +166,13 @@ class PushService
             $unique[$user->getIdUser()] = $user;
         }
         $users = array_values($unique);
-        $byUser = $this->findSubscriptions($users);
+        $allowed = array_values(array_filter($users, fn ($user) => $this->policy->isAllowed($user)));
+        $wanted = array_values(array_filter($allowed, fn ($user) => $this->getPreferences($user)[$category] ?? false));
+        $byUser = $this->findSubscriptions($wanted);
         $report = [
             'requested' => count($users),
-            'skipped' => count(array_filter($users, fn ($user) => !$this->policy->isAllowed($user))),
+            'skipped' => count($users) - count($allowed),
+            'optedOut' => count($allowed) - count($wanted),
             'recipients' => count($byUser),
             'devices' => 0,
             'sent' => 0,
@@ -126,6 +185,7 @@ class PushService
         }
 
         $payload = json_encode([
+            'category' => $category,
             'title' => mb_substr($title, 0, self::TITLE_MAX),
             'body' => mb_substr($body, 0, self::BODY_MAX),
             // Lien interne uniquement

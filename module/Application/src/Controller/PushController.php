@@ -50,6 +50,23 @@ class PushController extends AbstractActionController
     }
 
     /**
+     * Interrupteur d'une categorie dans le profil : { category, enabled }.
+     */
+    public function preferencesAction()
+    {
+        [$user, $data, $error] = $this->readRequest();
+        if ($error) {
+            return $error;
+        }
+        $category = (string) ($data['category'] ?? '');
+        if (!array_key_exists($category, PushService::CATEGORY_LABELS) || !isset($data['enabled'])) {
+            return $this->json(400, ['error' => 'Préférence invalide.']);
+        }
+        $this->pushService->setPreference($user, $category, (bool) $data['enabled']);
+        return $this->json(200, ['ok' => true, 'preferences' => $this->pushService->getPreferences($user)]);
+    }
+
+    /**
      * @return array{0: ?\User\Entity\User, 1: array, 2: ?JsonModel}
      */
     private function readRequest(): array

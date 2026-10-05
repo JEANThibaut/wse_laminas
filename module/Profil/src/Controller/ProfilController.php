@@ -8,6 +8,7 @@ use Profil\Entity\Replique;
 use User\Entity\User;
 use Game\Entity\GameRegister;
 use Application\Util\InputSanitizer;
+use Application\Service\PushService;
 
 class ProfilController extends AbstractActionController
 {
@@ -15,12 +16,14 @@ class ProfilController extends AbstractActionController
     private $authService;
     private $entityManager;
     private $repliqueManager;
+    private PushService $pushService;
 
-    public function __construct($entityManager, $authService, $repliqueManager)
+    public function __construct($entityManager, $authService, $repliqueManager, PushService $pushService)
     {
         $this->entityManager = $entityManager;
         $this->authService=$authService;
         $this->repliqueManager = $repliqueManager;
+        $this->pushService = $pushService;
     }
 
 
@@ -35,6 +38,10 @@ class ProfilController extends AbstractActionController
             // 'form' => $form,
             'currentUser'=>$currentUser,
             'registers'=>$registers,
+            // Bloc Notifications : seulement si le compte y a acces (GOD en phase de test)
+            'notificationPreferences' => $this->pushService->canUse($currentUser)
+                ? $this->pushService->getPreferences($currentUser)
+                : null,
         ]);
         $this->layout()->setVariable('activeMenu', 'profil');
         $view->setTemplate('profil/profil');

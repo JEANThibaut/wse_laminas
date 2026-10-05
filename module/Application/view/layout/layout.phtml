@@ -217,7 +217,10 @@
                 Les actualités
                 </a>
             </li>
-            <?php if ($this->currentUser->isGod()) : ?>
+        <?php endif; ?>
+            <?php if ($this->currentUser && $this->currentUser->isGod()) : ?>
+            <hr>
+            <h4>GOD MODE</h4>
             <li class="nav-item">
                 <a class="nav-link <?= ($activeMenu === 'admin-stats') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-stats')) ?>">
                 <?php if($isFunny): ?>
@@ -243,7 +246,6 @@
                 </a>
             </li>
             <?php endif; ?>
-        <?php endif; ?>
     </ul>
 
     <?php if ($this->currentUser): ?>
@@ -253,14 +255,6 @@
         <div class="mb-2">
             <button type="button" class="btn btn-outline-light w-100 d-none" id="pwaInstallButton">
                 <i class="fa-solid fa-mobile-screen-button me-2"></i>Installer l'application
-            </button>
-        </div>
-        <?php endif; ?>
-
-        <?php if ($pushKey !== ''): ?>
-        <div class="mb-2">
-            <button type="button" class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#pushModal">
-                <i class="fa-solid fa-bell me-2"></i>Notifications
             </button>
         </div>
         <?php endif; ?>
@@ -356,7 +350,8 @@
 <div class="modal fade" id="pushModal" tabindex="-1" aria-labelledby="pushModalTitle" aria-hidden="true"
      data-public-key="<?= $this->escapeHtmlAttr($pushKey) ?>"
      data-subscribe-url="<?= $this->escapeHtmlAttr($this->url('push-subscribe')) ?>"
-     data-unsubscribe-url="<?= $this->escapeHtmlAttr($this->url('push-unsubscribe')) ?>">
+     data-unsubscribe-url="<?= $this->escapeHtmlAttr($this->url('push-unsubscribe')) ?>"
+     data-preferences-url="<?= $this->escapeHtmlAttr($this->url('push-preferences')) ?>">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
