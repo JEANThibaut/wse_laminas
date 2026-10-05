@@ -10,6 +10,7 @@ use User\Entity\LoginLog;
 use User\Entity\User;
 use Application\Util\InputSanitizer;
 use Game\Service\GameManager;
+use Application\Service\PushService;
 
 class AdminController extends AbstractActionController
 {
@@ -17,12 +18,14 @@ class AdminController extends AbstractActionController
     private $authService;
     private $entityManager;
     private $gameManager;
+    private PushService $pushService;
 
-    public function __construct($entityManager, $authService, $gameManager)
+    public function __construct($entityManager, $authService, $gameManager, PushService $pushService)
     {
         $this->entityManager = $entityManager;
         $this->authService=$authService;
         $this->gameManager = $gameManager;
+        $this->pushService = $pushService;
     }
 
 
@@ -375,6 +378,123 @@ class AdminController extends AbstractActionController
         $this->layout()->setVariable('activeMenu', 'admin-stats');
         $view->setTemplate('admin/stats');
         return $view;
+    }
+
+    // Destinataires possibles d'une notification
+    private const PUSH_TARGETS = [
+        'me' => 'Moi uniquement',
+        'player' => 'Un joueur',
+        'registered' => 'Inscrits à la prochaine partie',
+        'queue' => "File d'attente de la prochaine partie",
+        'all' => 'Tous les joueurs actifs',
+    ];
+
+    /**
+     * Envoi d'une notification aux appareils abonnes, reserve au GOD. En
+     * phase de test, PushService ecarte tout compte non autorise.
+     */
+    public function notificationsAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        if (!$currentUser || !$currentUser->isGod()) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $this->redirect()->toRoute('home');
+        }
+
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $nextGame = $this->entityManager->getRepository(Game::class)->findNextGame();
+        $request = $this->getRequest();
+
+        if ($request->isPost() && $this->pushService->isConfigured()) {
+            $data = InputSanitizer::cleanArray($request->getPost()->toArray());
+            $title = trim($data['title'] ?? '');
+            $body = trim($data['body'] ?? '');
+            $target = $data['target'] ?? '';
+            $url = trim($data['url'] ?? '') ?: '/';
+
+            if ($title === '' || $body === '' || !array_key_exists($target, self::PUSH_TARGETS)) {
+                $this->flashMessenger()->addErrorMessage('Titre, message et destinataires sont obligatoires.');
+                return $this->redirect()->toRoute('admin-notifications');
+            }
+
+            $recipients = $this->findPushRecipients($target, $currentUser, $nextGame, InputSanitizer::cleanInt($data['user_id'] ?? 0));
+            $report = $this->pushService->send($recipients, $title, $body, $url);
+
+            if ($report['devices'] === 0) {
+                $this->flashMessenger()->addWarningMessage("Aucun appareil abonné parmi les destinataires : rien n'a été envoyé.");
+            } else {
+                $this->flashMessenger()->addSuccessMessage(
+                    'Notification envoyée à ' . $report['sent'] . '/' . $report['devices'] . ' appareil(s), '
+                    . $report['recipients'] . ' joueur(s).'
+                );
+            }
+            if ($report['skipped'] > 0) {
+                $this->flashMessenger()->addMessage($report['skipped'] . ' joueur(s) écarté(s) : mode test, seuls les comptes autorisés reçoivent.');
+            }
+            if ($report['removed'] > 0) {
+                $this->flashMessenger()->addMessage($report['removed'] . ' abonnement(s) expiré(s) supprimé(s).');
+            }
+            if ($report['errors']) {
+                $this->flashMessenger()->addErrorMessage('Échecs : ' . implode(' | ', array_unique($report['errors'])));
+            }
+            return $this->redirect()->toRoute('admin-notifications');
+        }
+
+        $view = new ViewModel([
+            'configured' => $this->pushService->isConfigured(),
+            'targets' => self::PUSH_TARGETS,
+            'players' => $this->findActivePlayers(),
+            'nextGame' => $nextGame,
+            'mySubscriptions' => $this->pushService->isConfigured()
+                ? count($this->pushService->findSubscriptions([$currentUser])[$currentUser->getIdUser()] ?? [])
+                : 0,
+            'titleMax' => PushService::TITLE_MAX,
+            'bodyMax' => PushService::BODY_MAX,
+        ]);
+        $this->layout()->setVariable('activeMenu', 'admin-notifications');
+        $view->setTemplate('admin/notifications');
+        return $view;
+    }
+
+    /**
+     * @return User[]
+     */
+    private function findPushRecipients(string $target, User $currentUser, ?Game $nextGame, int $userId): array
+    {
+        switch ($target) {
+            case 'me':
+                return [$currentUser];
+            case 'player':
+                $user = $this->entityManager->getRepository(User::class)->find($userId);
+                return $user ? [$user] : [];
+            case 'registered':
+            case 'queue':
+                if (!$nextGame) {
+                    return [];
+                }
+                $registers = $this->entityManager->getRepository(GameRegister::class)->findBy([
+                    'game' => $nextGame,
+                    'status' => $target === 'queue' ? GameRegister::STATUS_PENDING : GameRegister::STATUS_ACTIVE,
+                ]);
+                return array_map(fn (GameRegister $register) => $register->getUser(), $registers);
+            case 'all':
+                return $this->findActivePlayers();
+        }
+        return [];
+    }
+
+    /**
+     * Comptes actifs, joueurs et membres, tries par nom.
+     *
+     * @return User[]
+     */
+    private function findActivePlayers(): array
+    {
+        $repository = $this->entityManager->getRepository(User::class);
+        $players = array_merge($repository->search(''), $repository->search('', $repository::SCOPE_MEMBERS));
+        usort($players, fn (User $a, User $b) => [mb_strtolower($a->getLastname()), mb_strtolower($a->getFirstname())]
+            <=> [mb_strtolower($b->getLastname()), mb_strtolower($b->getFirstname())]);
+        return $players;
     }
 
     /**

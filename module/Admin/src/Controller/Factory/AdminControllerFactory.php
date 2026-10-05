@@ -2,6 +2,7 @@
 namespace Admin\Controller\Factory;
 
 use Admin\Controller\AdminController;
+use Application\Service\PushService;
 use Game\Service\GameManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -16,6 +17,7 @@ class AdminControllerFactory implements FactoryInterface
         $authService = $container->get(AuthService::class);
         $entityManager = $container->get(EntityManager::class);
         $gameManager = $container->get(GameManager::class);
-        return new AdminController($entityManager,$authService,$gameManager);
+        $pushService = $container->get(PushService::class);
+        return new AdminController($entityManager,$authService,$gameManager,$pushService);
     }
 }

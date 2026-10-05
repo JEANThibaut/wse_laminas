@@ -68,6 +68,32 @@ jobs:
         # Sans toucher la date de .gitkeep s'il existe : il serait renvoye a chaque fois
         run: mkdir -p data/cache && { [ -e data/cache/.gitkeep ] || touch data/cache/.gitkeep; }
 
+      # Cles VAPID des notifications, depuis les secrets GitHub : evite d'editer
+      # la config a la main sur le serveur. Laminas charge tout
+      # config/autoload/*.global.php. Sans les deux secrets, aucun fichier :
+      # les notifications restent desactivees.
+      - name: Genere la config des notifications
+        env:
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+        run: |
+          if [ -z "$VAPID_PUBLIC_KEY" ] || [ -z "$VAPID_PRIVATE_KEY" ]; then
+            echo "Secrets VAPID absents : notifications desactivees"
+            exit 0
+          fi
+          # Valeurs lues par PHP depuis l'environnement et echappees par
+          # var_export : aucune interpolation shell des cles
+          php -r '
+            $config = ["push" => ["vapid" => [
+                "subject" => "mailto:contact@wolfsofteure.fr",
+                "public_key" => getenv("VAPID_PUBLIC_KEY"),
+                "private_key" => getenv("VAPID_PRIVATE_KEY"),
+            ]]];
+            file_put_contents("config/autoload/push.global.php",
+                "<?php\n// Genere au deploiement depuis les secrets GitHub. Ne pas modifier.\nreturn " . var_export($config, true) . ";\n");
+          '
+          php -l config/autoload/push.global.php
+
       # Diagnostic en lecture seule : sert a verifier que REMOTE_DIR vise bien
       # le dossier du projet, et non un dossier vide ou inexistant.
       - name: Inspecte l'arborescence distante

@@ -14,6 +14,39 @@ const OFFLINE_PAGE = `<!doctype html><html lang="fr"><head><meta charset="utf-8"
 <button onclick="location.reload()" style="padding:.6rem 1.2rem;font-size:1rem">Réessayer</button>
 </body></html>`;
 
+// Notification envoyee par le serveur (Application\Service\PushService) :
+// { title, body, url }
+self.addEventListener('push', (event) => {
+    let data = {};
+    try {
+        data = event.data ? event.data.json() : {};
+    } catch (error) {
+        data = { body: event.data ? event.data.text() : '' };
+    }
+    event.waitUntil(self.registration.showNotification(data.title || 'Wolf Soft Eure', {
+        body: data.body || '',
+        icon: '/images/pwa/icon-192.png',
+        badge: '/images/pwa/icon-192.png',
+        data: { url: data.url || '/' },
+    }));
+});
+
+// Toucher la notification : ouvre la page, en reutilisant une fenetre du site deja ouverte
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const target = new URL(event.notification.data?.url || '/', self.location.origin).href;
+    event.waitUntil((async () => {
+        const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        for (const client of windows) {
+            if (new URL(client.url).origin === self.location.origin && 'focus' in client) {
+                await client.focus();
+                return client.navigate(target);
+            }
+        }
+        return self.clients.openWindow(target);
+    })());
+});
+
 self.addEventListener('fetch', (event) => {
     const request = event.request;
     // Uniquement les pages consultees : formulaires, images, scripts... suivent le chemin normal

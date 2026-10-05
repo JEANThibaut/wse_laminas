@@ -20,6 +20,26 @@ return [
                     ],
                 ],
             ],
+            'push-subscribe' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/push/subscribe',
+                    'defaults' => [
+                        'controller' => Controller\PushController::class,
+                        'action'     => 'subscribe',
+                    ],
+                ],
+            ],
+            'push-unsubscribe' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/push/unsubscribe',
+                    'defaults' => [
+                        'controller' => Controller\PushController::class,
+                        'action'     => 'unsubscribe',
+                    ],
+                ],
+            ],
             'login' => [
                 'type' => Literal::class,
                 'options' => [
@@ -108,6 +128,7 @@ return [
       
             Controller\AuthController::class => Controller\Factory\AuthControllerFactory::class,
             Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+            Controller\PushController::class => Controller\Factory\PushControllerFactory::class,
 
             // Controller\IndexController::class => InvokableFactory::class,
         ],
@@ -122,6 +143,8 @@ return [
                 return new AuthenticationService($storage);
             },
             Service\SumUpService::class => Service\Factory\SumUpServiceFactory::class,
+            Service\PwaAccessPolicy::class => Service\Factory\PwaAccessPolicyFactory::class,
+            Service\PushService::class => Service\Factory\PushServiceFactory::class,
         ],
         'aliases' => [
             'authentication' => AuthenticationService::class,
@@ -150,16 +173,21 @@ return [
         'aliases' => [
             'mailCheck' => View\Helper\MailCheck::class,
             'pwaAccess' => View\Helper\PwaAccess::class,
+            'pushPublicKey' => View\Helper\PushPublicKey::class,
         ],
         'factories' => [
             View\Helper\MailCheck::class => InvokableFactory::class,
             View\Helper\PwaAccess::class => View\Helper\Factory\PwaAccessFactory::class,
+            View\Helper\PushPublicKey::class => View\Helper\Factory\PushPublicKeyFactory::class,
         ],
     ],
 
-    // Application installable (PWA). En phase de test : manifeste, service
-    // worker et bouton "Installer l'application" ne sont servis qu'aux comptes
-    // de allowed_emails. Passer restricted a false pour l'ouvrir a tous.
+    // Application installable (PWA) et notifications. En phase de test :
+    // manifeste, service worker, boutons "Installer l'application" et
+    // "Notifications", abonnements et envois sont reserves aux comptes de
+    // allowed_emails. Passer restricted a false pour l'ouvrir a tous.
+    // Les cles VAPID des notifications ('push' => ['vapid' => ...]) sont dans
+    // config/autoload/global.php, jamais dans le repo.
     'pwa' => [
         'restricted' => true,
         'allowed_emails' => ['thibaut-jean@live.fr'],

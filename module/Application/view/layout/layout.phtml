@@ -3,6 +3,8 @@
 <?php $isFunny = true; ?>
 <?php // Application installable : uniquement les comptes autorises (config 'pwa') ?>
 <?php $pwa = $this->pwaAccess($this->currentUser); ?>
+<?php // Notifications : meme restriction, et seulement si les cles VAPID sont configurees ?>
+<?php $pushKey = $pwa ? $this->pushPublicKey($this->currentUser) : ''; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -232,6 +234,14 @@
                 Connexions
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-notifications') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-notifications')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Notifications
+                </a>
+            </li>
             <?php endif; ?>
         <?php endif; ?>
     </ul>
@@ -243,6 +253,14 @@
         <div class="mb-2">
             <button type="button" class="btn btn-outline-light w-100 d-none" id="pwaInstallButton">
                 <i class="fa-solid fa-mobile-screen-button me-2"></i>Installer l'application
+            </button>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($pushKey !== ''): ?>
+        <div class="mb-2">
+            <button type="button" class="btn btn-outline-light w-100" data-bs-toggle="modal" data-bs-target="#pushModal">
+                <i class="fa-solid fa-bell me-2"></i>Notifications
             </button>
         </div>
         <?php endif; ?>
@@ -331,6 +349,33 @@
     </div>
 </div>
 <script src="/js/pwa.js"></script>
+<?php endif; ?>
+
+<?php if ($pushKey !== ''): ?>
+<!-- Notifications : le texte s'adapte a l'appareil (push.js), deux phrases maximum -->
+<div class="modal fade" id="pushModal" tabindex="-1" aria-labelledby="pushModalTitle" aria-hidden="true"
+     data-public-key="<?= $this->escapeHtmlAttr($pushKey) ?>"
+     data-subscribe-url="<?= $this->escapeHtmlAttr($this->url('push-subscribe')) ?>"
+     data-unsubscribe-url="<?= $this->escapeHtmlAttr($this->url('push-unsubscribe')) ?>">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pushModalTitle"><i class="fa-solid fa-bell me-2"></i>Notifications</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0" id="pushModalText">Vérification…</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success d-none" id="pushEnableButton">Activer</button>
+                <button type="button" class="btn btn-outline-danger d-none" id="pushDisableButton">Désactiver</button>
+                <button type="button" class="btn btn-warning d-none" id="pushInstallButton">Installer l'application</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/push.js"></script>
 <?php endif; ?>
 
 <!-- Custom scripts -->

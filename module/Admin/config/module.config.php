@@ -122,6 +122,16 @@ return [
                     ],
                 ],
             ],
+            'admin-notifications' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/notifications',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'notifications',
+                    ],
+                ],
+            ],
             'admin-logs' => [
                 'type' => Literal::class,
                 'options' => [

@@ -1,32 +1,24 @@
 <?php
 namespace Application\View\Helper;
 
+use Application\Service\PwaAccessPolicy;
 use User\Entity\User;
 
 /**
- * Le compte peut-il installer le site comme application (config 'pwa') ?
- * Toujours non pour un visiteur non connecte.
+ * Le compte a-t-il acces a l'application installable et aux notifications ?
+ * Usage : <?php if ($this->pwaAccess($this->currentUser)): ?>
  */
 class PwaAccess
 {
-    private bool $restricted;
-    /** @var string[] emails en minuscules */
-    private array $allowedEmails;
+    private PwaAccessPolicy $policy;
 
-    public function __construct(bool $restricted, array $allowedEmails)
+    public function __construct(PwaAccessPolicy $policy)
     {
-        $this->restricted = $restricted;
-        $this->allowedEmails = array_map(fn ($email) => mb_strtolower(trim($email)), $allowedEmails);
+        $this->policy = $policy;
     }
 
     public function __invoke(?User $user): bool
     {
-        if (!$user) {
-            return false;
-        }
-        if (!$this->restricted) {
-            return true;
-        }
-        return in_array(mb_strtolower(trim((string) $user->getEmail())), $this->allowedEmails, true);
+        return $this->policy->isAllowed($user);
     }
 }

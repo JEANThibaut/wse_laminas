@@ -37,6 +37,12 @@ projet. `FTP_SERVER_DIR` vaut `.`, pas un chemin absolu.
 
 Secrets : `FTP_SERVER` (hote SFTP OVH), `FTP_USERNAME`, `FTP_PASSWORD`.
 
+Secrets des notifications : `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`. Le workflow en
+genere `config/autoload/push.global.php` (jamais commite), charge par Laminas comme
+tout `*.global.php`. Sans ces deux secrets, le fichier n'est pas cree et les
+notifications restent desactivees. Ne jamais changer ces cles une fois en service :
+tous les appareils abonnes devraient reactiver les notifications.
+
 Variables : `FTP_SERVER_DIR` = `.`, `SFTP_PORT` = `22`, `PHP_VERSION` = `8.3`.
 
 `PHP_VERSION` reste en 8.3 car `composer.json` n'autorise pas encore PHP 8.4
