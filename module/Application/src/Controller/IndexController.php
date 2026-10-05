@@ -6,20 +6,22 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\GameRegister;
-use Game\Entity\WaitingList;
 use Actus\Entity\Actus;
 use Game\Service\GameManager;
+use Game\Service\QueueManager;
 class IndexController extends AbstractActionController
 {
     private $authService;
     private $entityManager;
     private GameManager $gameManager;
+    private QueueManager $queueManager;
 
-    public function __construct($authService, $entityManager, GameManager $gameManager)
+    public function __construct($authService, $entityManager, GameManager $gameManager, QueueManager $queueManager)
     {
         $this->entityManager = $entityManager;
         $this->authService = $authService;
         $this->gameManager = $gameManager;
+        $this->queueManager = $queueManager;
     }
 
 
@@ -27,41 +29,25 @@ class IndexController extends AbstractActionController
     {
         $currentUser = $this->authService->getIdentity();
         $game = $this->entityManager->getRepository(Game::class)->findNextGame();
-        $isRegister = false;
-        $isInWaitingList = false;
-        $isComplete = false;
-        if($game){
-            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
-                'game' => $game->getIdGame(),
-                'status' => GameRegister::STATUS_ACTIVE,
-            ]);
-        }   
         $this->layout()->setVariable('activeMenu', 'home');
-        $register = null;
-        $queue = null;
-        if($game && $currentUser){
-            // Inscription en cours, y compris en file d'attente
-            $register = $this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $currentUser);
-            $countRegister = $this->entityManager->getRepository(GameRegister::class)->findBy([
-                'game' => $game->getIdGame(),
-                'status' => GameRegister::STATUS_ACTIVE,
-            ]);
-            // $isInWaitingList = $this->entityManager->getRepository(WaitingList::class)->findOneBy(['game'=>$game->getIdGame(),'user'=>$currentUser->getIdUser()]);
-            if($register){
-                $isRegister = true;
-            }
-            $isComplete = count($countRegister) >= $game->getPlayerMax();
 
-            // File d'attente : le joueur y est deja, ou y serait place en s'inscrivant
-            $isPending = $register && $register->isPending();
-            if ($isPending || (!$register && $this->gameManager->mustQueue($currentUser))) {
-                $opening = $this->gameManager->getConfirmationOpening($game, $currentUser);
-                $now = new \DateTimeImmutable('now', $opening->getTimezone());
-                $queue = [
-                    'isPending' => $isPending,
-                    'opening' => $opening,
-                    'isOpen' => $now >= $opening && $now < $this->gameManager->getGameStart($game),
-                ];
+        $register = null;
+        $registeredCount = 0;
+        $isComplete = false;
+        // File d'attente : visible seulement des comptes autorises (admins en phase de test)
+        $queueAvailable = false;
+        $queueStatus = null;
+        if ($game) {
+            $registeredCount = $this->entityManager->getRepository(GameRegister::class)->countActiveRegisters($game);
+            // Complete aussi quand les places restantes sont proposees a la file
+            $isComplete = $this->gameManager->isFull($game);
+
+            if ($currentUser) {
+                $register = $this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $currentUser);
+                $queueAvailable = $this->queueManager->isAvailableFor($currentUser);
+                if ($queueAvailable) {
+                    $queueStatus = $this->queueManager->getStatus($game, $currentUser);
+                }
             }
         }
 
@@ -74,14 +60,13 @@ class IndexController extends AbstractActionController
 
         return new ViewModel([
             'game' => $game,
-            'isRegister'=> $isRegister,
-            'currentUser'=>$currentUser,
-            'register'=>$register ?? null,
-            'isComplete'=>$isComplete,
+            'currentUser' => $currentUser,
+            'register' => $register,
+            'registeredCount' => $registeredCount,
+            'isComplete' => $isComplete,
+            'queueAvailable' => $queueAvailable,
+            'queueStatus' => $queueStatus,
             'actus' => $actus,
-            'countRegister'=> $countRegister ?? null,
-            'queue' => $queue,
-            // 'isInWaitingList'=>$isInWaitingList,
         ]);
     }
 

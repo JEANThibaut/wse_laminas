@@ -3,7 +3,7 @@ namespace Game\Service;
 
 use Game\Entity\Game;
 use Game\Entity\GameRegister;
-use Game\Entity\WaitingList;
+use Game\Entity\QueueEntry;
 use User\Entity\User;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
@@ -47,96 +47,15 @@ class GameManager
         return true;
     }
 
-    // Resultats de registerInGame() et confirmPendingRegister()
+    // Resultats de registerInGame() et adminAddPlayer()
     public const RESULT_REGISTERED = 'registered';
-    public const RESULT_QUEUED = 'queued';
-    public const RESULT_CONFIRMED = 'confirmed';
     public const RESULT_ALREADY = 'already';
     public const RESULT_FULL = 'full';
-    public const RESULT_NOT_OPEN = 'not_open';
-    public const RESULT_CLOSED = 'closed';
 
     // Heure de reference d'une partie : la date stockee n'a pas d'heure fiable
     // (le formulaire ne saisit que le jour), on prend l'heure d'accueil.
     private const GAME_START_TIME = '08:00';
-    private const TIMEZONE = 'Europe/Paris';
-    // Ouverture de la confirmation pour la file d'attente, en heures avant la partie
-    private const CONFIRM_HOURS_ALREADY_CAME = 48;
-    private const CONFIRM_HOURS_NEVER_CAME = 24;
-
-    /**
-     * Presences (paid = 1) et absences (paid = 0) d'un joueur sur les parties
-     * passees, inscriptions actives non membres (member != 1).
-     *
-     * @return array{presences: int, absences: int}
-     */
-    public function getAttendance(User $user): array
-    {
-        $stats = $this->entityManager->getRepository(GameRegister::class)
-            ->getParticipationStatsByUser($user->getIdUser(), true)[$user->getIdUser()] ?? null;
-        $presences = $stats['validated'] ?? 0;
-
-        return [
-            'presences' => $presences,
-            'absences' => ($stats['registered'] ?? 0) - $presences,
-        ];
-    }
-
-    /**
-     * Un joueur deja absent a une partie passe par la file d'attente.
-     * Membres, admins et GOD n'y passent jamais.
-     */
-    public function mustQueue(User $user): bool
-    {
-        // Desactive pour l'instant : la file d'attente se gere a la main
-        // depuis la fiche d'une partie, le temps de fiabiliser le comptage des
-        // absences.
-        return false;
-
-        if ($user->getIsMember() || $user->hasAdminAccess()) {
-            return false;
-        }
-        return $this->getAttendance($user)['absences'] >= 1;
-    }
-
-    /**
-     * Inscrits d'une partie qui releveraient de la file d'attente avec les
-     * criteres actuels (memes regles que mustQueue).
-     *
-     * @return GameRegister[]
-     */
-    public function findRegistersToQueue(Game $game): array
-    {
-        $repository = $this->entityManager->getRepository(GameRegister::class);
-        $stats = $repository->getParticipationStatsByUser(null, true);
-        $registers = $repository->findBy(['game' => $game, 'status' => GameRegister::STATUS_ACTIVE], ['idregister' => 'ASC']);
-
-        return array_values(array_filter($registers, function (GameRegister $register) use ($stats) {
-            $user = $register->getUser();
-            if ($user->getIsMember() || $user->hasAdminAccess()) {
-                return false;
-            }
-            $stat = $stats[$user->getIdUser()] ?? ['registered' => 0, 'validated' => 0];
-            return $stat['registered'] - $stat['validated'] >= 1;
-        }));
-    }
-
-    /**
-     * Place en file d'attente les inscrits d'une partie qui en relevent.
-     *
-     * @return GameRegister[] les inscriptions deplacees
-     */
-    public function generateQueue(Game $game): array
-    {
-        $registers = $this->findRegistersToQueue($game);
-        foreach ($registers as $register) {
-            $register->setStatus(GameRegister::STATUS_PENDING);
-            $register->setArrivedNumber(0);
-        }
-        $this->entityManager->flush();
-
-        return $registers;
-    }
+    public const TIMEZONE = 'Europe/Paris';
 
     public function getGameStart(Game $game): \DateTimeImmutable
     {
@@ -147,196 +66,85 @@ class GameManager
     }
 
     /**
-     * Moment a partir duquel un joueur en file d'attente peut confirmer :
-     * 48 h avant s'il est deja venu au moins une fois, 24 h sinon.
+     * Places encore libres : le maximum, moins les inscrits et les places
+     * proposees a la file d'attente (reservees tant qu'elles ne sont pas
+     * acceptees ou expirees). Negatif si un admin a depasse le maximum.
      */
-    public function getConfirmationOpening(Game $game, User $user): \DateTimeImmutable
+    public function countFreePlaces(Game $game): int
     {
-        $hours = $this->getAttendance($user)['presences'] >= 1
-            ? self::CONFIRM_HOURS_ALREADY_CAME
-            : self::CONFIRM_HOURS_NEVER_CAME;
-
-        return $this->getGameStart($game)->modify("-{$hours} hours");
+        return (int) $game->getPlayerMax()
+            - $this->entityManager->getRepository(GameRegister::class)->countActiveRegisters($game)
+            - $this->entityManager->getRepository(QueueEntry::class)->countOffered($game);
     }
 
     public function isFull(Game $game): bool
     {
-        return $this->entityManager->getRepository(GameRegister::class)->countActiveRegisters($game) >= $game->getPlayerMax();
+        return $this->countFreePlaces($game) <= 0;
     }
 
     /**
-     * Inscrit le joueur, ou le place en file d'attente s'il a deja ete absent.
-     * La file d'attente reste ouverte meme quand la partie est complete.
+     * Inscrit le joueur s'il reste une place libre. Une place proposee a la
+     * file d'attente n'est pas libre : on ne passe pas devant la file.
      *
      * @return string self::RESULT_*
      */
     public function registerInGame($game, $currentUser): string
     {
         $user = $this->entityManager->getRepository(User::class)->find($currentUser->getIdUser());
-        $queued = $this->mustQueue($user);
 
-        return $this->entityManager->wrapInTransaction(function () use ($game, $user, $queued) {
+        return $this->entityManager->wrapInTransaction(function () use ($game, $user) {
             // Verrou sur la partie : deux inscriptions simultanees ne peuvent
             // pas depasser la limite de places
             $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
-            $repository = $this->entityManager->getRepository(GameRegister::class);
 
-            if ($repository->findCurrentRegister($game, $user)) {
+            if ($this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $user)) {
                 return self::RESULT_ALREADY;
             }
-            if (!$queued && $this->isFull($game)) {
+            if ($this->isFull($game)) {
                 return self::RESULT_FULL;
             }
+            $this->createRegister($game, $user);
 
-            $register = new GameRegister();
-            $register->setUser($user);
-            $register->setGame($game);
-            $register->setPaid(0);
-            $register->setArrivedNumber(0);
-            $register->setMember($user->getIsMember());
-            $register->setStatus($queued ? GameRegister::STATUS_PENDING : GameRegister::STATUS_ACTIVE);
-            $this->entityManager->persist($register);
-            $this->entityManager->flush();
-
-            return $queued ? self::RESULT_QUEUED : self::RESULT_REGISTERED;
-        });
-    }
-
-    /**
-     * Le joueur en file d'attente confirme sa venue : il obtient une place si
-     * la confirmation est ouverte pour lui et qu'il en reste.
-     *
-     * @return string self::RESULT_*
-     */
-    public function confirmPendingRegister(GameRegister $register): string
-    {
-        $game = $register->getGame();
-        $now = new \DateTimeImmutable('now', new \DateTimeZone(self::TIMEZONE));
-        if ($now < $this->getConfirmationOpening($game, $register->getUser())) {
-            return self::RESULT_NOT_OPEN;
-        }
-        if ($now >= $this->getGameStart($game)) {
-            return self::RESULT_CLOSED;
-        }
-
-        return $this->activatePendingRegister($register);
-    }
-
-    /**
-     * Inscription depuis la file d'attente par un admin : sans condition de
-     * date ni limite de places, comme adminAddPlayer.
-     *
-     * @return string self::RESULT_CONFIRMED ou RESULT_ALREADY (plus en file d'attente)
-     */
-    public function adminConfirmPendingRegister(GameRegister $register): string
-    {
-        $game = $register->getGame();
-
-        return $this->entityManager->wrapInTransaction(function () use ($register, $game) {
-            $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
-            $this->entityManager->refresh($register);
-            if (!$register->isPending()) {
-                return self::RESULT_ALREADY;
-            }
-            $register->setStatus(GameRegister::STATUS_ACTIVE);
-            $this->entityManager->flush();
-
-            return self::RESULT_CONFIRMED;
+            return self::RESULT_REGISTERED;
         });
     }
 
     /**
      * Inscription manuelle d'un joueur par un admin, sans limite de places ni
-     * condition de date. Un joueur en file d'attente y est directement inscrit.
+     * condition de date. La file d'attente (QueueManager) est mise a jour par
+     * l'appelant.
      *
-     * @return string self::RESULT_REGISTERED, RESULT_CONFIRMED (sorti de la
-     *                file d'attente) ou RESULT_ALREADY
+     * @return string self::RESULT_REGISTERED ou RESULT_ALREADY
      */
     public function adminAddPlayer(Game $game, User $user): string
     {
         return $this->entityManager->wrapInTransaction(function () use ($game, $user) {
             $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
 
-            $register = $this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $user);
-            if ($register && $register->isPending()) {
-                $register->setStatus(GameRegister::STATUS_ACTIVE);
-                $this->entityManager->flush();
-                return self::RESULT_CONFIRMED;
-            }
-            if ($register) {
+            if ($this->entityManager->getRepository(GameRegister::class)->findCurrentRegister($game, $user)) {
                 return self::RESULT_ALREADY;
             }
-
-            $register = new GameRegister();
-            $register->setUser($user);
-            $register->setGame($game);
-            $register->setPaid(0);
-            $register->setArrivedNumber(0);
-            $register->setMember($user->getIsMember());
-            $register->setStatus(GameRegister::STATUS_ACTIVE);
-            $this->entityManager->persist($register);
-            $this->entityManager->flush();
+            $this->createRegister($game, $user);
 
             return self::RESULT_REGISTERED;
         });
     }
 
-    private function activatePendingRegister(GameRegister $register): string
-    {
-        $game = $register->getGame();
-
-        return $this->entityManager->wrapInTransaction(function () use ($register, $game) {
-            $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
-            $this->entityManager->refresh($register);
-            if (!$register->isPending()) {
-                return self::RESULT_ALREADY;
-            }
-            if ($this->isFull($game)) {
-                return self::RESULT_FULL;
-            }
-            $register->setStatus(GameRegister::STATUS_ACTIVE);
-            $this->entityManager->flush();
-
-            return self::RESULT_CONFIRMED;
-        });
-    }
-
     /**
-     * File d'attente d'une partie classee par priorite : le plus de presences
-     * d'abord, puis le moins d'absences, puis l'ordre d'inscription.
-     *
-     * @return array<int, array{register: GameRegister, presences: int, absences: int, opening: \DateTimeImmutable}>
+     * Nouvelle inscription active, a appeler dans une transaction qui verrouille la partie.
      */
-    public function getPendingQueue(Game $game): array
+    public function createRegister(Game $game, User $user): GameRegister
     {
-        $stats = $this->entityManager->getRepository(GameRegister::class)->getParticipationStatsByUser(null, true);
-        $queue = [];
-        foreach ($this->entityManager->getRepository(GameRegister::class)->findPendingRegisters($game) as $register) {
-            $stat = $stats[$register->getUser()->getIdUser()] ?? ['registered' => 0, 'validated' => 0];
-            $queue[] = [
-                'register' => $register,
-                'presences' => $stat['validated'],
-                'absences' => $stat['registered'] - $stat['validated'],
-                'opening' => $this->getConfirmationOpening($game, $register->getUser()),
-            ];
-        }
-        usort($queue, fn ($a, $b) => [$b['presences'], $a['absences'], $a['register']->getIdregister()]
-            <=> [$a['presences'], $b['absences'], $b['register']->getIdregister()]);
-
-        return $queue;
-    }
-
-    public function registerInWaitingList($currentUser,$game, $count){
-        
-        $newWaitingList = new WaitingList;
-        $newWaitingList->setGameId($game->getIdGame());
-        $newWaitingList->setUserId($currentUser->getIdUser());
-        $newWaitingList->setEmailSend(0);
-        $newWaitingList->setIsValidate(0);
-        $newWaitingList->setOrderList($count +1);
-        $this->entityManager->persist($newWaitingList);
+        $register = new GameRegister();
+        $register->setUser($user);
+        $register->setGame($game);
+        $register->setPaid(0);
+        $register->setArrivedNumber(0);
+        $register->setMember($user->getIsMember());
+        $register->setStatus(GameRegister::STATUS_ACTIVE);
+        $this->entityManager->persist($register);
         $this->entityManager->flush();
 
+        return $register;
     }
-
 }

@@ -9,10 +9,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class GameRegister
 {
+    // Inscrit, pas encore pointe
     public const STATUS_ACTIVE = 'active';
+    // Pointe le jour de la partie (bouton "Valider") : arrive et paye
+    public const STATUS_VALIDATED = 'validated';
+    // Desinscrit, par le joueur ou par un admin
     public const STATUS_CANCELLED = 'cancelled';
-    // File d'attente : ne prend pas de place tant que le joueur n'a pas confirme
-    public const STATUS_PENDING = 'pending';
+
+    // Inscriptions qui occupent une place : inscrits et deja pointes
+    public const PLACE_STATUSES = [self::STATUS_ACTIVE, self::STATUS_VALIDATED];
 
     /**
      * @ORM\Id
@@ -118,10 +123,11 @@ public function isActive()
     return $this->status === self::STATUS_ACTIVE;
 }
 
-public function isPending()
+public function isValidated()
 {
-    return $this->status === self::STATUS_PENDING;
+    return $this->status === self::STATUS_VALIDATED;
 }
+
 
   
 }

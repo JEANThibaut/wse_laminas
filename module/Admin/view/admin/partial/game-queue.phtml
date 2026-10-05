@@ -1,0 +1,70 @@
+<?php
+/**
+ * File d'attente d'une partie, dans l'ordre d'arrivee (Game\Service\QueueManager).
+ * Parametres : queue (QueueEntry[]), withActions (bool), game (Game, requis avec
+ * les actions), canOffer (bool : bouton "Proposer la place", mode manuel).
+ */
+$withActions = $withActions ?? false;
+$canOffer = $canOffer ?? false;
+$parisTz = new \DateTimeZone('Europe/Paris');
+$format = fn (\DateTimeInterface $date) => \DateTimeImmutable::createFromInterface($date)->setTimezone($parisTz)->format('d/m à H\hi');
+?>
+<?php if (empty($queue)): ?>
+    <p class="text-muted">Personne en file d'attente.</p>
+<?php else: ?>
+    <p class="small text-muted">Ordre d'arrivée. Une place proposée est réservée 12 h (2 h la veille et le jour de la partie) : sans réponse, elle se libère.</p>
+    <table class="table table-striped">
+        <tbody>
+        <?php $position = 0; ?>
+        <?php foreach ($queue as $entry): ?>
+            <?php $user = $entry->getUser(); ?>
+            <tr>
+                <td class="align-middle" style="width: 1%;">
+                    <?php if ($entry->isOffered()): ?>
+                        <i class="fa-solid fa-hourglass-half text-success" title="Place proposée"></i>
+                    <?php else: ?>
+                        <?= ++$position ?>
+                    <?php endif; ?>
+                </td>
+                <td class="text-break">
+                    <div class="fw-semibold">
+                        <?= $this->escapeHtml($user->getLastname()) ?> <?= $this->escapeHtml($user->getFirstname()) ?><?= $this->mailCheck($user) ?>
+                    </div>
+                    <div class="small text-muted"><?= $this->escapeHtml($user->getEmail()) ?></div>
+                    <?php if ($entry->isOffered()): ?>
+                        <div class="small text-success">Place proposée jusqu'au <?= $this->escapeHtml($format($entry->getOfferExpiresAt())) ?></div>
+                    <?php else: ?>
+                        <div class="small text-muted">En file depuis le <?= $this->escapeHtml($format($entry->getCreatedAt())) ?></div>
+                    <?php endif; ?>
+                </td>
+                <?php if ($withActions): ?>
+                <td class="text-end align-middle text-nowrap" style="width: 1%;">
+                    <?php if ($canOffer && $entry->isWaiting()): ?>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-queue-offer')) ?>" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($entry->getId()) ?>">
+                        <button type="submit" class="btn btn-sm btn-warning" title="Lui proposer une place libre : il a un délai pour l'accepter, prévenu par email et notification">
+                            <i class="fa-solid fa-hand-holding"></i> Proposer la place
+                        </button>
+                    </form>
+                    <?php endif; ?>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-add-player')) ?>" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($game->getIdGame()) ?>">
+                        <input type="hidden" name="user_id" value="<?= $this->escapeHtmlAttr($user->getIdUser()) ?>">
+                        <button type="submit" class="btn btn-sm btn-success" title="Inscrire directement, même si la partie est complète">
+                            <i class="fa-solid fa-user-check"></i> Inscrire
+                        </button>
+                    </form>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-queue-remove')) ?>" class="d-inline">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($entry->getId()) ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" title="Retirer de la file d'attente"
+                                onclick="return confirm('Retirer ce joueur de la file d\'attente ?');">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>

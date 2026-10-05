@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php foreach ($users as $user): ?>
 <?php
-    // Inscriptions actives (member != 1) : presences (paid = 1) / inscriptions.
+    // Inscriptions non membres (member != 1), inscrits et pointes : presences (pointees, statut validated) / inscriptions.
     // Les membres ne sont pas pointes : on affiche leur nombre d'inscriptions.
     $stat = $stats[$user->getIdUser()] ?? ['registered' => 0, 'validated' => 0, 'total' => 0];
     if ($user->getIsMember()) {
@@ -13,7 +13,7 @@
         $badgeTitle = "Nombre d'inscriptions";
     } else {
         $badgeText = $stat['validated'] . '/' . $stat['registered'];
-        $badgeTitle = 'Présences (payé) / inscriptions';
+        $badgeTitle = 'Présences (pointé) / inscriptions';
     }
 
     if ($user->getIsMember() || $stat['registered'] === 0) {

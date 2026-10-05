@@ -11,6 +11,8 @@ use User\Entity\User;
 use Application\Util\InputSanitizer;
 use Game\Service\GameManager;
 use Application\Service\PushService;
+use Game\Entity\QueueEntry;
+use Game\Service\QueueManager;
 
 class AdminController extends AbstractActionController
 {
@@ -19,13 +21,15 @@ class AdminController extends AbstractActionController
     private $entityManager;
     private $gameManager;
     private PushService $pushService;
+    private QueueManager $queueManager;
 
-    public function __construct($entityManager, $authService, $gameManager, PushService $pushService)
+    public function __construct($entityManager, $authService, $gameManager, PushService $pushService, QueueManager $queueManager)
     {
         $this->entityManager = $entityManager;
         $this->authService=$authService;
         $this->gameManager = $gameManager;
         $this->pushService = $pushService;
+        $this->queueManager = $queueManager;
     }
 
 
@@ -75,7 +79,7 @@ class AdminController extends AbstractActionController
         }
         $registers = $this->entityManager->getRepository(GameRegister::class)->findBy([
             'game' => $game->getIdGame(),
-            'status' => GameRegister::STATUS_ACTIVE,
+            'status' => GameRegister::PLACE_STATUSES,
         ]);
         $players = $registers;
 
@@ -89,6 +93,8 @@ class AdminController extends AbstractActionController
                     $game = $this->gameManager->editGame($game, $data);
                     if($game){
                         $this->flashMessenger()->addSuccessMessage('La partie a bien été modifiée.');
+                        // Maximum augmente : les nouvelles places vont d'abord a la file
+                        $this->flashOffers($this->queueManager->fillFreePlaces($game));
                         return $this->redirect()->toRoute('admin-games');
                     }else{
                           $this->flashMessenger()->addErrorMessage('Une erreur est survenu.');
@@ -104,8 +110,9 @@ class AdminController extends AbstractActionController
             "game"=>$game,
             'players'=>$players,
             'unvalidatedRegisters' => $this->entityManager->getRepository(GameRegister::class)->findUnvalidatedRegisters($game),
-            'pendingQueue' => $this->gameManager->getPendingQueue($game),
-            'registersToQueue' => $this->gameManager->findRegistersToQueue($game),
+            'queue' => $this->queueManager->getQueue($game),
+            'freePlaces' => $this->gameManager->countFreePlaces($game),
+            'autoOffer' => $this->queueManager->isAutoOffer(),
             'addablePlayers' => $this->entityManager->getRepository(User::class)->findAddableToGame($game),
         ]);
         $view->setTemplate('admin/edit-game');
@@ -152,7 +159,7 @@ class AdminController extends AbstractActionController
         $id = InputSanitizer::cleanInt($request->getPost('id'));
         $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
             'idregister' => $id,
-            'status' => [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING],
+            'status' => GameRegister::PLACE_STATUSES,
         ]);
         if (!$register) {
             $this->flashMessenger()->addErrorMessage('Inscription introuvable.');
@@ -170,13 +177,15 @@ class AdminController extends AbstractActionController
         if ((int) $register->getPaid() === 1) {
             $this->flashMessenger()->addWarningMessage("Cette inscription était payée : le remboursement éventuel est à faire manuellement.");
         }
+        $this->flashOffers($this->queueManager->fillFreePlaces($register->getGame()));
 
         return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
     }
 
     /**
      * Inscription manuelle d'un joueur par un admin, meme si la partie est
-     * complete. Un joueur en file d'attente y est directement inscrit.
+     * complete. Un joueur en file d'attente y est directement inscrit et sort
+     * de la file.
      */
     public function addPlayerAction()
     {
@@ -203,7 +212,7 @@ class AdminController extends AbstractActionController
         $name = $user->getFirstname() . ' ' . $user->getLastname();
         switch ($this->gameManager->adminAddPlayer($game, $user)) {
             case GameManager::RESULT_REGISTERED:
-            case GameManager::RESULT_CONFIRMED:
+                $this->queueManager->onDirectRegistration($game, $user);
                 $this->flashMessenger()->addSuccessMessage($name . ' est inscrit à la partie.');
                 $this->warnIfOverQuota($game);
                 if (!$user->isMailValidated()) {
@@ -228,41 +237,6 @@ class AdminController extends AbstractActionController
                 'La partie dépasse le nombre maximum de joueurs : ' . $count . '/' . $game->getPlayerMax() . '.'
             );
         }
-    }
-
-    /**
-     * Passe un inscrit en file d'attente : il perd sa place et devra confirmer
-     * sa venue (ou etre reinscrit depuis la file par un admin).
-     */
-    public function queuePlayerAction()
-    {
-        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-            $this->flashMessenger()->addErrorMessage('Accès refusé.');
-            return $redirect;
-        }
-        $request = $this->getRequest();
-        if (!$request->isPost()) {
-            return $this->redirect()->toRoute('admin-games');
-        }
-
-        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
-            'idregister' => InputSanitizer::cleanInt($request->getPost('id')),
-            'status' => GameRegister::STATUS_ACTIVE,
-        ]);
-        if (!$register) {
-            $this->flashMessenger()->addErrorMessage('Inscription introuvable.');
-            return $this->redirect()->toRoute('admin-games');
-        }
-
-        $register->setStatus(GameRegister::STATUS_PENDING);
-        $register->setArrivedNumber(0);
-        $this->entityManager->flush();
-
-        $user = $register->getUser();
-        $this->flashMessenger()->addSuccessMessage(
-            $user->getFirstname() . ' ' . $user->getLastname() . " est passé en file d'attente."
-        );
-        return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
     }
 
     /**
@@ -294,13 +268,15 @@ class AdminController extends AbstractActionController
         $this->entityManager->flush();
 
         $this->flashMessenger()->addSuccessMessage(count($registers) . ' joueur(s) sans email validé désinscrit(s) de la partie.');
+        $this->flashOffers($this->queueManager->fillFreePlaces($game));
         return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
     }
 
     /**
-     * Inscrit un joueur depuis la file d'attente, dans la limite des places.
+     * Retire un joueur de la file d'attente. Si une place lui etait proposee,
+     * elle passe au suivant.
      */
-    public function confirmPendingAction()
+    public function queueRemoveAction()
     {
         if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
             $this->flashMessenger()->addErrorMessage('Accès refusé.');
@@ -310,52 +286,69 @@ class AdminController extends AbstractActionController
         if (!$request->isPost()) {
             return $this->redirect()->toRoute('admin-games');
         }
-
-        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
-            'idregister' => InputSanitizer::cleanInt($request->getPost('id')),
-            'status' => GameRegister::STATUS_PENDING,
-        ]);
-        if (!$register) {
-            $this->flashMessenger()->addErrorMessage("Inscription en file d'attente introuvable.");
+        $entry = $this->entityManager->getRepository(QueueEntry::class)->find(InputSanitizer::cleanInt($request->getPost('id')));
+        if (!$entry) {
+            $this->flashMessenger()->addErrorMessage("Joueur introuvable dans la file d'attente.");
             return $this->redirect()->toRoute('admin-games');
         }
+        $offered = $this->queueManager->removeByAdmin($entry);
+        $user = $entry->getUser();
+        $this->flashMessenger()->addSuccessMessage(
+            $user->getFirstname() . ' ' . $user->getLastname() . " a été retiré de la file d'attente."
+        );
+        $this->flashOffers($offered);
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $entry->getGame()->getIdGame()]);
+    }
 
-        $user = $register->getUser();
-        $name = $user->getFirstname() . ' ' . $user->getLastname();
-        switch ($this->gameManager->adminConfirmPendingRegister($register)) {
-            case GameManager::RESULT_CONFIRMED:
-                $this->flashMessenger()->addSuccessMessage($name . ' est inscrit à la partie.');
-                $this->warnIfOverQuota($register->getGame());
+    /**
+     * Mode manuel : propose une place libre a un joueur de la file (meme delai
+     * et memes notifications qu'en mode automatique).
+     */
+    public function queueOfferAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('admin-games');
+        }
+        $entry = $this->entityManager->getRepository(QueueEntry::class)->find(InputSanitizer::cleanInt($request->getPost('id')));
+        if (!$entry) {
+            $this->flashMessenger()->addErrorMessage("Joueur introuvable dans la file d'attente.");
+            return $this->redirect()->toRoute('admin-games');
+        }
+        $name = $entry->getUser()->getFirstname() . ' ' . $entry->getUser()->getLastname();
+        switch ($this->queueManager->offerTo($entry)) {
+            case QueueManager::RESULT_OFFERED:
+                $this->flashOffers([$entry]);
+                break;
+            case QueueManager::RESULT_NO_PLACE:
+                $this->flashMessenger()->addErrorMessage("Aucune place libre à proposer : libérez une place ou augmentez le maximum.");
+                break;
+            case QueueManager::RESULT_NOT_WAITING:
+                $this->flashMessenger()->addErrorMessage($name . " n'est plus en attente.");
                 break;
             default:
-                $this->flashMessenger()->addErrorMessage($name . " n'est plus en file d'attente.");
+                $this->flashMessenger()->addErrorMessage("La file d'attente de cette partie est fermée (partie inactive ou commencée).");
         }
-        return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $entry->getGame()->getIdGame()]);
     }
 
     /**
-     * Applique les criteres de la file d'attente aux inscrits d'une partie.
+     * Signale les places que l'action vient de proposer a la file d'attente.
+     *
+     * @param QueueEntry[] $offered
      */
-    public function generateQueueAction()
+    private function flashOffers(array $offered): void
     {
-        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
-            $this->flashMessenger()->addErrorMessage('Accès refusé.');
-            return $redirect;
+        foreach ($offered as $entry) {
+            $this->flashMessenger()->addMessage(
+                'Place proposée à ' . $entry->getUser()->getFirstname() . ' ' . $entry->getUser()->getLastname()
+                . " (file d'attente), prévenu par email."
+            );
         }
-        $request = $this->getRequest();
-        if (!$request->isPost()) {
-            return $this->redirect()->toRoute('admin-games');
-        }
-
-        $game = $this->entityManager->getRepository(Game::class)->find(InputSanitizer::cleanInt($request->getPost('id')));
-        if (!$game) {
-            $this->flashMessenger()->addErrorMessage('Partie introuvable.');
-            return $this->redirect()->toRoute('admin-games');
-        }
-
-        $queued = $this->gameManager->generateQueue($game);
-        $this->flashMessenger()->addSuccessMessage(count($queued) . " joueur(s) placé(s) en file d'attente.");
-        return $this->redirect()->toRoute('admin-edit-game', ['id' => $game->getIdGame()]);
     }
 
     /**
@@ -477,15 +470,18 @@ class AdminController extends AbstractActionController
                 $user = $this->entityManager->getRepository(User::class)->find($userId);
                 return $user ? [$user] : [];
             case 'registered':
-            case 'queue':
                 if (!$nextGame) {
                     return [];
                 }
                 $registers = $this->entityManager->getRepository(GameRegister::class)->findBy([
                     'game' => $nextGame,
-                    'status' => $target === 'queue' ? GameRegister::STATUS_PENDING : GameRegister::STATUS_ACTIVE,
+                    'status' => GameRegister::PLACE_STATUSES,
                 ]);
                 return array_map(fn (GameRegister $register) => $register->getUser(), $registers);
+            case 'queue':
+                return $nextGame
+                    ? array_map(fn (QueueEntry $entry) => $entry->getUser(), $this->queueManager->getQueue($nextGame))
+                    : [];
             case 'all':
                 return $this->findActivePlayers();
         }
@@ -568,9 +564,9 @@ class AdminController extends AbstractActionController
             ->addSelect('u')
             ->where('r.game = :game')
             ->andWhere('r.member = 0')
-            ->andWhere('r.status = :status')
+            ->andWhere('r.status IN (:statuses)')
             ->setParameter('game', $nextGame)
-            ->setParameter('status', GameRegister::STATUS_ACTIVE)
+            ->setParameter('statuses', GameRegister::PLACE_STATUSES)
             ->orderBy('u.firstname', 'ASC');
         $registers = $qb->getQuery()->getResult();
         if ($request->isPost()) {
@@ -581,19 +577,18 @@ class AdminController extends AbstractActionController
             if ($registerId && in_array($action, ['validate', 'cancel'])) {
                 $register = $this->entityManager->getRepository(GameRegister::class)->find($registerId);
 
-                if ($register && $register->getStatus() === GameRegister::STATUS_ACTIVE) {
-                    if ($action === 'validate') {
-                        $nextArrived = $this->entityManager
-                            ->getRepository(GameRegister::class)
-                            ->getFirstMissingArrivedNumber($register, $nextGame->getIdgame());
+                // Pointage : le joueur est arrive et a paye
+                if ($register && $action === 'validate' && $register->isActive()) {
+                    $nextArrived = $this->entityManager
+                        ->getRepository(GameRegister::class)
+                        ->getFirstMissingArrivedNumber($register, $nextGame->getIdgame());
 
-                        $register->setPaid(1);
-                        $register->setArrivedNumber($nextArrived ?: 0);
-                    } else {
-                        $register->setPaid(0);
-                        $register->setArrivedNumber(0);
-                    }
-
+                    $register->setStatus(GameRegister::STATUS_VALIDATED);
+                    $register->setArrivedNumber($nextArrived ?: 0);
+                    $this->entityManager->flush();
+                } elseif ($register && $action === 'cancel' && $register->isValidated()) {
+                    $register->setStatus(GameRegister::STATUS_ACTIVE);
+                    $register->setArrivedNumber(0);
                     $this->entityManager->flush();
                 }
             }
@@ -604,7 +599,7 @@ class AdminController extends AbstractActionController
         $view = new ViewModel([
             'currentUser'=>$currentUser,
             'registers'=>$registers,
-            'pendingQueue' => $nextGame ? $this->gameManager->getPendingQueue($nextGame) : [],
+            'queue' => $nextGame ? $this->queueManager->getQueue($nextGame) : [],
         ]);
         $this->layout()->setVariable('activeMenu', 'game');
         $view->setTemplate('admin/next-game');

@@ -4,6 +4,7 @@ namespace Admin\Controller\Factory;
 use Admin\Controller\AdminController;
 use Application\Service\PushService;
 use Game\Service\GameManager;
+use Game\Service\QueueManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\EntityManager;
@@ -18,6 +19,7 @@ class AdminControllerFactory implements FactoryInterface
         $entityManager = $container->get(EntityManager::class);
         $gameManager = $container->get(GameManager::class);
         $pushService = $container->get(PushService::class);
-        return new AdminController($entityManager,$authService,$gameManager,$pushService);
+        $queueManager = $container->get(QueueManager::class);
+        return new AdminController($entityManager,$authService,$gameManager,$pushService,$queueManager);
     }
 }

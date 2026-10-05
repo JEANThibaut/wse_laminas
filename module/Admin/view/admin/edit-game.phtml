@@ -54,7 +54,15 @@
 </div>
 <div class="card mt-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: 0.5rem;">
-        <h4 class="mb-0">Joueurs inscrits (<?= $this->escapeHtml(count($players)) ?>/<?= $this->escapeHtml($game->getPlayerMax()) ?>)</h4>
+        <div>
+            <h4 class="mb-0">Joueurs inscrits (<?= $this->escapeHtml(count($players)) ?>/<?= $this->escapeHtml($game->getPlayerMax()) ?>)</h4>
+            <div class="small text-muted">
+                <?= $freePlaces > 0
+                    ? $this->escapeHtml($freePlaces) . ' place' . ($freePlaces > 1 ? 's' : '') . ' libre' . ($freePlaces > 1 ? 's' : '')
+                    : 'Complète' ?>
+                · <?= $this->escapeHtml(count($queue)) ?> en file d'attente
+            </div>
+        </div>
         <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addPlayerModal">
             <i class="fa-solid fa-user-plus"></i> Ajouter un joueur
         </button>
@@ -81,12 +89,6 @@
                     </td>
                     <td>
                         <div class="d-flex justify-content-end" style="gap: 0.5rem;">
-                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-queue-player')) ?>">
-                                <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
-                                <button type="submit" class="btn btn-sm btn-warning" title="Mettre en file d'attente" aria-label="Mettre en file d'attente">
-                                    <i class="fa-solid fa-hourglass-half"></i>
-                                </button>
-                            </form>
                             <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
                                 <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
                                 <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>" title="Désinscrire" aria-label="Désinscrire">
@@ -101,10 +103,20 @@
         </table>
     <?php endif; ?>
 
-    <h4 class="mt-4">En attente (<?= count($pendingQueue) ?>)</h4>
-    <?= $this->partial('admin/partial/pending-queue', ['pendingQueue' => $pendingQueue, 'withActions' => true]) ?>
-    <?php /* "Generer la file d'attente" (critere des absences) desactive pour
-             l'instant : la file se gere a la main, joueur par joueur. */ ?>
+    <h4 class="mt-4">File d'attente (<?= count($queue) ?>)</h4>
+    <?php if (!$autoOffer): ?>
+        <p class="small text-muted mb-2">
+            <i class="fa-solid fa-hand-pointer me-1"></i>Mode manuel : les places libérées ne sont pas proposées automatiquement.
+            Utilisez « Proposer la place » pour en proposer une à un joueur de la file.
+        </p>
+    <?php endif; ?>
+    <?= $this->partial('admin/partial/game-queue', [
+        'queue' => $queue,
+        'withActions' => true,
+        'game' => $game,
+        // Bouton "Proposer la place" : mode manuel et au moins une place libre
+        'canOffer' => !$autoOffer && $freePlaces > 0,
+    ]) ?>
 
     <div class="mt-3">
         <?= $this->partial('application/partial/confirm-bulk-action', [

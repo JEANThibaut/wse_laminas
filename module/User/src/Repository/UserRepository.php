@@ -24,8 +24,9 @@ class UserRepository extends EntityRepository
     }
 
     /**
-     * Comptes actifs qu'un admin peut inscrire a une partie : ni deja inscrits,
-     * ni deja en file d'attente (ceux-la s'inscrivent depuis la file). Tries par nom.
+     * Comptes actifs qu'un admin peut inscrire a une partie : ceux qui n'y sont
+     * pas deja inscrits (un joueur en file d'attente peut l'etre directement).
+     * Tries par nom.
      */
     public function findAddableToGame($game): array
     {
@@ -41,7 +42,7 @@ class UserRepository extends EntityRepository
             ->where('u.isActive IS NULL OR u.isActive <> 0')
             ->andWhere("NOT EXISTS ($registered)")
             ->setParameter('game', $game)
-            ->setParameter('statuses', [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING])
+            ->setParameter('statuses', GameRegister::PLACE_STATUSES)
             ->orderBy('u.lastname', 'ASC')
             ->addOrderBy('u.firstname', 'ASC')
             ->getQuery()

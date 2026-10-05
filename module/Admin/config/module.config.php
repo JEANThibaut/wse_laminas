@@ -72,13 +72,23 @@ return [
                     ],
                 ],
             ],
-            'admin-queue-player' => [
+            'admin-queue-offer' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/admin/queue-player',
+                    'route' => '/admin/queue-offer',
                     'defaults' => [
                         'controller' => AdminController::class,
-                        'action' => 'queuePlayer',
+                        'action' => 'queueOffer',
+                    ],
+                ],
+            ],
+            'admin-queue-remove' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/queue-remove',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'queueRemove',
                     ],
                 ],
             ],
@@ -89,26 +99,6 @@ return [
                     'defaults' => [
                         'controller' => AdminController::class,
                         'action' => 'unregisterUnvalidated',
-                    ],
-                ],
-            ],
-            'admin-confirm-pending' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/admin/confirm-pending',
-                    'defaults' => [
-                        'controller' => AdminController::class,
-                        'action' => 'confirmPending',
-                    ],
-                ],
-            ],
-            'admin-generate-queue' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/admin/generate-queue',
-                    'defaults' => [
-                        'controller' => AdminController::class,
-                        'action' => 'generateQueue',
                     ],
                 ],
             ],

@@ -33,7 +33,7 @@ public function findRegister($game, $currentUser){
         return $this->_em->getRepository(GameRegister::class)->findOneBy([
         'game' => $game->getIdGame(),
     'user' => $currentUser,
-    'status' => GameRegister::STATUS_ACTIVE,
+    'status' => GameRegister::PLACE_STATUSES,
     ]);
 }
 
@@ -89,8 +89,7 @@ public function getFirstMissingArrivedNumber($excludedRegister, $gameId): int
 }
 
 /**
- * Inscriptions d'une partie (inscrits et file d'attente) dont le joueur n'a
- * pas valide son email.
+ * Inscriptions en cours d'une partie dont le joueur n'a pas valide son email.
  */
 public function findUnvalidatedRegisters($game): array
 {
@@ -102,7 +101,7 @@ public function findUnvalidatedRegisters($game): array
         ->andWhere('r.status IN (:statuses)')
         ->andWhere('u.mailValidation = false')
         ->setParameter('game', $game)
-        ->setParameter('statuses', [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING])
+        ->setParameter('statuses', GameRegister::PLACE_STATUSES)
         ->orderBy('u.lastname', 'ASC')
         ->addOrderBy('u.firstname', 'ASC')
         ->getQuery()
@@ -111,13 +110,11 @@ public function findUnvalidatedRegisters($game): array
 
 /**
  * Participation par utilisateur : [iduser => ['registered' => n, 'validated' => n, 'total' => n]].
- * Seules les inscriptions actives comptent (ni desinscriptions, ni file d'attente).
- * 'registered' : inscriptions non membres (member != 1) ; 'validated' : parmi
- * elles, les presences (paid = 1), le reste etant des absences ; 'total' :
- * toutes les inscriptions actives.
+ * 'registered' : inscriptions non membres (member != 1), inscrits et pointes ;
+ * 'validated' : parmi elles, les pointees (statut validated) ; 'total' :
+ * toutes les inscriptions inscrites ou pointees.
  *
- * @param bool $pastOnly limiter aux parties deja passees (file d'attente : une
- *                       inscription a une partie a venir n'est pas une absence)
+ * @param bool $pastOnly limiter aux parties deja passees
  */
 public function getParticipationStatsByUser(?int $userId = null, bool $pastOnly = false): array
 {
@@ -125,10 +122,11 @@ public function getParticipationStatsByUser(?int $userId = null, bool $pastOnly 
         ->select('IDENTITY(r.user) AS iduser')
         ->addSelect('COUNT(r.idregister) AS total')
         ->addSelect('SUM(CASE WHEN r.member <> 1 THEN 1 ELSE 0 END) AS registered')
-        ->addSelect('SUM(CASE WHEN r.member <> 1 AND r.paid = 1 THEN 1 ELSE 0 END) AS validated')
+        ->addSelect('SUM(CASE WHEN r.member <> 1 AND r.status = :validated THEN 1 ELSE 0 END) AS validated')
         ->from(GameRegister::class, 'r')
-        ->where('r.status = :status')
-        ->setParameter('status', GameRegister::STATUS_ACTIVE)
+        ->where('r.status IN (:statuses)')
+        ->setParameter('statuses', GameRegister::PLACE_STATUSES)
+        ->setParameter('validated', GameRegister::STATUS_VALIDATED)
         ->groupBy('r.user');
     if ($pastOnly) {
         $qb->join('r.game', 'g')
@@ -152,7 +150,8 @@ public function getParticipationStatsByUser(?int $userId = null, bool $pastOnly 
 }
 
 /**
- * Nombre d'inscrits qui occupent une place (hors file d'attente).
+ * Nombre d'inscrits qui occupent une place : inscrits et deja pointes (la file
+ * d'attente est a part).
  */
 public function countActiveRegisters($game): int
 {
@@ -160,15 +159,16 @@ public function countActiveRegisters($game): int
         ->select('COUNT(r.idregister)')
         ->from(GameRegister::class, 'r')
         ->where('r.game = :game')
-        ->andWhere('r.status = :status')
+        ->andWhere('r.status IN (:statuses)')
         ->setParameter('game', $game)
-        ->setParameter('status', GameRegister::STATUS_ACTIVE)
+        ->setParameter('statuses', GameRegister::PLACE_STATUSES)
         ->getQuery()
         ->getSingleScalarResult();
 }
 
 /**
- * Inscription en cours (inscrit ou en file d'attente) d'un joueur a une partie.
+ * Inscription en cours d'un joueur a une partie, pointee ou non (la file d'attente est a part :
+ * Game\Repository\QueueRepository).
  */
 public function findCurrentRegister($game, $user): ?GameRegister
 {
@@ -180,28 +180,10 @@ public function findCurrentRegister($game, $user): ?GameRegister
         ->andWhere('r.status IN (:statuses)')
         ->setParameter('game', $game)
         ->setParameter('user', $user)
-        ->setParameter('statuses', [GameRegister::STATUS_ACTIVE, GameRegister::STATUS_PENDING])
+        ->setParameter('statuses', GameRegister::PLACE_STATUSES)
         ->setMaxResults(1)
         ->getQuery()
         ->getOneOrNullResult();
-}
-
-/**
- * File d'attente d'une partie, sans ordre particulier (le classement est
- * fait par GameManager::sortPendingByPriority).
- */
-public function findPendingRegisters($game): array
-{
-    return $this->_em->createQueryBuilder()
-        ->select('r', 'u')
-        ->from(GameRegister::class, 'r')
-        ->join('r.user', 'u')
-        ->where('r.game = :game')
-        ->andWhere('r.status = :status')
-        ->setParameter('game', $game)
-        ->setParameter('status', GameRegister::STATUS_PENDING)
-        ->getQuery()
-        ->getResult();
 }
 
 

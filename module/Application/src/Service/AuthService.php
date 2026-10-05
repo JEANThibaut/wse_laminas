@@ -174,6 +174,15 @@ class AuthService
         );
     }
 
+    /**
+     * Email texte brut via le SMTP du site (file d'attente, etc.). Ne leve jamais
+     * d'exception : renvoie false en cas d'echec, journalise.
+     */
+    public function sendNotificationMail(string $toEmail, string $subject, string $body): bool
+    {
+        return $this->sendMail($toEmail, $subject, $body);
+    }
+
     private function createMailer(): PHPMailer
     {
         $mail = new PHPMailer(true);

@@ -42,13 +42,44 @@ return [
                     ],
                 ],
             ],
-            'confirm-pending-register' => [
+            // File d'attente (Game\Service\QueueManager), en POST
+            'queue-join' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route' => '/confirm-pending-register',
+                    'route' => '/queue/join',
                     'defaults' => [
                         'controller' => GameController::class,
-                        'action' => 'confirmPending',
+                        'action' => 'queueJoin',
+                    ],
+                ],
+            ],
+            'queue-leave' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/queue/leave',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'queueLeave',
+                    ],
+                ],
+            ],
+            'queue-accept' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/queue/accept',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'queueAccept',
+                    ],
+                ],
+            ],
+            'queue-decline' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/queue/decline',
+                    'defaults' => [
+                        'controller' => GameController::class,
+                        'action' => 'queueDecline',
                     ],
                 ],
             ],
@@ -59,26 +90,6 @@ return [
                     'defaults' => [
                         'controller' => GameController::class,
                         'action' => 'unregisterInGame',
-                    ],
-                ],
-            ],
-            'register-in-waiting-list' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/register-in-waiting-list',
-                    'defaults' => [
-                        'controller' => GameController::class,
-                        'action' => 'registerInWaitingList',
-                    ],
-                ],
-            ],
-            'unregister-in-waiting-list' => [
-                'type' => Literal::class,
-                'options' => [
-                    'route' => '/unregister-in-waiting-list',
-                    'defaults' => [
-                        'controller' => GameController::class,
-                        'action' => 'unregisterInWaitingList',
                     ],
                 ],
             ],
@@ -104,7 +115,18 @@ return [
         'factories' => [
             Application\Service\AuthService::class =>  Application\Service\Factory\AuthServiceFactory::class,
             Service\GameManager::class => Service\Factory\GameManagerFactory::class,
+            Service\QueueManager::class => Service\Factory\QueueManagerFactory::class,
         ],
+    ],
+    // File d'attente : en phase de test, visible et utilisable par les admins
+    // seulement (GOD compris). Passer restricted a false pour l'ouvrir a tous.
+    // auto_offer : false = un admin propose lui-meme les places liberees
+    // (fiche de la partie) ; true = chaque place liberee est proposee
+    // automatiquement au premier de la file.
+    'queue' => [
+        'restricted' => true,
+        'auto_offer' => false,
+        'site_url' => 'https://www.wolfsofteure.fr',
     ],
     // 'template_path_stack' => [
     //     'Game' => __DIR__ . '/../view',
