@@ -48,6 +48,8 @@ class ActusController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = InputSanitizer::cleanArray($request->getPost()->toArray());
+            // Le contenu garde ses retours a la ligne (cleanArray les retire)
+            $data['contenu'] = InputSanitizer::cleanText($request->getPost('contenu'));
             $actus = $this->actusManager->addActus($data);
             if ($actus) {
                 $this->flashMessenger()->addSuccessMessage('Actu créée.');
@@ -80,6 +82,8 @@ class ActusController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = InputSanitizer::cleanArray($request->getPost()->toArray());
+            // Le contenu garde ses retours a la ligne (cleanArray les retire)
+            $data['contenu'] = InputSanitizer::cleanText($request->getPost('contenu'));
             $this->actusManager->editActus($actus, $data);
             $this->flashMessenger()->addSuccessMessage('Actu modifiée.');
             return $this->redirect()->toRoute('actus-index');

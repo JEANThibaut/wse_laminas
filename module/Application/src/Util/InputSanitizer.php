@@ -36,6 +36,21 @@ final class InputSanitizer
         return (string) self::getFilter()->filter((string) $value);
     }
 
+    /**
+     * Texte long saisi dans un textarea (contenu d'une actu...) : comme
+     * cleanString, mais en gardant les retours a la ligne, normalises en \n.
+     */
+    public static function cleanText($value): string
+    {
+        if ($value === null || is_array($value)) {
+            return '';
+        }
+        $text = str_replace(["\r\n", "\r"], "\n", (string) $value);
+        $text = (new StripTags())->filter($text);
+
+        return trim((string) $text);
+    }
+
     public static function cleanArray(array $data): array
     {
         $clean = [];
