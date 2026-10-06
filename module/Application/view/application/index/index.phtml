@@ -140,7 +140,8 @@ $parisTz = new \DateTimeZone('Europe/Paris');
           <?php endif; ?>
         </div>
   
-        <div><?= $this->escapeHtml($actu->getContenu()) ?></div>
+        <?php // Echappe d'abord, puis retours a la ligne -> <br> : aucun HTML saisi n'est interprete ?>
+        <div><?= nl2br($this->escapeHtml($actu->getContenu())) ?></div>
         <?php if ($actu->getLien()): ?>
           <div class="mt-2">
             <a href="<?= $this->escapeHtmlAttr($actu->getLien()) ?>" target="_blank" rel="noopener">
