@@ -499,6 +499,28 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function isSuperAdmin(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isSuperAdmin', []);
+
+        return parent::isSuperAdmin();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSuperAdmin(bool $superAdmin): \User\Entity\User
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setSuperAdmin', [$superAdmin]);
+
+        return parent::setSuperAdmin($superAdmin);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function hasAdminAccess(): bool
     {
 
