@@ -39,7 +39,7 @@ CACHE_FILES = [
 ]
 # Generes au build, absents de Git : toujours renvoyes en partiel.
 # vendor/composer contient la table des classes, modules compris.
-GENERATED_FILES = ['vendor/autoload.php', 'config/autoload/push.global.php']
+GENERATED_FILES = ['vendor/autoload.php', 'config/autoload/push.global.php', 'config/autoload/facebook.global.php']
 GENERATED_DIRS = ['vendor/composer']
 # Un changement de dependances renvoie tout vendor/
 VENDOR_TRIGGERS = {'composer.json', 'composer.lock'}

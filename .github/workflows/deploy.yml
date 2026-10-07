@@ -94,6 +94,28 @@ jobs:
           '
           php -l config/autoload/push.global.php
 
+      # Page Facebook (publication a la creation d'une partie), meme principe :
+      # le jeton DOIT etre un secret, l'identifiant de la Page peut etre une
+      # variable. Sans les deux, aucun fichier : la publication est desactivee.
+      - name: Genere la config Facebook
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID || vars.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+        run: |
+          if [ -z "$FACEBOOK_PAGE_ID" ] || [ -z "$FACEBOOK_PAGE_TOKEN" ]; then
+            echo "FACEBOOK_PAGE_ID ou secret FACEBOOK_PAGE_TOKEN absent : publication Facebook desactivee"
+            exit 0
+          fi
+          php -r '
+            $config = ["facebook" => [
+                "page_id" => getenv("FACEBOOK_PAGE_ID"),
+                "token" => getenv("FACEBOOK_PAGE_TOKEN"),
+            ]];
+            file_put_contents("config/autoload/facebook.global.php",
+                "<?php\n// Genere au deploiement depuis les secrets GitHub. Ne pas modifier.\nreturn " . var_export($config, true) . ";\n");
+          '
+          php -l config/autoload/facebook.global.php
+
 
       # L'hebergement OVH expose du SFTP (sous-systeme SSH, port 22), pas du
       # FTPS. lftp parle les deux. Reglages de connexion communs aux etapes

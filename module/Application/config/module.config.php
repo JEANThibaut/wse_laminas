@@ -155,6 +155,7 @@ return [
             Service\SumUpService::class => Service\Factory\SumUpServiceFactory::class,
             Service\PwaAccessPolicy::class => Service\Factory\PwaAccessPolicyFactory::class,
             Service\PushService::class => Service\Factory\PushServiceFactory::class,
+            Service\FacebookPublisher::class => Service\Factory\FacebookPublisherFactory::class,
         ],
         'aliases' => [
             'authentication' => AuthenticationService::class,
@@ -200,6 +201,18 @@ return [
     // depuis les secrets GitHub (config/autoload/push.global.php), jamais dans le repo.
     'pwa' => [
         'restricted' => true,
+    ],
+
+    // Publication sur la Page Facebook, depuis l'onglet GOD MODE > Publication.
+    // page_id et token : config/autoload/facebook.global.php,
+    // genere au deploiement depuis les secrets GitHub FACEBOOK_PAGE_ID et
+    // FACEBOOK_PAGE_TOKEN. live = false : publications NON publiees (visibles
+    // des seuls admins de la Page), le temps des tests.
+    'facebook' => [
+        'live' => false,
+        'graph_version' => 'v21.0',
+        // Marqueurs : {jour}, {date}, {places}, {lien}
+        'template' => "🎯 Nouvelle partie le {jour} {date} !\n\n{places} places disponibles, les inscriptions sont ouvertes : {lien}",
     ],
 
     'session_config' => [

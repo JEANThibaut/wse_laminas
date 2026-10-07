@@ -11,6 +11,7 @@ use User\Entity\User;
 use Application\Util\InputSanitizer;
 use Game\Service\GameManager;
 use Application\Service\PushService;
+use Application\Service\FacebookPublisher;
 use Game\Entity\QueueEntry;
 use Game\Service\QueueManager;
 
@@ -22,14 +23,16 @@ class AdminController extends AbstractActionController
     private $gameManager;
     private PushService $pushService;
     private QueueManager $queueManager;
+    private FacebookPublisher $facebookPublisher;
 
-    public function __construct($entityManager, $authService, $gameManager, PushService $pushService, QueueManager $queueManager)
+    public function __construct($entityManager, $authService, $gameManager, PushService $pushService, QueueManager $queueManager, FacebookPublisher $facebookPublisher)
     {
         $this->entityManager = $entityManager;
         $this->authService=$authService;
         $this->gameManager = $gameManager;
         $this->pushService = $pushService;
         $this->queueManager = $queueManager;
+        $this->facebookPublisher = $facebookPublisher;
     }
 
 
@@ -63,6 +66,57 @@ class AdminController extends AbstractActionController
         return $view;
     }
 
+
+    /**
+     * Publication sur la Page Facebook, reservee au GOD : message prerempli avec
+     * la prochaine partie, modifiable. En mode test (facebook.live = false), le
+     * bouton cree un brouillon (publication non publiee, visible des seuls
+     * admins de la Page).
+     */
+    public function publicationAction()
+    {
+        $currentUser = $this->authService->getIdentity();
+        if (!$currentUser || !$currentUser->isGod()) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $this->redirect()->toRoute('home');
+        }
+
+        $nextGame = $this->entityManager->getRepository(Game::class)->findNextGame();
+        $render = fn (string $text) => $nextGame
+            ? $this->facebookPublisher->renderMessage($text, $nextGame->getDate(), (int) $nextGame->getPlayerMax())
+            : $text;
+
+        $request = $this->getRequest();
+        if ($request->isPost() && $this->facebookPublisher->canPublish($currentUser)) {
+            $message = $render(InputSanitizer::cleanText($request->getPost('message')));
+            if ($message === '') {
+                $this->flashMessenger()->addErrorMessage("Le message est vide : rien n'a été envoyé.");
+                return $this->redirect()->toRoute('admin-publication');
+            }
+            $result = $this->facebookPublisher->publish($message);
+            if ($result['success']) {
+                $this->flashMessenger()->addSuccessMessage(
+                    ($result['published']
+                        ? 'Publié sur la Page Facebook : '
+                        : 'Brouillon créé sur la Page Facebook (non publié, visible des seuls admins de la Page) : ')
+                    . $result['url']
+                );
+            } else {
+                $this->flashMessenger()->addErrorMessage('Facebook : ' . $result['error']);
+            }
+            return $this->redirect()->toRoute('admin-publication');
+        }
+
+        $view = new ViewModel([
+            'configured' => $this->facebookPublisher->isConfigured(),
+            'live' => $this->facebookPublisher->isLive(),
+            'nextGame' => $nextGame,
+            'message' => $render($this->facebookPublisher->getTemplate()),
+        ]);
+        $this->layout()->setVariable('activeMenu', 'admin-publication');
+        $view->setTemplate('admin/publication');
+        return $view;
+    }
 
     public function editGameAction()
     {

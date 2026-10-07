@@ -52,6 +52,13 @@ pas dans le repo : cocher "Envoi complet" pour tout resynchroniser.
 
 Secrets : `FTP_SERVER` (hote SFTP OVH), `FTP_USERNAME`, `FTP_PASSWORD`.
 
+Publication Facebook : `FACEBOOK_PAGE_ID` (secret ou variable) et `FACEBOOK_PAGE_TOKEN`
+(**secret obligatoirement**), le jeton d'un utilisateur systeme du portefeuille business
+de l'association (Business Suite > Parametres de l'entreprise > Utilisateurs systeme,
+expiration "Jamais", permissions pages_manage_posts, pages_read_engagement,
+pages_show_list). Le workflow en genere `config/autoload/facebook.global.php` (jamais
+commite). Sans ces deux valeurs, la case "Publier sur Facebook" n'apparait pas.
+
 Notifications : `VAPID_PUBLIC_KEY` (secret ou variable) et `VAPID_PRIVATE_KEY`
 (**secret obligatoirement** : le depot est public, ses journaux aussi, et seuls les
 secrets y sont masques ; une variable s'afficherait en clair). Le workflow en

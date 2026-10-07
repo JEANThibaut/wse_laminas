@@ -3,6 +3,7 @@ namespace Admin\Controller\Factory;
 
 use Admin\Controller\AdminController;
 use Application\Service\PushService;
+use Application\Service\FacebookPublisher;
 use Game\Service\GameManager;
 use Game\Service\QueueManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -20,6 +21,7 @@ class AdminControllerFactory implements FactoryInterface
         $gameManager = $container->get(GameManager::class);
         $pushService = $container->get(PushService::class);
         $queueManager = $container->get(QueueManager::class);
-        return new AdminController($entityManager,$authService,$gameManager,$pushService,$queueManager);
+        $facebookPublisher = $container->get(FacebookPublisher::class);
+        return new AdminController($entityManager,$authService,$gameManager,$pushService,$queueManager,$facebookPublisher);
     }
 }

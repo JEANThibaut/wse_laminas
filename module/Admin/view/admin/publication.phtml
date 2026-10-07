@@ -1,0 +1,36 @@
+<div class="card">
+    <h4 class="mb-3"><i class="fa-brands fa-facebook text-primary me-2"></i>Publication Facebook</h4>
+
+    <?php if (!$configured): ?>
+        <div class="alert alert-warning mb-0">
+            La Page Facebook n'est pas configurée sur ce serveur. Dans GitHub (Settings &gt; Secrets and variables &gt; Actions),
+            ajoutez <code>FACEBOOK_PAGE_ID</code> (secret ou variable) et le secret <code>FACEBOOK_PAGE_TOKEN</code>,
+            puis relancez le déploiement.
+        </div>
+    <?php else: ?>
+        <?php if (!$live): ?>
+            <div class="alert alert-info py-2 small">
+                <b>Mode test :</b> le bouton crée un <b>brouillon</b> (publication non publiée),
+                visible des seuls admins de la Page. Rien n'apparaît pour les abonnés.
+            </div>
+        <?php endif; ?>
+
+        <form method="post">
+            <div class="mb-3">
+                <label for="facebookMessage" class="form-label">Message</label>
+                <textarea name="message" id="facebookMessage" class="form-control" rows="6" required><?= $this->escapeHtml($message) ?></textarea>
+                <div class="form-text">
+                    <?php if ($nextGame): ?>
+                        Prérempli avec la prochaine partie, du <?= $this->escapeHtml($nextGame->getDate()->format('d/m/Y')) ?>.
+                    <?php else: ?>
+                        Aucune partie à venir : {jour}, {date} et {places} restent tels quels.
+                    <?php endif; ?>
+                    Un lien vers le site est ajouté à la publication.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa-brands fa-facebook me-2"></i><?= $live ? 'Publier sur FB' : 'Publier sur FB (brouillon)' ?>
+            </button>
+        </form>
+    <?php endif; ?>
+</div>

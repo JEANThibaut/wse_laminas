@@ -245,6 +245,14 @@
                 Notifications
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-publication') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-publication')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Publication
+                </a>
+            </li>
             <?php endif; ?>
     </ul>
 

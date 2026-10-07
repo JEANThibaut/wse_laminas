@@ -112,6 +112,16 @@ return [
                     ],
                 ],
             ],
+            'admin-publication' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/publication',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'publication',
+                    ],
+                ],
+            ],
             'admin-notifications' => [
                 'type' => Literal::class,
                 'options' => [
