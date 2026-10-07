@@ -391,6 +391,42 @@ class AdminController extends AbstractActionController
     }
 
     /**
+     * Passe un inscrit en fin de file d'attente (preinscription), sans le prevenir.
+     */
+    public function queuePlayerAction()
+    {
+        if ($redirect = $this->authService->requireRoles(['admin'], $this->redirect())) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $register = $this->entityManager->getRepository(GameRegister::class)->findOneBy([
+            'idregister' => InputSanitizer::cleanInt($request->getPost('id')),
+            'status' => GameRegister::PLACE_STATUSES,
+        ]);
+        if (!$register) {
+            $this->flashMessenger()->addErrorMessage('Inscription introuvable.');
+            return $this->redirect()->toRoute('admin-games');
+        }
+
+        $offers = $this->queueManager->moveToQueue($register);
+        $user = $register->getUser();
+        $this->flashMessenger()->addSuccessMessage(
+            $user->getFirstname() . ' ' . $user->getLastname() . " a été placé en fin de file d'attente."
+        );
+        if ((int) $register->getPaid() === 1) {
+            $this->flashMessenger()->addWarningMessage("Cette inscription était payée : le remboursement éventuel est à faire manuellement.");
+        }
+        $this->flashOffers($offers);
+
+        return $this->redirect()->toRoute('admin-edit-game', ['id' => $register->getGame()->getIdGame()]);
+    }
+
+    /**
      * Inscription manuelle d'un joueur par un admin, meme si la partie est
      * complete. Un joueur en file d'attente y est directement inscrit et sort
      * de la file.

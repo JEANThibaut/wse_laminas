@@ -89,6 +89,13 @@
                     </td>
                     <td>
                         <div class="d-flex justify-content-end" style="gap: 0.5rem;">
+                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-queue-player')) ?>">
+                                <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
+                                <button type="submit" class="btn btn-sm btn-warning" title="Mettre en file d'attente" aria-label="Mettre en file d'attente"
+                                        onclick="return confirm('Placer ce joueur en fin de file d\'attente ? Son inscription sera annulée.');">
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                </button>
+                            </form>
                             <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-unregister-player')) ?>" class="delete-form">
                                 <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>">
                                 <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="<?= $this->escapeHtmlAttr($player->getIdregister()) ?>" title="Désinscrire" aria-label="Désinscrire">

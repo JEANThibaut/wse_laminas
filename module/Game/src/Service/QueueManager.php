@@ -202,6 +202,29 @@ class QueueManager
     }
 
     /**
+     * Un admin passe un inscrit en file d'attente : l'inscription est annulee
+     * et le joueur place en fin de file. Personne n'est prevenu.
+     *
+     * @return QueueEntry[] les places proposees (place liberee), le cas echeant
+     */
+    public function moveToQueue(GameRegister $register): array
+    {
+        $game = $register->getGame();
+        $this->entityManager->wrapInTransaction(function () use ($game, $register) {
+            $this->entityManager->lock($game, LockMode::PESSIMISTIC_WRITE);
+
+            $register->setStatus(GameRegister::STATUS_CANCELLED);
+            $register->setArrivedNumber(0);
+            if (!$this->repository()->findOpenEntry($game, $register->getUser())) {
+                $this->entityManager->persist(new QueueEntry($game, $register->getUser()));
+            }
+            $this->entityManager->flush();
+        });
+
+        return $this->fillFreePlaces($game);
+    }
+
+    /**
      * Un admin a inscrit directement le joueur : son entree de file est close.
      */
     public function onDirectRegistration(Game $game, User $user): void
