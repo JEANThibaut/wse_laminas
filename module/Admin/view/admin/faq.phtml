@@ -1,0 +1,53 @@
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3" style="gap: 0.5rem;">
+        <h4 class="mb-0">FAQ</h4>
+        <a href="<?= $this->escapeHtmlAttr($this->url('faq')) ?>" class="btn btn-sm btn-outline-dark" target="_blank" rel="noopener">
+            <i class="fa-solid fa-eye me-1"></i>Voir la page
+        </a>
+    </div>
+
+    <?php if (empty($items)): ?>
+        <p class="text-muted">Aucune question pour le moment.</p>
+    <?php else: ?>
+        <div class="list-group mb-2">
+            <?php $last = count($items) - 1; ?>
+            <?php foreach (array_values($items) as $index => $item): ?>
+                <div class="list-group-item d-flex align-items-center px-2 py-2" style="gap: 0.5rem;">
+                    <div class="d-flex flex-column" style="gap: 0.25rem;">
+                        <?php foreach (['up' => ['fa-chevron-up', 'Monter', $index === 0], 'down' => ['fa-chevron-down', 'Descendre', $index === $last]] as $direction => [$icon, $label, $disabled]): ?>
+                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-faq-move')) ?>">
+                                <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($item->getId()) ?>">
+                                <input type="hidden" name="direction" value="<?= $direction ?>">
+                                <button type="submit" class="btn btn-sm btn-light py-0 px-2" title="<?= $label ?>" aria-label="<?= $label ?>" <?= $disabled ? 'disabled' : '' ?>>
+                                    <i class="fa-solid <?= $icon ?>"></i>
+                                </button>
+                            </form>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="flex-grow-1 text-break">
+                        <div class="fw-semibold"><?= $this->escapeHtml($item->getQuestion()) ?></div>
+                        <div class="small text-muted">
+                            <?= $item->isActive() ? 'Visible' : '<span class="text-danger">Masquée</span>' ?>
+                            <?= $item->isHtml() ? ' · contient du HTML' : '' ?>
+                        </div>
+                    </div>
+                    <a href="<?= $this->escapeHtmlAttr($this->url('admin-faq-edit', ['id' => $item->getId()])) ?>" class="btn btn-sm btn-warning" title="Modifier" aria-label="Modifier">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-faq-delete')) ?>">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($item->getId()) ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" title="Supprimer" aria-label="Supprimer"
+                                onclick="return confirm('Supprimer définitivement cette question ?');">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<div class="card mt-4">
+    <h4 class="mb-3">Ajouter une question</h4>
+    <?= $this->partial('admin/partial/faq-form', ['item' => null, 'action' => $this->url('admin-faq'), 'submit' => 'Ajouter']) ?>
+</div>

@@ -7,6 +7,7 @@ use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\GameRegister;
 use Actus\Entity\Actus;
+use Application\Entity\FaqItem;
 use Game\Service\GameManager;
 use Game\Service\QueueManager;
 class IndexController extends AbstractActionController
@@ -74,11 +75,28 @@ class IndexController extends AbstractActionController
     public function faqAction()
     {
         $this->layout()->setVariable('activeMenu', 'faq');
-        return new ViewModel();
+        try {
+            $items = $this->entityManager->getRepository(FaqItem::class)->findBy(['isActive' => true], ['position' => 'ASC', 'id' => 'ASC']);
+        } catch (\Doctrine\DBAL\Exception\TableNotFoundException $e) {
+            // Migration faq_item pas encore jouee : ancienne FAQ fixe
+            $items = null;
+        }
+        return new ViewModel(['items' => $items]);
     }
 
+    /**
+     * Briefing des parties : membres et admins seulement (lien du menu "Espace membres").
+     */
     public function briefingAction()
     {
+        $currentUser = $this->authService->getIdentity();
+        if (!$currentUser) {
+            return $this->redirect()->toRoute('login');
+        }
+        if (!$currentUser->getIsMember() && !$currentUser->hasAdminAccess()) {
+            $this->flashMessenger()->addErrorMessage('Accès réservé aux membres.');
+            return $this->redirect()->toRoute('home');
+        }
         $this->layout()->setVariable('activeMenu', 'briefing');
         return new ViewModel();
     }

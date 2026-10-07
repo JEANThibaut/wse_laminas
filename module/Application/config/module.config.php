@@ -180,6 +180,21 @@ return [
         ],
     ],
 
+    'doctrine' => [
+        'driver' => [
+            'Application_entity' => [
+                'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src/Entity'],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    'Application\Entity' => 'Application_entity',
+                ],
+            ],
+        ],
+    ],
+
     'view_helpers' => [
         'aliases' => [
             'mailCheck' => View\Helper\MailCheck::class,

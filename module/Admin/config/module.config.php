@@ -112,6 +112,47 @@ return [
                     ],
                 ],
             ],
+            'admin-faq' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/faq',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'faq',
+                    ],
+                ],
+            ],
+            'admin-faq-edit' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/admin/faq/edit/:id',
+                    'constraints' => ['id' => '[0-9]+'],
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'faqEdit',
+                    ],
+                ],
+            ],
+            'admin-faq-move' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/faq/move',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'faqMove',
+                    ],
+                ],
+            ],
+            'admin-faq-delete' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/faq/delete',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'faqDelete',
+                    ],
+                ],
+            ],
             'admin-publication' => [
                 'type' => Literal::class,
                 'options' => [

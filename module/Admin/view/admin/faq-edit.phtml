@@ -1,0 +1,13 @@
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3" style="gap: 0.5rem;">
+        <h4 class="mb-0">Modifier une question</h4>
+        <a href="<?= $this->escapeHtmlAttr($this->url('admin-faq')) ?>" class="btn btn-sm btn-outline-dark">
+            <i class="fa-solid fa-arrow-left me-1"></i>Retour à la FAQ
+        </a>
+    </div>
+    <?= $this->partial('admin/partial/faq-form', [
+        'item' => $item,
+        'action' => $this->url('admin-faq-edit', ['id' => $item->getId()]),
+        'submit' => 'Enregistrer',
+    ]) ?>
+</div>

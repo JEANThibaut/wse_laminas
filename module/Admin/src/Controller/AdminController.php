@@ -7,6 +7,7 @@ use Laminas\View\Model\ViewModel;
 use Game\Entity\Game;
 use Game\Entity\GameRegister;
 use User\Entity\LoginLog;
+use Application\Entity\FaqItem;
 use User\Entity\User;
 use Application\Util\InputSanitizer;
 use Game\Service\GameManager;
@@ -125,6 +126,150 @@ class AdminController extends AbstractActionController
         } else {
             $this->flashMessenger()->addErrorMessage('Facebook : ' . $result['error']);
         }
+    }
+
+    /**
+     * GOD MODE > FAQ : liste des questions (ordre d'affichage) et ajout.
+     */
+    public function faqAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            [$question, $answer] = $this->readFaqForm();
+            if ($question === '' || $answer === '') {
+                $this->flashMessenger()->addErrorMessage('La question et la réponse sont obligatoires.');
+                return $this->redirect()->toRoute('admin-faq');
+            }
+            $items = $this->findFaqItems();
+            $last = end($items);
+            $this->entityManager->persist(new FaqItem($question, $answer, $last ? $last->getPosition() + 1 : 1));
+            $this->entityManager->flush();
+            $this->flashMessenger()->addSuccessMessage('Question ajoutée à la FAQ.');
+            return $this->redirect()->toRoute('admin-faq');
+        }
+
+        $view = new ViewModel(['items' => $this->findFaqItems()]);
+        $this->layout()->setVariable('activeMenu', 'admin-faq');
+        $view->setTemplate('admin/faq');
+        return $view;
+    }
+
+    /**
+     * Modification d'une question : texte, reponse, visible ou masquee.
+     */
+    public function faqEditAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $item = $this->entityManager->getRepository(FaqItem::class)->find(InputSanitizer::cleanInt($this->params()->fromRoute('id')));
+        if (!$item) {
+            $this->flashMessenger()->addErrorMessage('Question introuvable.');
+            return $this->redirect()->toRoute('admin-faq');
+        }
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            [$question, $answer] = $this->readFaqForm();
+            if ($question === '' || $answer === '') {
+                $this->flashMessenger()->addErrorMessage('La question et la réponse sont obligatoires.');
+                return $this->redirect()->toRoute('admin-faq-edit', ['id' => $item->getId()]);
+            }
+            $item->update($question, $answer, (bool) $request->getPost('is_active'));
+            $this->entityManager->flush();
+            $this->flashMessenger()->addSuccessMessage('Question enregistrée.');
+            return $this->redirect()->toRoute('admin-faq');
+        }
+
+        $view = new ViewModel(['item' => $item]);
+        $this->layout()->setVariable('activeMenu', 'admin-faq');
+        $view->setTemplate('admin/faq-edit');
+        return $view;
+    }
+
+    /**
+     * Monte ou descend une question d'un cran.
+     */
+    public function faqMoveAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $items = $this->findFaqItems();
+            $id = InputSanitizer::cleanInt($request->getPost('id'));
+            $offset = $request->getPost('direction') === 'up' ? -1 : 1;
+            foreach ($items as $index => $item) {
+                if ($item->getId() === $id && isset($items[$index + $offset])) {
+                    [$items[$index], $items[$index + $offset]] = [$items[$index + $offset], $items[$index]];
+                    break;
+                }
+            }
+            // Positions renumerotees 1, 2, 3... dans le nouvel ordre
+            foreach (array_values($items) as $index => $item) {
+                $item->setPosition($index + 1);
+            }
+            $this->entityManager->flush();
+        }
+        return $this->redirect()->toRoute('admin-faq');
+    }
+
+    public function faqDeleteAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $item = $this->entityManager->getRepository(FaqItem::class)->find(InputSanitizer::cleanInt($request->getPost('id')));
+            if ($item) {
+                $this->entityManager->remove($item);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage('Question supprimée de la FAQ.');
+            }
+        }
+        return $this->redirect()->toRoute('admin-faq');
+    }
+
+    /**
+     * @return FaqItem[] toutes les questions, visibles ou masquees, dans l'ordre d'affichage
+     */
+    private function findFaqItems(): array
+    {
+        return $this->entityManager->getRepository(FaqItem::class)->findBy([], ['position' => 'ASC', 'id' => 'ASC']);
+    }
+
+    /**
+     * Question nettoyee comme une saisie ordinaire ; reponse conservee telle
+     * quelle (HTML autorise : seul le GOD ecrit dans la FAQ).
+     *
+     * @return array{0: string, 1: string}
+     */
+    private function readFaqForm(): array
+    {
+        $request = $this->getRequest();
+        $answer = str_replace(["\r\n", "\r"], "\n", (string) $request->getPost('answer', ''));
+
+        return [
+            mb_substr(InputSanitizer::cleanString($request->getPost('question')), 0, 255),
+            trim($answer),
+        ];
+    }
+
+    /**
+     * Redirection si le compte connecte n'est pas GOD, sinon null.
+     */
+    private function requireGod()
+    {
+        $currentUser = $this->authService->getIdentity();
+        if ($currentUser && $currentUser->isGod()) {
+            return null;
+        }
+        $this->flashMessenger()->addErrorMessage('Accès refusé.');
+        return $this->redirect()->toRoute('home');
     }
 
     public function editGameAction()

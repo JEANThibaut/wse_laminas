@@ -1,0 +1,30 @@
+<?php
+/**
+ * Formulaire d'une question de FAQ.
+ * Parametres : item (FaqItem ou null pour un ajout), action (url), submit (libelle du bouton).
+ */
+?>
+<form method="post" action="<?= $this->escapeHtmlAttr($action) ?>">
+    <div class="mb-3">
+        <label class="form-label" for="faqQuestion">Question</label>
+        <input type="text" name="question" id="faqQuestion" class="form-control" maxlength="255" required
+               value="<?= $this->escapeHtmlAttr($item ? $item->getQuestion() : '') ?>">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="faqAnswer">Réponse</label>
+        <textarea name="answer" id="faqAnswer" class="form-control font-monospace" rows="<?= $item && $item->isHtml() ? 14 : 6 ?>" required><?= $this->escapeHtml($item ? $item->getAnswer() : '') ?></textarea>
+        <div class="form-text">
+            Texte simple : les retours à la ligne sont conservés.
+            Pour une mise en forme (gras, liens, tableau, carte), écrivez directement du HTML,
+            par exemple <code>&lt;b&gt;gras&lt;/b&gt;</code> ou <code>&lt;a href="…"&gt;lien&lt;/a&gt;</code> :
+            dès qu'il y a une balise, la réponse est affichée comme du HTML.
+        </div>
+    </div>
+    <?php if ($item): ?>
+        <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" role="switch" name="is_active" value="1" id="faqActive" <?= $item->isActive() ? 'checked' : '' ?>>
+            <label class="form-check-label" for="faqActive">Visible sur la page FAQ</label>
+        </div>
+    <?php endif; ?>
+    <button type="submit" class="btn btn-warning w-100"><?= $this->escapeHtml($submit) ?></button>
+</form>
