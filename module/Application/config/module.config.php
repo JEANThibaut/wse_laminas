@@ -211,8 +211,15 @@ return [
     'facebook' => [
         'live' => false,
         'graph_version' => 'v21.0',
-        // Marqueurs : {jour}, {date}, {places}, {lien}
-        'template' => "🎯 Nouvelle partie le {jour} {date} !\n\n{places} places disponibles, les inscriptions sont ouvertes : {lien}",
+        // Modele prerempli dans GOD MODE > Publication, avec la prochaine partie.
+        // Marqueurs : {DATE} (DIMANCHE 11 OCTOBRE), {jour}, {date} (11/10),
+        // {places}, {lien}
+        'template' => "🐺 PROCHAINE PARTIE WSE — {DATE} !\n"
+            . "💎 {lien} 💎\n"
+            . "🚨🚨 Inscrivez-vous sur notre site🚨🚨\n"
+            . "La Wolf Soft Eure vous donne rendez-vous pour une nouvelle journée d’airsoft sur notre terrain !\n"
+            . "{places} places de disponibles !\n"
+            . "  #airsoftnation #airsoftgun #airsoftobsessed #airsof #airsoft #wse #airsofter #airsoftworldwide #airsoftworld #airsoftwars #WSE",
     ],
 
     'session_config' => [

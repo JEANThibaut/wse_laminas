@@ -60,7 +60,7 @@ class FacebookPublisher
     }
 
     /**
-     * Modele de message, avec les marqueurs {jour}, {date}, {places} et {lien}.
+     * Modele de message, avec les marqueurs {DATE}, {jour}, {date}, {places} et {lien}.
      */
     public function getTemplate(): string
     {
@@ -73,9 +73,14 @@ class FacebookPublisher
     public function renderMessage(string $message, \DateTimeInterface $date, int $places): string
     {
         $days = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        $months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
+            'septembre', 'octobre', 'novembre', 'décembre'];
+        $day = $days[(int) $date->format('w')];
 
         return strtr($message, [
-            '{jour}' => $days[(int) $date->format('w')],
+            // "DIMANCHE 11 OCTOBRE"
+            '{DATE}' => mb_strtoupper($day . ' ' . ($date->format('j') === '1' ? '1er' : $date->format('j')) . ' ' . $months[(int) $date->format('n') - 1]),
+            '{jour}' => $day,
             '{date}' => $date->format('d/m'),
             '{places}' => (string) $places,
             '{lien}' => $this->siteUrl,

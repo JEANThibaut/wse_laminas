@@ -93,17 +93,7 @@ class AdminController extends AbstractActionController
                 $this->flashMessenger()->addErrorMessage("Le message est vide : rien n'a été envoyé.");
                 return $this->redirect()->toRoute('admin-publication');
             }
-            $result = $this->facebookPublisher->publish($message);
-            if ($result['success']) {
-                $this->flashMessenger()->addSuccessMessage(
-                    ($result['published']
-                        ? 'Publié sur la Page Facebook : '
-                        : 'Brouillon créé sur la Page Facebook (non publié, visible des seuls admins de la Page) : ')
-                    . $result['url']
-                );
-            } else {
-                $this->flashMessenger()->addErrorMessage('Facebook : ' . $result['error']);
-            }
+            $this->publishOnFacebook($message);
             return $this->redirect()->toRoute('admin-publication');
         }
 
@@ -116,6 +106,25 @@ class AdminController extends AbstractActionController
         $this->layout()->setVariable('activeMenu', 'admin-publication');
         $view->setTemplate('admin/publication');
         return $view;
+    }
+
+    /**
+     * Publie sur la Page Facebook (brouillon en mode test) et rend compte du
+     * resultat : lien vers la publication, ou erreur de Facebook.
+     */
+    private function publishOnFacebook(string $message): void
+    {
+        $result = $this->facebookPublisher->publish($message);
+        if ($result['success']) {
+            $this->flashMessenger()->addSuccessMessage(
+                ($result['published']
+                    ? 'Publié sur la Page Facebook : '
+                    : 'Brouillon créé sur la Page Facebook (à retrouver dans les brouillons de Business Suite) : ')
+                . $result['url']
+            );
+        } else {
+            $this->flashMessenger()->addErrorMessage('Facebook : ' . $result['error']);
+        }
     }
 
     public function editGameAction()
