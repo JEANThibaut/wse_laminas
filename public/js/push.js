@@ -185,6 +185,8 @@
     // ici, jamais demande, et pas refuse recemment
     function init() {
         refresh().then((state) => {
+            // Pas de proposition dans les colonnes du tableau de bord GOD
+            if (document.documentElement.classList.contains('in-dashboard')) return;
             const dismissedAt = Number(storage.get(PROMPT_KEY) || 0);
             if (state === 'idle' && Notification.permission === 'default' && Date.now() - dismissedAt > PROMPT_DELAY) {
                 bootstrap.Modal.getOrCreateInstance(modal).show();

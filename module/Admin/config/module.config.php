@@ -173,6 +173,16 @@ return [
                     ],
                 ],
             ],
+            'admin-dashboard' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/dashboard',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'dashboard',
+                    ],
+                ],
+            ],
             'admin-logs' => [
                 'type' => Literal::class,
                 'options' => [

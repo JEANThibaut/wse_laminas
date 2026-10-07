@@ -560,6 +560,39 @@ class AdminController extends AbstractActionController
     }
 
     /**
+     * GOD MODE > Tableau de bord (PC uniquement) : les ecrans d'administration
+     * affiches cote a cote, chacun dans une colonne au format telephone.
+     */
+    public function dashboardAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+
+        // Ecrans proposes dans chaque colonne : cle => [libelle, route]
+        $screens = [];
+        foreach ([
+            'games' => ['Les parties', 'admin-games'],
+            'next-game' => ['Prochaine partie', 'admin-next-games'],
+            'users' => ['Users', 'admin-users'],
+            'actus' => ['Les actualités', 'actus-admin'],
+            'stats' => ['Stats', 'admin-stats'],
+            'logs' => ['Connexions', 'admin-logs'],
+            'notifications' => ['Notifications', 'admin-notifications'],
+            'publication' => ['Publication', 'admin-publication'],
+            'faq' => ['FAQ', 'admin-faq'],
+        ] as $key => [$label, $route]) {
+            $screens[] = ['key' => $key, 'label' => $label, 'url' => $this->url()->fromRoute($route)];
+        }
+
+        $view = new ViewModel(['screens' => $screens]);
+        $this->layout()->setVariable('activeMenu', 'admin-dashboard');
+        $this->layout()->setVariable('disablePtr', true);
+        $view->setTemplate('admin/dashboard');
+        return $view;
+    }
+
+    /**
      * Statistiques du site, reservees au GOD.
      */
     public function statsAction()

@@ -54,7 +54,20 @@
         #ptr-indicator svg{ height: 36px; width: 36px; display:block; }
         /* optional stroke color */
         #ptr-indicator svg circle, #ptr-indicator svg path{ stroke: #01003f5b; fill: none; stroke-width: 2.5; }
+        /* Page affichee dans une colonne du tableau de bord GOD : sans la barre du haut */
+        .in-dashboard #wrapper > nav.navbar{ display: none; }
+        .in-dashboard #ptr-content{ margin-top: .75rem !important; }
     </style>
+    <script>
+        // Classe posee uniquement dans un cadre du tableau de bord GOD : navigation normale inchangee
+        if (window.self !== window.top) {
+            try {
+                if (window.top.document.getElementById('godDashboard')) {
+                    document.documentElement.classList.add('in-dashboard');
+                }
+            } catch (e) { /* autre site : rien */ }
+        }
+    </script>
 
 </head>
 
@@ -221,6 +234,15 @@
             <?php if ($this->currentUser && $this->currentUser->isGod()) : ?>
             <hr>
             <h4>GOD MODE</h4>
+            <?php // Tableau de bord : ordinateur uniquement, invisible sous 1200 px ?>
+            <li class="nav-item d-none d-xl-block">
+                <a class="nav-link <?= ($activeMenu === 'admin-dashboard') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-dashboard')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Tableau de bord
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link <?= ($activeMenu === 'admin-stats') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-stats')) ?>">
                 <?php if($isFunny): ?>

@@ -1,0 +1,27 @@
+<?php
+/**
+ * GOD MODE > Tableau de bord, sur ordinateur uniquement (1200 px et plus).
+ * Les colonnes sont construites par god-dashboard.js : chacune affiche la vraie
+ * page d'administration choisie, dans un cadre a la largeur d'un telephone.
+ */
+?>
+<style>
+    #godDashboard { gap: 1rem; }
+    #godDashboard .gd-column { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+        background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, .12); overflow: hidden; }
+    #godDashboard .gd-header { display: flex; align-items: center; gap: .35rem; padding: .5rem; background: #212529; }
+    #godDashboard .gd-header .form-select { flex: 1 1 auto; min-width: 0; }
+    #godDashboard iframe { flex: 1 1 auto; width: 100%; border: 0; background: #f8f9fa; }
+    /* Pied de page vide : sans lui, la page tient dans l'ecran */
+    @media (min-width: 1200px) { body footer { display: none; } }
+</style>
+
+<div class="d-xl-none card text-center">
+    <i class="fa-solid fa-desktop fa-2x mb-2"></i>
+    <p class="mb-0">Le tableau de bord est disponible uniquement sur ordinateur.</p>
+</div>
+
+<div id="godDashboard" class="d-none d-xl-flex"
+     data-screens="<?= $this->escapeHtmlAttr(json_encode($screens)) ?>"></div>
+
+<script src="/js/god-dashboard.js?v=<?= (int) (@filemtime('public/js/god-dashboard.js') ?: time()) ?>"></script>
