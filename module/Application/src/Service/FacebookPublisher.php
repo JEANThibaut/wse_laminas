@@ -107,15 +107,20 @@ class FacebookPublisher
                 return $result;
             }
 
-            // 2. Publication (non publiee tant que live = false)
-            $post = $this->decode($client->post($this->pageId . '/feed', [
-                'form_params' => [
-                    'message' => $message,
-                    'link' => $this->siteUrl . '/',
-                    'published' => $this->live ? 'true' : 'false',
-                    'access_token' => $page['access_token'],
-                ],
-            ]));
+            // 2. Publication, ou brouillon tant que live = false. Sans
+            // unpublished_content_type, Facebook range une publication non
+            // publiee dans les publications publicitaires : DRAFT la met dans
+            // les brouillons de Business Suite (a relire, publier ou supprimer).
+            $params = [
+                'message' => $message,
+                'link' => $this->siteUrl . '/',
+                'published' => $this->live ? 'true' : 'false',
+                'access_token' => $page['access_token'],
+            ];
+            if (!$this->live) {
+                $params['unpublished_content_type'] = 'DRAFT';
+            }
+            $post = $this->decode($client->post($this->pageId . '/feed', ['form_params' => $params]));
             if (empty($post['id'])) {
                 $result['error'] = $this->errorMessage($post, 'La publication a été refusée par Facebook.');
                 return $result;
