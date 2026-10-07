@@ -148,6 +148,12 @@ class UserController extends AbstractActionController
                     $user->setFirstName($data['first_name']);
                     $user->setLastName($data['last_name']);
                     $user->setEmail($data['email']);
+                    // Super-admin : attribue par le GOD seulement. Traite avant Admin,
+                    // pour que retirer les deux d'un coup retire bien l'admin
+                    // (un super-admin est forcement admin)
+                    if ($currentUser && $currentUser->isGod() && isset($data['isSuperAdmin'])) {
+                        $user->setSuperAdmin(InputSanitizer::cleanBool($data['isSuperAdmin']));
+                    }
                     $user->setIsAdmin(InputSanitizer::cleanBool($data['isAdmin'] ?? 0));
                     $user->setIsMember(InputSanitizer::cleanBool($data['isMember'] ?? 0));
                     $user->setIsBlacklist(InputSanitizer::cleanBool($data['isBlacklist'] ?? 0));

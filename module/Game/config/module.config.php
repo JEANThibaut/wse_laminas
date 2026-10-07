@@ -118,13 +118,12 @@ return [
             Service\QueueManager::class => Service\Factory\QueueManagerFactory::class,
         ],
     ],
-    // File d'attente : en phase de test, visible et utilisable par les admins
-    // seulement (GOD compris). Passer restricted a false pour l'ouvrir a tous.
+    // File d'attente. Qui la voit et la rejoint : config features.queue
+    // (module Application).
     // auto_offer : false = un admin propose lui-meme les places liberees
     // (fiche de la partie) ; true = chaque place liberee est proposee
     // automatiquement au premier de la file.
     'queue' => [
-        'restricted' => true,
         'auto_offer' => false,
         'site_url' => 'https://www.wolfsofteure.fr',
     ],

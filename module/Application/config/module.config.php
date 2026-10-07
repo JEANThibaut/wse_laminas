@@ -153,7 +153,7 @@ return [
                 return new AuthenticationService($storage);
             },
             Service\SumUpService::class => Service\Factory\SumUpServiceFactory::class,
-            Service\PwaAccessPolicy::class => Service\Factory\PwaAccessPolicyFactory::class,
+            Service\FeatureAccess::class => Service\Factory\FeatureAccessFactory::class,
             Service\PushService::class => Service\Factory\PushServiceFactory::class,
             Service\FacebookPublisher::class => Service\Factory\FacebookPublisherFactory::class,
         ],
@@ -198,24 +198,47 @@ return [
     'view_helpers' => [
         'aliases' => [
             'mailCheck' => View\Helper\MailCheck::class,
-            'pwaAccess' => View\Helper\PwaAccess::class,
+            'featureAccess' => View\Helper\FeatureAccess::class,
             'pushPublicKey' => View\Helper\PushPublicKey::class,
         ],
         'factories' => [
             View\Helper\MailCheck::class => InvokableFactory::class,
-            View\Helper\PwaAccess::class => View\Helper\Factory\PwaAccessFactory::class,
+            View\Helper\FeatureAccess::class => View\Helper\Factory\FeatureAccessFactory::class,
             View\Helper\PushPublicKey::class => View\Helper\Factory\PushPublicKeyFactory::class,
         ],
     ],
 
-    // Application installable (PWA) et notifications. En phase de test :
-    // manifeste, service worker, bouton "Installer l'application",
-    // notifications du profil, abonnements et envois sont reserves aux comptes
-    // GOD. Passer restricted a false pour l'ouvrir a tous.
+    // Qui a acces a quoi : pour chaque fonctionnalite, true (active) ou false
+    // par niveau. Un compte a un seul niveau, le plus haut : god, sinon
+    // super_admin (admin a qui ouvrir des fonctionnalites en test, attribue par
+    // le GOD sur la fiche du joueur), sinon admin (droits d'administration),
+    // sinon user (joueur connecte). Les visiteurs non connectes n'ont jamais acces.
+    //  - pwa : bouton "Installer l'application" du menu
+    //  - notification : notifications (popup, reglages du profil, abonnements
+    //    et envois). Charge aussi le manifeste et le service worker, sans
+    //    lesquels les notifications ne marchent pas (iPhone : application installee)
+    //  - queue : voir et rejoindre la file d'attente d'une partie complete
     // Les cles VAPID ('push' => ['vapid' => ...]) sont generees au deploiement
     // depuis les secrets GitHub (config/autoload/push.global.php), jamais dans le repo.
-    'pwa' => [
-        'restricted' => true,
+    'features' => [
+        'pwa' => [
+            'user' => false,
+            'admin' => false,
+            'super_admin' => false,
+            'god' => true,
+        ],
+        'notification' => [
+            'user' => false,
+            'admin' => false,
+            'super_admin' => false,
+            'god' => true,
+        ],
+        'queue' => [
+            'user' => false,
+            'admin' => true,
+            'super_admin' => true,
+            'god' => true,
+        ],
     ],
 
     // Publication sur la Page Facebook, depuis l'onglet GOD MODE > Publication.

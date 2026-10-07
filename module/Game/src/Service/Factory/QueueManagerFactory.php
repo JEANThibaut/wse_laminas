@@ -2,6 +2,7 @@
 namespace Game\Service\Factory;
 
 use Application\Service\AuthService;
+use Application\Service\FeatureAccess;
 use Application\Service\PushService;
 use Doctrine\ORM\EntityManager;
 use Game\Service\GameManager;
@@ -20,8 +21,8 @@ class QueueManagerFactory implements FactoryInterface
             $container->get(GameManager::class),
             $container->get(PushService::class),
             $container->get(AuthService::class),
-            // Sans config explicite, on reste en phase de test (admins seulement)
-            (bool) ($config['restricted'] ?? true),
+            // Qui voit et rejoint la file : config features.queue
+            $container->get(FeatureAccess::class),
             // Sans config explicite, propositions manuelles (par un admin)
             (bool) ($config['auto_offer'] ?? false),
             (string) ($config['site_url'] ?? 'https://www.wolfsofteure.fr')

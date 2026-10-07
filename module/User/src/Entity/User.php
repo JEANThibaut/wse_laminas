@@ -170,9 +170,13 @@ class User
         return $this->admin;
     }
 
+    /**
+     * Un super-admin est forcement admin : on ne peut pas lui retirer ce droit
+     * (retirer d'abord le super-admin).
+     */
     public function setIsAdmin(bool $admin): self
     {
-        $this->admin = $admin;
+        $this->admin = $admin || $this->isSuperAdmin();
         return $this;
     }
 
@@ -245,12 +249,39 @@ class User
     }
 
     /**
-     * Droits d'administration : GOD, colonne `admin` (champ "Admin" de la
-     * fiche utilisateur) ou role ADMIN dans le JSON `roles`.
+     * Super-admin : admin a qui le GOD peut ouvrir des fonctionnalites en test
+     * (config features), sans le GOD MODE. Role SUPER_ADMIN dans le JSON `roles`.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->isInRoles('super_admin');
+    }
+
+    /**
+     * Ajoute ou retire le role SUPER_ADMIN, sans toucher aux autres roles.
+     * L'ajout donne aussi les droits admin ; le retrait les laisse en place.
+     */
+    public function setSuperAdmin(bool $superAdmin): self
+    {
+        $roles = json_decode((string) $this->getRoles(), true);
+        $roles = array_values(array_filter(
+            is_array($roles) ? $roles : [],
+            fn ($role) => strtolower((string) $role) !== 'super_admin'
+        ));
+        if ($superAdmin) {
+            $roles[] = 'SUPER_ADMIN';
+            $this->admin = true;
+        }
+        return $this->setRoles(json_encode($roles));
+    }
+
+    /**
+     * Droits d'administration : GOD, super-admin, colonne `admin` (champ
+     * "Admin" de la fiche utilisateur) ou role ADMIN dans le JSON `roles`.
      */
     public function hasAdminAccess(): bool
     {
-        return $this->isGod() || (bool) $this->admin || $this->isInRoles('admin');
+        return $this->isGod() || $this->isSuperAdmin() || (bool) $this->admin || $this->isInRoles('admin');
     }
     
     public function getResetToken(): ?string

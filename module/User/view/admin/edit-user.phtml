@@ -68,6 +68,17 @@ $generatedPasswords = $this->flashMessenger()->setNamespace('generatedPassword')
                 </div>
         
             </div>
+            <?php // Super-admin : visible et modifiable par le GOD seulement ?>
+            <?php if ($currentUser && $currentUser->isGod()): ?>
+            <div class="form-group mt-3">
+                <label for="isSuperAdmin">Super-admin</label>
+                <select class="form-control" name="isSuperAdmin" id="isSuperAdmin">
+                    <option value="1" <?= $user->isSuperAdmin() ? 'selected' : '' ?>>Oui</option>
+                    <option value="0" <?= !$user->isSuperAdmin() ? 'selected' : '' ?>>Non</option>
+                </select>
+                <div class="form-text">Toujours admin, plus les fonctionnalités en test ouvertes aux super-admins (config features). Retirer le super-admin laisse les droits admin.</div>
+            </div>
+            <?php endif; ?>
         </div>
 
         <div class='d-flex justify-content-between mt-5 '>

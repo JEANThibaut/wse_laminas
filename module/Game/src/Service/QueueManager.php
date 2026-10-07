@@ -2,6 +2,7 @@
 namespace Game\Service;
 
 use Application\Service\AuthService;
+use Application\Service\FeatureAccess;
 use Application\Service\PushService;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
@@ -20,8 +21,7 @@ use User\Entity\User;
  * passe au suivant. Le joueur est prevenu sur le site, par email et par
  * notification "Parties" s'il l'a activee.
  *
- * En phase de test (config queue.restricted), seuls les admins (GOD compris)
- * voient et rejoignent la file.
+ * Qui voit et rejoint la file : config features.queue.
  *
  * Propositions automatiques (config queue.auto_offer) : sans elles (mode
  * manuel), une place liberee reste libre jusqu'a ce qu'un admin la propose a
@@ -46,7 +46,7 @@ class QueueManager
     private GameManager $gameManager;
     private PushService $pushService;
     private AuthService $authService;
-    private bool $restricted;
+    private FeatureAccess $features;
     private bool $autoOffer;
     private string $siteUrl;
 
@@ -55,7 +55,7 @@ class QueueManager
         GameManager $gameManager,
         PushService $pushService,
         AuthService $authService,
-        bool $restricted,
+        FeatureAccess $features,
         bool $autoOffer,
         string $siteUrl
     ) {
@@ -63,17 +63,17 @@ class QueueManager
         $this->gameManager = $gameManager;
         $this->pushService = $pushService;
         $this->authService = $authService;
-        $this->restricted = $restricted;
+        $this->features = $features;
         $this->autoOffer = $autoOffer;
         $this->siteUrl = rtrim($siteUrl, '/');
     }
 
     /**
-     * Le joueur peut-il voir et rejoindre la file ? (admins seulement en phase de test)
+     * Le joueur peut-il voir et rejoindre la file ? (config features.queue)
      */
     public function isAvailableFor(?User $user): bool
     {
-        return $user !== null && (!$this->restricted || $user->hasAdminAccess());
+        return $this->features->isAllowed(FeatureAccess::QUEUE, $user);
     }
 
     /**

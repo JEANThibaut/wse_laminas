@@ -2,7 +2,7 @@
 namespace Application\Service\Factory;
 
 use Application\Service\PushService;
-use Application\Service\PwaAccessPolicy;
+use Application\Service\FeatureAccess;
 use Doctrine\ORM\EntityManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
@@ -16,7 +16,7 @@ class PushServiceFactory implements FactoryInterface
 
         return new PushService(
             $container->get(EntityManager::class),
-            $container->get(PwaAccessPolicy::class),
+            $container->get(FeatureAccess::class),
             $vapid
         );
     }

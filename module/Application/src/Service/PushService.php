@@ -9,8 +9,9 @@ use User\Entity\User;
 
 /**
  * Notifications Web Push : abonnements des appareils et envoi.
- * Tout passe par PwaAccessPolicy : un compte non autorise ne peut ni
- * s'abonner ni recevoir, quel que soit le destinataire demande.
+ * Tout passe par FeatureAccess (config features.notification) : un compte
+ * non autorise ne peut ni s'abonner ni recevoir, quel que soit le
+ * destinataire demande.
  */
 class PushService
 {
@@ -34,14 +35,14 @@ class PushService
     ];
 
     private EntityManager $entityManager;
-    private PwaAccessPolicy $policy;
+    private FeatureAccess $features;
     /** @var array{subject?: string, public_key?: string, private_key?: string} */
     private array $vapid;
 
-    public function __construct(EntityManager $entityManager, PwaAccessPolicy $policy, array $vapid)
+    public function __construct(EntityManager $entityManager, FeatureAccess $features, array $vapid)
     {
         $this->entityManager = $entityManager;
-        $this->policy = $policy;
+        $this->features = $features;
         $this->vapid = $vapid;
     }
 
@@ -60,7 +61,7 @@ class PushService
 
     public function canUse(?User $user): bool
     {
-        return $this->isConfigured() && $this->policy->isAllowed($user);
+        return $this->isConfigured() && $this->features->isAllowed(FeatureAccess::NOTIFICATION, $user);
     }
 
     /**
@@ -160,7 +161,7 @@ class PushService
      */
     public function findSubscriptions(array $users): array
     {
-        $allowed = array_filter($users, fn ($user) => $this->policy->isAllowed($user));
+        $allowed = array_filter($users, fn ($user) => $this->features->isAllowed(FeatureAccess::NOTIFICATION, $user));
         if (!$allowed) {
             return [];
         }
@@ -192,7 +193,7 @@ class PushService
             $unique[$user->getIdUser()] = $user;
         }
         $users = array_values($unique);
-        $allowed = array_values(array_filter($users, fn ($user) => $this->policy->isAllowed($user)));
+        $allowed = array_values(array_filter($users, fn ($user) => $this->features->isAllowed(FeatureAccess::NOTIFICATION, $user)));
         $wanted = array_values(array_filter($allowed, fn ($user) => $this->getPreferences($user)[$category] ?? false));
         $byUser = $this->findSubscriptions($wanted);
         $report = [

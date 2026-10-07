@@ -1,10 +1,12 @@
 <?php $activeMenu = $this->layout()->getVariable('activeMenu') ?? ''; ?>
 <?php $disablePtr = $this->layout()->getVariable('disablePtr') ?? false; ?>
 <?php $isFunny = true; ?>
-<?php // Application installable : uniquement les comptes autorises (config 'pwa') ?>
-<?php $pwa = $this->pwaAccess($this->currentUser); ?>
-<?php // Notifications : meme restriction, et seulement si les cles VAPID sont configurees ?>
-<?php $pushKey = $pwa ? $this->pushPublicKey($this->currentUser) : ''; ?>
+<?php // Bouton "Installer l'application" : config features.pwa ?>
+<?php $pwa = $this->featureAccess('pwa', $this->currentUser); ?>
+<?php // Notifications : config features.notification, et seulement si les cles VAPID sont configurees ?>
+<?php $pushKey = $this->pushPublicKey($this->currentUser); ?>
+<?php // Manifeste et service worker : pour l'installation comme pour les notifications ?>
+<?php $pwaBase = $pwa || $pushKey !== ''; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= $this->headTitle('Wolf Soft Eure') ?>
 
-    <?php if ($pwa): ?>
+    <?php if ($pwaBase): ?>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#212529">
     <link rel="apple-touch-icon" href="/images/pwa/apple-touch-icon.png">
@@ -356,7 +358,7 @@
 <!-- Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
-<?php if ($pwa): ?>
+<?php if ($pwaBase): ?>
 <!-- Installation sur iPhone / iPad : Apple ne permet que l'ajout manuel a l'ecran d'accueil -->
 <div class="modal fade" id="pwaIosModal" tabindex="-1" aria-labelledby="pwaIosModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

@@ -1,15 +1,15 @@
 <?php
 namespace Application\View\Helper\Factory;
 
-use Application\Service\PwaAccessPolicy;
-use Application\View\Helper\PwaAccess;
+use Application\Service\FeatureAccess as FeatureAccessService;
+use Application\View\Helper\FeatureAccess;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
-class PwaAccessFactory implements FactoryInterface
+class FeatureAccessFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
-        return new PwaAccess($container->get(PwaAccessPolicy::class));
+        return new FeatureAccess($container->get(FeatureAccessService::class));
     }
 }

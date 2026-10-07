@@ -8,7 +8,7 @@ use Laminas\View\Model\JsonModel;
 
 /**
  * Abonnement / desabonnement d'un appareil aux notifications, appele en
- * JSON par public/js/push.js. Reserve aux comptes autorises (PwaAccessPolicy).
+ * JSON par public/js/push.js. Reserve aux comptes autorises (config features.notification).
  */
 class PushController extends AbstractActionController
 {
