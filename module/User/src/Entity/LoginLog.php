@@ -25,6 +25,8 @@ class LoginLog
     public const STATE_UNKNOWN_EMAIL = 'unknown_email';
     // Deconnexion volontaire
     public const STATE_LOGOUT = 'logout';
+    // Bon mot de passe, mais compte bloque (blacklist)
+    public const STATE_BLOCKED = 'blocked';
 
     public const STATE_LABELS = [
         self::STATE_SUCCESS => 'Connexion',
@@ -32,6 +34,7 @@ class LoginLog
         self::STATE_WRONG_PASSWORD => 'Mauvais mot de passe',
         self::STATE_UNKNOWN_EMAIL => 'Email inconnu',
         self::STATE_LOGOUT => 'Déconnexion',
+        self::STATE_BLOCKED => 'Compte bloqué',
     ];
 
     /**

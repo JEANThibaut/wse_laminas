@@ -27,6 +27,10 @@ class AuthService
     // Domaines d'email refuses, lus une fois par requete (table blocked_email_domain)
     private ?array $blockedEmailDomains = null;
 
+    public const BLOCKED_ACCOUNT_MESSAGE = "Ce compte est bloqué. Contactez-nous si vous pensez qu'il s'agit d'une erreur.";
+    // Derniere tentative de connexion refusee parce que le compte est bloque
+    private bool $lastLoginBlocked = false;
+
     public const BLOCKED_EMAIL_MESSAGE = "Les adresses email jetables ne sont pas acceptées. Merci d'utiliser votre adresse personnelle.";
 
     public function __construct(EntityManager $entityManager, AuthenticationService $authenticationService, array $mailSettings = [], array $trustedProxies = [])
@@ -111,7 +115,14 @@ class AuthService
             return false;
         }
 
+        $this->lastLoginBlocked = false;
         if (password_verify($password, $user->getPassword())) {
+            // Compte bloque : refuse, et signale seulement avec le bon mot de passe
+            if ($user->isBlocked()) {
+                $this->lastLoginBlocked = true;
+                $this->logLogin(LoginLog::STATE_BLOCKED, $email, $user, $request);
+                return false;
+            }
             // store only the user id in session so we can re-hydrate on each request
             $this->authenticationService->getStorage()->write($user->getIdUser());
             $this->logLogin($afterSignup ? LoginLog::STATE_SIGNUP : LoginLog::STATE_SUCCESS, $email, $user, $request);
@@ -185,7 +196,21 @@ class AuthService
     {
         $id = $this->authenticationService->getIdentity();
         if (!$id) return null;
-        return $this->entityManager->getRepository(User::class)->find($id);
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        // Compte bloque pendant sa session : deconnecte a la requete suivante
+        if ($user && $user->isBlocked()) {
+            $this->authenticationService->clearIdentity();
+            return null;
+        }
+        return $user;
+    }
+
+    /**
+     * La derniere connexion a-t-elle ete refusee parce que le compte est bloque ?
+     */
+    public function wasLastLoginBlocked(): bool
+    {
+        return $this->lastLoginBlocked;
     }
     public function getStorage()
     {

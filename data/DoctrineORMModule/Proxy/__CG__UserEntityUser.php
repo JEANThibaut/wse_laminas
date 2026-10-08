@@ -400,6 +400,17 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function isBlocked(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isBlocked', []);
+
+        return parent::isBlocked();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setIsBlacklist(bool $blacklist): \User\Entity\User
     {
 

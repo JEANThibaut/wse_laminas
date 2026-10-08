@@ -184,8 +184,9 @@ class AdminController extends AbstractActionController
 
     /**
      * GOD MODE > Purge emails : comptes dont l'adresse est sur un domaine
-     * interdit. Apercu, puis purge : le compte est garde mais desactive,
-     * desinscrit des parties a venir et retire des files d'attente.
+     * interdit. Apercu, puis purge : le compte est garde mais desactive et
+     * blackliste (connexion refusee), desinscrit des parties a venir et retire
+     * des files d'attente.
      * Le GOD n'est jamais concerne ; les parties passees ne sont pas touchees.
      */
     public function emailPurgeAction()
@@ -200,7 +201,9 @@ class AdminController extends AbstractActionController
             $registerCount = 0;
             $offers = [];
             foreach ($candidates as ['user' => $user, 'registers' => $registers, 'entries' => $entries]) {
+                // Desactive et blackliste : connexion refusee, session en cours fermee
                 $user->setIsActive(false);
+                $user->setIsBlacklist(true);
                 foreach ($registers as $register) {
                     $register->setStatus(GameRegister::STATUS_CANCELLED);
                     $register->setArrivedNumber(0);
@@ -261,7 +264,7 @@ class AdminController extends AbstractActionController
                 'user' => $user,
                 'status' => QueueEntry::OPEN_STATUSES,
             ]);
-            if (!$user->isDeactivated() || $registers || $entries) {
+            if (!$user->isDeactivated() || !$user->isBlocked() || $registers || $entries) {
                 $candidates[] = ['user' => $user, 'registers' => $registers, 'entries' => $entries];
             }
         }

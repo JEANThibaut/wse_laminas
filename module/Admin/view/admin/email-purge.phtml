@@ -7,8 +7,8 @@
     </div>
     <p class="small text-muted">
         Comptes dont l'adresse est sur un domaine interdit. La purge garde le compte mais le
-        <b>désactive</b>, le <b>désinscrit des parties à venir</b> et le retire des files d'attente,
-        sans le prévenir. Les parties passées ne sont pas touchées ; votre compte n'est jamais concerné.
+        <b>désactive et le blackliste</b> (connexion refusée), le <b>désinscrit des parties à venir</b>
+        et le retire des files d'attente, sans le prévenir. Les parties passées ne sont pas touchées ; votre compte n'est jamais concerné.
     </p>
 
     <?php if (empty($candidates)): ?>
@@ -24,6 +24,7 @@
                     <div class="small text-muted"><?= $this->escapeHtml($user->getEmail()) ?></div>
                     <div class="small">
                         <?= !$user->isDeactivated() ? 'Compte actif' : '<span class="text-muted">Déjà désactivé</span>' ?>
+                        · <?= $user->isBlocked() ? '<span class="text-muted">déjà blacklisté</span>' : 'non blacklisté' ?>
                         <?php foreach ($registers as $register): ?>
                             · inscrit le <?= $this->escapeHtml($register->getGame()->getDate()->format('d/m/Y')) ?>
                         <?php endforeach; ?>

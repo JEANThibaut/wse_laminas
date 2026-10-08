@@ -41,7 +41,9 @@ class AuthController extends AbstractActionController
                     $this->flashMessenger()->addSuccessMessage("Connexion réussie.");
                     return $this->redirect()->toRoute('home');
                 } else {
-                    $message = "Identifiants incorrects.";
+                    $message = $this->authService->wasLastLoginBlocked()
+                        ? AuthService::BLOCKED_ACCOUNT_MESSAGE
+                        : "Identifiants incorrects.";
                 }
             } else {
                 $message = "Veuillez remplir tous les champs correctement.";

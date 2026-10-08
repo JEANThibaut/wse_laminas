@@ -8,8 +8,9 @@ $stateIcons = [
     LoginLog::STATE_WRONG_PASSWORD => 'fa-key text-danger',
     LoginLog::STATE_UNKNOWN_EMAIL => 'fa-circle-question text-warning',
     LoginLog::STATE_LOGOUT => 'fa-right-from-bracket text-secondary',
+    LoginLog::STATE_BLOCKED => 'fa-ban text-danger',
 ];
-$failureStates = [LoginLog::STATE_WRONG_PASSWORD, LoginLog::STATE_UNKNOWN_EMAIL];
+$failureStates = [LoginLog::STATE_WRONG_PASSWORD, LoginLog::STATE_UNKNOWN_EMAIL, LoginLog::STATE_BLOCKED];
 
 $weekDays = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
 $today = new \DateTimeImmutable('today');

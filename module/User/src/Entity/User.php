@@ -185,6 +185,15 @@ class User
         return $this->blacklist;
     }
 
+    /**
+     * Compte bloque : connexion refusee, session en cours fermee. Jamais le
+     * GOD, pour ne jamais pouvoir s'enfermer dehors. NULL en base = non bloque.
+     */
+    public function isBlocked(): bool
+    {
+        return (bool) $this->blacklist && !$this->isGod();
+    }
+
     public function setIsBlacklist(bool $blacklist): self
     {
         $this->blacklist = $blacklist;
