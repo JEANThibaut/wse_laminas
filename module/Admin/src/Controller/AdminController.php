@@ -182,6 +182,92 @@ class AdminController extends AbstractActionController
         return $view;
     }
 
+    /**
+     * GOD MODE > Purge emails : comptes dont l'adresse est sur un domaine
+     * interdit. Apercu, puis purge : le compte est garde mais desactive,
+     * desinscrit des parties a venir et retire des files d'attente.
+     * Le GOD n'est jamais concerne ; les parties passees ne sont pas touchees.
+     */
+    public function emailPurgeAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $candidates = $this->findPurgeCandidates();
+
+        if ($this->getRequest()->isPost()) {
+            $games = [];
+            $registerCount = 0;
+            $offers = [];
+            foreach ($candidates as ['user' => $user, 'registers' => $registers, 'entries' => $entries]) {
+                $user->setIsActive(false);
+                foreach ($registers as $register) {
+                    $register->setStatus(GameRegister::STATUS_CANCELLED);
+                    $register->setArrivedNumber(0);
+                    $games[$register->getGame()->getIdGame()] = $register->getGame();
+                    $registerCount++;
+                }
+                foreach ($entries as $entry) {
+                    $offers = array_merge($offers, $this->queueManager->removeByAdmin($entry));
+                }
+            }
+            $this->entityManager->flush();
+            // Places liberees : proposees a la file si le mode automatique est actif
+            foreach ($games as $game) {
+                $offers = array_merge($offers, $this->queueManager->fillFreePlaces($game));
+            }
+
+            $this->flashMessenger()->addSuccessMessage(
+                count($candidates) . ' compte(s) désactivé(s), ' . $registerCount . ' inscription(s) annulée(s).'
+            );
+            $this->flashOffers($offers);
+            return $this->redirect()->toRoute('admin-email-purge');
+        }
+
+        $view = new ViewModel(['candidates' => $candidates]);
+        $this->layout()->setVariable('activeMenu', 'admin-email-purge');
+        $view->setTemplate('admin/email-purge');
+        return $view;
+    }
+
+    /**
+     * Comptes a purger : adresse sur un domaine interdit, hors GOD, et encore
+     * quelque chose a faire (compte actif, inscription a venir ou place en file).
+     *
+     * @return array<int, array{user: User, registers: GameRegister[], entries: QueueEntry[]}>
+     */
+    private function findPurgeCandidates(): array
+    {
+        $today = new \DateTime('today', new \DateTimeZone(GameManager::TIMEZONE));
+        $candidates = [];
+        foreach ($this->entityManager->getRepository(User::class)->findBy([], ['lastname' => 'ASC', 'firstname' => 'ASC']) as $user) {
+            if ($user->isGod() || !$this->authService->isEmailDomainBlocked((string) $user->getEmail())) {
+                continue;
+            }
+            $registers = $this->entityManager->createQueryBuilder()
+                ->select('r')
+                ->from(GameRegister::class, 'r')
+                ->join('r.game', 'g')
+                ->where('r.user = :user')
+                ->andWhere('r.status IN (:statuses)')
+                ->andWhere('g.date >= :today')
+                ->setParameter('user', $user)
+                ->setParameter('statuses', GameRegister::PLACE_STATUSES)
+                ->setParameter('today', $today)
+                ->orderBy('g.date', 'ASC')
+                ->getQuery()
+                ->getResult();
+            $entries = $this->entityManager->getRepository(QueueEntry::class)->findBy([
+                'user' => $user,
+                'status' => QueueEntry::OPEN_STATUSES,
+            ]);
+            if (!$user->isDeactivated() || $registers || $entries) {
+                $candidates[] = ['user' => $user, 'registers' => $registers, 'entries' => $entries];
+            }
+        }
+        return $candidates;
+    }
+
     public function emailDomainDeleteAction()
     {
         if ($redirect = $this->requireGod()) {
@@ -690,6 +776,7 @@ class AdminController extends AbstractActionController
             'publication' => ['Publication', 'admin-publication'],
             'faq' => ['FAQ', 'admin-faq'],
             'email-domains' => ['Emails interdits', 'admin-email-domains'],
+            'email-purge' => ['Purge emails', 'admin-email-purge'],
         ] as $key => [$label, $route]) {
             $screens[] = ['key' => $key, 'label' => $label, 'url' => $this->url()->fromRoute($route)];
         }

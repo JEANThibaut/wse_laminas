@@ -293,6 +293,14 @@
                 Emails interdits
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-email-purge') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-email-purge')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Purge emails
+                </a>
+            </li>
             <?php endif; ?>
     </ul>
 

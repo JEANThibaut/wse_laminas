@@ -422,6 +422,17 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function isDeactivated(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isDeactivated', []);
+
+        return parent::isDeactivated();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setIsActive(bool $isActive): \User\Entity\User
     {
 

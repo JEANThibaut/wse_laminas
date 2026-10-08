@@ -142,6 +142,16 @@ return [
                     ],
                 ],
             ],
+            'admin-email-purge' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/email-purge',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'emailPurge',
+                    ],
+                ],
+            ],
             'admin-faq' => [
                 'type' => Literal::class,
                 'options' => [

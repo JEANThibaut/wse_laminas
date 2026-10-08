@@ -197,6 +197,15 @@ class User
         return $this->isActive;
     }
 
+    /**
+     * Desactive seulement si isActive vaut explicitement 0 (NULL = actif,
+     * comme dans UserRepository).
+     */
+    public function isDeactivated(): bool
+    {
+        return $this->isActive !== null && !$this->isActive;
+    }
+
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
