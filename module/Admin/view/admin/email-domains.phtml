@@ -1,0 +1,53 @@
+<div class="card">
+    <h4 class="mb-1">Emails interdits</h4>
+    <p class="small text-muted mb-3">
+        Adresses jetables refusées à l'inscription et au changement d'adresse, dès l'enregistrement.
+        Un domaine refuse aussi ses sous-domaines ; <code>*</code> sert de joker
+        (<code>yopmail.*</code> : yopmail.com, yopmail.fr…).
+        Les comptes existants ne sont pas bloqués : ils sont seulement comptés.
+    </p>
+
+    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-email-domains')) ?>">
+        <label class="form-label" for="blockedDomains">Ajouter des domaines (un par ligne)</label>
+        <textarea name="domains" id="blockedDomains" class="form-control font-monospace mb-2" rows="3" required
+                  placeholder="exemple.com&#10;poubelle.*"></textarea>
+        <button type="submit" class="btn btn-warning w-100">Ajouter</button>
+    </form>
+</div>
+
+<div class="card mt-4">
+    <h4 class="mb-3">Liste (<?= count($domains) ?>)</h4>
+    <?php if (empty($domains)): ?>
+        <p class="text-muted mb-0">Aucun domaine interdit.</p>
+    <?php else: ?>
+        <input type="search" class="form-control mb-2" id="blockedDomainsFilter" placeholder="Filtrer" autocomplete="off">
+        <div class="list-group">
+            <?php foreach ($domains as $domain): ?>
+                <div class="list-group-item d-flex align-items-center px-2 py-2" style="gap: 0.5rem;" data-domain="<?= $this->escapeHtmlAttr($domain->getDomain()) ?>">
+                    <div class="flex-grow-1 text-break">
+                        <div class="font-monospace"><?= $this->escapeHtml($domain->getDomain()) ?></div>
+                        <?php if ($accounts[$domain->getId()] > 0): ?>
+                            <div class="small text-danger"><?= $accounts[$domain->getId()] ?> compte<?= $accounts[$domain->getId()] > 1 ? 's' : '' ?> existant<?= $accounts[$domain->getId()] > 1 ? 's' : '' ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-email-domains-delete')) ?>">
+                        <input type="hidden" name="id" value="<?= $this->escapeHtmlAttr($domain->getId()) ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" title="Retirer" aria-label="Retirer"
+                                onclick="return confirm('Retirer ce domaine de la liste ?');">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <script>
+            // Filtre instantane de la liste
+            document.getElementById('blockedDomainsFilter').addEventListener('input', function () {
+                const q = this.value.trim().toLowerCase();
+                document.querySelectorAll('[data-domain]').forEach((row) => {
+                    row.classList.toggle('d-none', q !== '' && !row.dataset.domain.includes(q));
+                });
+            });
+        </script>
+    <?php endif; ?>
+</div>

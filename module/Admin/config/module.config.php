@@ -122,6 +122,26 @@ return [
                     ],
                 ],
             ],
+            'admin-email-domains' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/email-domains',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'emailDomains',
+                    ],
+                ],
+            ],
+            'admin-email-domains-delete' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/email-domains/delete',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'emailDomainDelete',
+                    ],
+                ],
+            ],
             'admin-faq' => [
                 'type' => Literal::class,
                 'options' => [

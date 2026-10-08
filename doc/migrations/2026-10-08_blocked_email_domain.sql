@@ -1,0 +1,106 @@
+-- Domaines d'email refuses (adresses jetables), GOD MODE > Emails interdits.
+-- Refuse le domaine et ses sous-domaines ; '*' sert de joker (yopmail.*).
+-- Tant que la table n'existe pas, aucune adresse n'est refusee.
+
+CREATE TABLE blocked_email_domain (
+    id INT AUTO_INCREMENT NOT NULL,
+    domain VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE INDEX uniq_blocked_email_domain (domain)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+
+INSERT INTO blocked_email_domain (domain, created_at) VALUES
+-- Yopmail : tous ses domaines, y compris les alias proposes sur yopmail.com
+('yopmail.*', NOW()),
+('cool.fr.nf', NOW()),
+('jetable.fr.nf', NOW()),
+('courriel.fr.nf', NOW()),
+('moncourrier.fr.nf', NOW()),
+('monemail.fr.nf', NOW()),
+('monmail.fr.nf', NOW()),
+('nospam.ze.tc', NOW()),
+('nomail.xl.cx', NOW()),
+('mega.zik.dj', NOW()),
+('speed.1s.fr', NOW()),
+-- Jetable.org
+('jetable.*', NOW()),
+-- Mailinator
+('mailinator.*', NOW()),
+('mailinator2.com', NOW()),
+-- Guerrilla Mail
+('guerrillamail.*', NOW()),
+('guerrillamailblock.com', NOW()),
+('sharklasers.com', NOW()),
+('grr.la', NOW()),
+('pokemail.net', NOW()),
+('spam4.me', NOW()),
+-- 10 Minute Mail et apparentes
+('10minutemail.*', NOW()),
+('20minutemail.com', NOW()),
+-- Temp Mail et apparentes
+('temp-mail.org', NOW()),
+('temp-mail.io', NOW()),
+('tempmail.com', NOW()),
+('tempmail.net', NOW()),
+('tempmailo.com', NOW()),
+('tempail.com', NOW()),
+('tempr.email', NOW()),
+('tempinbox.com', NOW()),
+('tmpmail.org', NOW()),
+('tmpmail.net', NOW()),
+('mytemp.email', NOW()),
+('mail-temp.com', NOW()),
+('emailfake.com', NOW()),
+-- 1secmail
+('1secmail.com', NOW()),
+('1secmail.net', NOW()),
+('1secmail.org', NOW()),
+('esiix.com', NOW()),
+('wwjmp.com', NOW()),
+('xojxe.com', NOW()),
+('yoggm.com', NOW()),
+-- Trashmail
+('trashmail.*', NOW()),
+('trash-mail.com', NOW()),
+-- Fake Mail Generator
+('armyspy.com', NOW()),
+('cuvox.de', NOW()),
+('dayrep.com', NOW()),
+('einrot.com', NOW()),
+('fleckens.hu', NOW()),
+('gustr.com', NOW()),
+('jourrapide.com', NOW()),
+('rhyta.com', NOW()),
+('superrito.com', NOW()),
+('teleworm.us', NOW()),
+-- Autres services jetables connus
+('maildrop.cc', NOW()),
+('mailnesia.com', NOW()),
+('mailcatch.com', NOW()),
+('mailsac.com', NOW()),
+('mailpoof.com', NOW()),
+('getnada.com', NOW()),
+('nada.email', NOW()),
+('dispostable.com', NOW()),
+('discard.email', NOW()),
+('discardmail.com', NOW()),
+('discardmail.de', NOW()),
+('fakeinbox.com', NOW()),
+('fakemail.net', NOW()),
+('emailondeck.com', NOW()),
+('mohmal.com', NOW()),
+('mintemail.com', NOW()),
+('moakt.com', NOW()),
+('spamgourmet.com', NOW()),
+('spambox.us', NOW()),
+('spamdecoy.net', NOW()),
+('throwawaymail.com', NOW()),
+('burnermail.io', NOW()),
+('crazymailing.com', NOW()),
+('harakirimail.com', NOW()),
+('inboxkitten.com', NOW()),
+('anonbox.net', NOW()),
+('byom.de', NOW()),
+('wegwerfmail.de', NOW()),
+('wegwerfmail.net', NOW());

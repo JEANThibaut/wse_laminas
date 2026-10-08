@@ -150,6 +150,10 @@ class AuthController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage('Veuillez entrer une adresse email valide.');
             return $this->redirect()->toRoute('home');
         }
+        if ($this->authService->isEmailDomainBlocked($email)) {
+            $this->flashMessenger()->addErrorMessage(AuthService::BLOCKED_EMAIL_MESSAGE);
+            return $this->redirect()->toRoute('home');
+        }
         if ($this->authService->isEmailTakenByAnother($email, $user)) {
             $this->flashMessenger()->addErrorMessage('Cette adresse email est déjà utilisée par un autre compte.');
             return $this->redirect()->toRoute('home');
@@ -221,6 +225,8 @@ class AuthController extends AbstractActionController
             $errors = [];
             if ($mail !== $mailRaw || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = "Veuillez entrer une adresse email valide.";
+            } elseif ($this->authService->isEmailDomainBlocked($mail)) {
+                $errors[] = AuthService::BLOCKED_EMAIL_MESSAGE;
             }
             if ($firstname !== $firstnameRaw || $firstname === '' || !preg_match('/\A[\p{L}\p{M}\'\-\s]+\z/u', $firstname)) {
                 $errors[] = "Le prenom contient des caracteres invalides.";

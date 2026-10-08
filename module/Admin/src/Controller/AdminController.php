@@ -8,6 +8,8 @@ use Game\Entity\Game;
 use Game\Entity\GameRegister;
 use User\Entity\LoginLog;
 use Application\Entity\FaqItem;
+use Application\Entity\BlockedEmailDomain;
+use Application\Service\AuthService;
 use User\Entity\User;
 use Application\Util\InputSanitizer;
 use Game\Service\GameManager;
@@ -126,6 +128,76 @@ class AdminController extends AbstractActionController
         } else {
             $this->flashMessenger()->addErrorMessage('Facebook : ' . $result['error']);
         }
+    }
+
+    /**
+     * GOD MODE > Emails interdits : domaines refuses (adresses jetables),
+     * modifiables en direct. Ajout de plusieurs domaines d'un coup (un par ligne).
+     */
+    public function emailDomainsAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $repository = $this->entityManager->getRepository(BlockedEmailDomain::class);
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $added = [];
+            $invalid = [];
+            foreach (preg_split('/[\s,;]+/', (string) $request->getPost('domains', ''), -1, PREG_SPLIT_NO_EMPTY) as $input) {
+                $domain = BlockedEmailDomain::normalize($input);
+                if ($domain === '') {
+                    $invalid[] = $input;
+                } elseif (!in_array($domain, $added, true) && !$repository->findOneBy(['domain' => $domain])) {
+                    $this->entityManager->persist(new BlockedEmailDomain($domain));
+                    $added[] = $domain;
+                }
+            }
+            $this->entityManager->flush();
+            if ($added) {
+                $this->flashMessenger()->addSuccessMessage('Ajouté : ' . implode(', ', $added));
+            } elseif (!$invalid) {
+                $this->flashMessenger()->addMessage('Ces domaines sont déjà dans la liste.');
+            }
+            if ($invalid) {
+                $this->flashMessenger()->addErrorMessage('Non valable, ignoré : ' . implode(', ', $invalid));
+            }
+            return $this->redirect()->toRoute('admin-email-domains');
+        }
+
+        $domains = $repository->findBy([], ['domain' => 'ASC']);
+        // Comptes existants concernes, par entree (ils ne sont pas bloques, juste signales)
+        $emails = $this->entityManager->getConnection()->fetchFirstColumn('SELECT email FROM user WHERE email IS NOT NULL');
+        $accounts = [];
+        foreach ($domains as $domain) {
+            $accounts[$domain->getId()] = count(array_filter(
+                $emails,
+                fn ($email) => AuthService::emailMatchesDomain((string) $email, $domain->getDomain())
+            ));
+        }
+
+        $view = new ViewModel(['domains' => $domains, 'accounts' => $accounts]);
+        $this->layout()->setVariable('activeMenu', 'admin-email-domains');
+        $view->setTemplate('admin/email-domains');
+        return $view;
+    }
+
+    public function emailDomainDeleteAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $domain = $this->entityManager->getRepository(BlockedEmailDomain::class)
+                ->find(InputSanitizer::cleanInt($request->getPost('id')));
+            if ($domain) {
+                $this->entityManager->remove($domain);
+                $this->entityManager->flush();
+                $this->flashMessenger()->addSuccessMessage($domain->getDomain() . ' retiré de la liste.');
+            }
+        }
+        return $this->redirect()->toRoute('admin-email-domains');
     }
 
     /**
@@ -617,6 +689,7 @@ class AdminController extends AbstractActionController
             'notifications' => ['Notifications', 'admin-notifications'],
             'publication' => ['Publication', 'admin-publication'],
             'faq' => ['FAQ', 'admin-faq'],
+            'email-domains' => ['Emails interdits', 'admin-email-domains'],
         ] as $key => [$label, $route]) {
             $screens[] = ['key' => $key, 'label' => $label, 'url' => $this->url()->fromRoute($route)];
         }

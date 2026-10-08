@@ -24,6 +24,10 @@ class AuthService
     private array $mailSettings;
     // Proxies publics de l'hebergeur dont on croit X-Forwarded-For (cf. ClientIp)
     private array $trustedProxies;
+    // Domaines d'email refuses, lus une fois par requete (table blocked_email_domain)
+    private ?array $blockedEmailDomains = null;
+
+    public const BLOCKED_EMAIL_MESSAGE = "Les adresses email jetables ne sont pas acceptées. Merci d'utiliser votre adresse personnelle.";
 
     public function __construct(EntityManager $entityManager, AuthenticationService $authenticationService, array $mailSettings = [], array $trustedProxies = [])
     {
@@ -31,6 +35,54 @@ class AuthService
         $this->authenticationService = $authenticationService;
         $this->mailSettings = $mailSettings;
         $this->trustedProxies = $trustedProxies;
+    }
+
+    /**
+     * Le domaine de l'adresse est-il refuse (adresse jetable) ? Liste en base
+     * (GOD MODE > Emails interdits). Une entree refuse le domaine et ses
+     * sous-domaines ; '*' sert de joker (yopmail.*).
+     */
+    public function isEmailDomainBlocked(string $email): bool
+    {
+        foreach ($this->getBlockedEmailDomains() as $blocked) {
+            if (self::emailMatchesDomain($email, (string) $blocked)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * L'adresse correspond-elle a cette entree de la liste (domaine, sous-domaine ou joker) ?
+     */
+    public static function emailMatchesDomain(string $email, string $blocked): bool
+    {
+        $domain = strtolower(trim(substr((string) strrchr(trim($email), '@'), 1)));
+        $blocked = strtolower(trim($blocked));
+        if ($domain === '' || $blocked === '') {
+            return false;
+        }
+        if (str_contains($blocked, '*')) {
+            return fnmatch($blocked, $domain) || fnmatch('*.' . $blocked, $domain);
+        }
+        return $domain === $blocked || str_ends_with($domain, '.' . $blocked);
+    }
+
+    /**
+     * @return string[] domaines refuses ; table absente (migration pas encore
+     * jouee) : aucun, le site continue de fonctionner
+     */
+    private function getBlockedEmailDomains(): array
+    {
+        if ($this->blockedEmailDomains === null) {
+            try {
+                $this->blockedEmailDomains = $this->entityManager->getConnection()
+                    ->fetchFirstColumn('SELECT domain FROM blocked_email_domain');
+            } catch (\Doctrine\DBAL\Exception\TableNotFoundException $e) {
+                $this->blockedEmailDomains = [];
+            }
+        }
+        return $this->blockedEmailDomains;
     }
 
     private function findUserByEmail(string $email): ?User

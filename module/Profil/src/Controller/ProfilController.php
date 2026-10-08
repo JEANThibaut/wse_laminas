@@ -76,6 +76,12 @@ class ProfilController extends AbstractActionController
                 $this->flashMessenger()->addErrorMessage("Adresse email invalide.");
                 return $this->redirect()->toRoute('profil-index');
             }
+            // Adresse jetable refusee, seulement si elle change (un ancien compte peut garder la sienne)
+            if (strcasecmp(trim($data['email']), trim((string) $user->getEmail())) !== 0
+                && $this->authService->isEmailDomainBlocked($data['email'])) {
+                $this->flashMessenger()->addErrorMessage(\Application\Service\AuthService::BLOCKED_EMAIL_MESSAGE);
+                return $this->redirect()->toRoute('profil-index');
+            }
             if (!$birthdate) {
                 $this->flashMessenger()->addErrorMessage("Date de naissance invalide.");
                 return $this->redirect()->toRoute('profil-index');

@@ -143,6 +143,12 @@ class UserController extends AbstractActionController
             // dump($data);
             if(!empty($data['first_name']) && !empty($data['last_name']) && !empty($data['email']) ){
                 $user = $this->entityManager->getRepository(User::class)->findOneBy(['iduser' => $iduser]);
+                if($user && strcasecmp(trim($data['email']), trim((string) $user->getEmail())) !== 0
+                    && $this->authService->isEmailDomainBlocked($data['email'])) {
+                    // Adresse jetable refusee, seulement si elle change
+                    $this->flashMessenger()->addErrorMessage(AuthService::BLOCKED_EMAIL_MESSAGE);
+                    return $this->redirect()->toRoute('admin-edit-user', ['iduser' => $iduser]);
+                }
                 if($user){
                    
                     $user->setFirstName($data['first_name']);
