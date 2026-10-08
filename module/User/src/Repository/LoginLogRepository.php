@@ -5,9 +5,6 @@ use Doctrine\ORM\EntityRepository;
 
 class LoginLogRepository extends EntityRepository
 {
-    // Duree de conservation des logs (RGPD : les IP sont des donnees personnelles)
-    public const RETENTION = '-6 months';
-
     /**
      * Derniers evenements de connexion, les plus recents d'abord. Le terme
      * filtre sur l'email saisi, le nom, le prenom ou l'IP ; l'etat sur un
@@ -50,17 +47,5 @@ class LoginLogRepository extends EntityRepository
             ->setParameter('since', $since)
             ->getQuery()
             ->getSingleScalarResult();
-    }
-
-    /**
-     * Supprime les logs plus anciens que la duree de conservation.
-     */
-    public function purgeExpired(): int
-    {
-        return $this->getEntityManager()->createQuery(
-            'DELETE FROM User\Entity\LoginLog l WHERE l.createdAt < :limit'
-        )
-            ->setParameter('limit', new \DateTime(self::RETENTION))
-            ->execute();
     }
 }

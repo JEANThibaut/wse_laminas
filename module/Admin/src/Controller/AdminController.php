@@ -271,6 +271,87 @@ class AdminController extends AbstractActionController
         return $candidates;
     }
 
+    /**
+     * GOD MODE > Recoupement IP : a partir du journal des connexions, les IP
+     * des adresses jetables, toutes les adresses vues sur ces IP, et plus
+     * largement les IP a plusieurs adresses / adresses a plusieurs IP.
+     * Ce sont des indices (foyer, wifi public, 4G partagent des IP) : aucune action.
+     */
+    public function ipCrossAction()
+    {
+        if ($redirect = $this->requireGod()) {
+            return $redirect;
+        }
+        $connection = $this->entityManager->getConnection();
+
+        // Un couple adresse / IP par ligne : nombre d'evenements, dernier, compte lie
+        $byIp = [];
+        $byEmail = [];
+        $userIds = [];
+        foreach ($connection->fetchAllAssociative(
+            'SELECT LOWER(TRIM(email)) AS email, ip, COUNT(*) AS n, MAX(created_at) AS last, MAX(user_id) AS user_id
+             FROM login_log GROUP BY LOWER(TRIM(email)), ip'
+        ) as $row) {
+            $pair = ['n' => (int) $row['n'], 'last' => new \DateTime($row['last']), 'userId' => $row['user_id'] ? (int) $row['user_id'] : null];
+            $byIp[$row['ip']][$row['email']] = $pair;
+            $byEmail[$row['email']][$row['ip']] = $pair;
+            if ($pair['userId']) {
+                $userIds[$pair['userId']] = true;
+            }
+        }
+
+        // Adresses jetables : saisies a la connexion, ou adresse actuelle du compte lie
+        $users = $userIds ? $this->entityManager->getRepository(User::class)->findBy(['iduser' => array_keys($userIds)]) : [];
+        $usersById = [];
+        foreach ($users as $user) {
+            $usersById[$user->getIdUser()] = $user;
+        }
+        $isDisposable = function (string $email, array $ips) use ($usersById): bool {
+            if ($this->authService->isEmailDomainBlocked($email)) {
+                return true;
+            }
+            foreach ($ips as $pair) {
+                $user = $pair['userId'] ? ($usersById[$pair['userId']] ?? null) : null;
+                if ($user && $this->authService->isEmailDomainBlocked((string) $user->getEmail())) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        $disposable = [];
+        foreach ($byEmail as $email => $ips) {
+            if ($isDisposable($email, $ips)) {
+                $disposable[$email] = $ips;
+            }
+        }
+
+        // IP vues avec au moins une adresse jetable : toutes leurs adresses
+        $suspectIps = [];
+        foreach ($disposable as $ips) {
+            foreach (array_keys($ips) as $ip) {
+                $suspectIps[$ip] = $byIp[$ip];
+            }
+        }
+
+        $multi = fn (array $groups) => array_filter($groups, fn ($items) => count($items) > 1);
+        $sortByCount = function (array $groups): array {
+            uasort($groups, fn ($a, $b) => count($b) <=> count($a));
+            return $groups;
+        };
+
+        $view = new ViewModel([
+            'disposable' => $sortByCount($disposable),
+            'suspectIps' => $sortByCount($suspectIps),
+            'sharedIps' => $sortByCount($multi($byIp)),
+            'multiIpEmails' => $sortByCount($multi($byEmail)),
+            'disposableEmails' => array_fill_keys(array_keys($disposable), true),
+            'usersById' => $usersById,
+        ]);
+        $this->layout()->setVariable('activeMenu', 'admin-ip-cross');
+        $view->setTemplate('admin/ip-cross');
+        return $view;
+    }
+
     public function emailDomainDeleteAction()
     {
         if ($redirect = $this->requireGod()) {
@@ -780,6 +861,7 @@ class AdminController extends AbstractActionController
             'faq' => ['FAQ', 'admin-faq'],
             'email-domains' => ['Emails interdits', 'admin-email-domains'],
             'email-purge' => ['Purge emails', 'admin-email-purge'],
+            'ip-cross' => ['Recoupement IP', 'admin-ip-cross'],
         ] as $key => [$label, $route]) {
             $screens[] = ['key' => $key, 'label' => $label, 'url' => $this->url()->fromRoute($route)];
         }

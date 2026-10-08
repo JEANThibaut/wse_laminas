@@ -152,6 +152,16 @@ return [
                     ],
                 ],
             ],
+            'admin-ip-cross' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/admin/ip-cross',
+                    'defaults' => [
+                        'controller' => AdminController::class,
+                        'action' => 'ipCross',
+                    ],
+                ],
+            ],
             'admin-faq' => [
                 'type' => Literal::class,
                 'options' => [

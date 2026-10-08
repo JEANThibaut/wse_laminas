@@ -4,7 +4,7 @@ namespace User\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Evenement de connexion d'un compte. Conserve LoginLogRepository::RETENTION.
+ * Evenement de connexion d'un compte. Conserve sans limite de duree (trace).
  *
  * @ORM\Entity(repositoryClass="User\Repository\LoginLogRepository")
  * @ORM\Table(name="login_log", indexes={

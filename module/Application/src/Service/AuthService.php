@@ -143,7 +143,7 @@ class AuthService
     }
 
     /**
-     * Journalise un evenement de connexion et purge les logs expires.
+     * Journalise un evenement de connexion (conserve sans limite de duree).
      * En SQL direct et sans jamais lever d'exception : un probleme de log ne
      * doit pas empecher de se connecter.
      */
@@ -160,7 +160,6 @@ class AuthService
                 'user_agent' => $this->truncateOrNull($server['HTTP_USER_AGENT'] ?? null),
                 'created_at' => (new \DateTime())->format('Y-m-d H:i:s'),
             ]);
-            $this->entityManager->getRepository(LoginLog::class)->purgeExpired();
         } catch (\Throwable $e) {
             error_log('login_log : ' . $e->getMessage());
         }

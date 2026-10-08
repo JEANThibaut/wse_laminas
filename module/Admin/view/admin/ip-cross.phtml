@@ -1,0 +1,87 @@
+<?php
+/**
+ * GOD MODE > Recoupement IP. Groupes : cle (adresse ou IP) => [element => ['n', 'last', 'userId']].
+ * Indices seulement : foyer, wifi public ou 4G peuvent partager une IP.
+ */
+$limit = 100;
+
+// Une adresse : rouge si jetable, nom du compte (lien vers sa fiche), badge si bloque
+$renderEmail = function (string $email, ?int $userId) use ($disposableEmails, $usersById): string {
+    $html = '<span class="font-monospace ' . (isset($disposableEmails[$email]) ? 'text-danger fw-semibold' : '') . '">'
+        . $this->escapeHtml($email) . '</span>';
+    $user = $userId ? ($usersById[$userId] ?? null) : null;
+    if ($user) {
+        $html .= ' · <a href="' . $this->escapeHtmlAttr($this->url('admin-edit-user', ['iduser' => $user->getIdUser()])) . '">'
+            . $this->escapeHtml($user->getFirstname() . ' ' . $user->getLastname()) . '</a>';
+        if ($user->isBlocked()) {
+            $html .= ' <span class="badge text-bg-danger">bloqué</span>';
+        }
+    }
+    return $html;
+};
+$renderIp = fn (string $ip): string => '<span class="font-monospace">' . $this->escapeHtml($ip) . '</span>';
+$stats = fn (array $pair): string => '<span class="small text-muted text-nowrap">' . $pair['n'] . ' évén. · ' . $this->escapeHtml($pair['last']->format('d/m/Y')) . '</span>';
+
+// Section en accordeon : chaque groupe (titre) et ses elements
+$sections = [
+    ['id' => 'disposable', 'title' => 'Adresses jetables → IP', 'groups' => $disposable, 'groupIsEmail' => true,
+     'help' => 'Chaque adresse jetable (saisie à la connexion ou adresse actuelle du compte) et les IP qui l\'ont utilisée.'],
+    ['id' => 'suspect', 'title' => 'IP des adresses jetables → toutes leurs adresses', 'groups' => $suspectIps, 'groupIsEmail' => false,
+     'help' => 'Toutes les adresses vues sur une IP utilisée par une adresse jetable : les autres comptes possibles de la même personne.'],
+    ['id' => 'shared', 'title' => 'IP utilisées par plusieurs adresses', 'groups' => $sharedIps, 'groupIsEmail' => false,
+     'help' => 'Sur tout le journal. Attention : un foyer, un wifi public ou la 4G partagent souvent une IP.'],
+    ['id' => 'multi', 'title' => 'Adresses connectées depuis plusieurs IP', 'groups' => $multiIpEmails, 'groupIsEmail' => true,
+     'help' => 'Sur tout le journal. Normal pour un téléphone (l\'IP change en 4G) : à croiser avec les blocs du dessus.'],
+];
+?>
+<div class="card">
+    <h4 class="mb-1">Recoupement IP</h4>
+    <p class="small text-muted mb-3">
+        D'après le journal des connexions (connexions, inscriptions, échecs). Ce sont des indices à vérifier, aucune action n'est faite.
+        Adresses jetables <span class="text-danger fw-semibold">en rouge</span>.
+    </p>
+
+    <div class="accordion" id="ipCross">
+        <?php foreach ($sections as $index => $section): ?>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button <?= $index === 0 ? '' : 'collapsed' ?>" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#ipCross-<?= $section['id'] ?>" aria-expanded="<?= $index === 0 ? 'true' : 'false' ?>">
+                        <?= $this->escapeHtml($section['title']) ?>&nbsp;<span class="badge text-bg-secondary"><?= count($section['groups']) ?></span>
+                    </button>
+                </h2>
+                <div id="ipCross-<?= $section['id'] ?>" class="accordion-collapse collapse <?= $index === 0 ? 'show' : '' ?>">
+                    <div class="accordion-body px-2">
+                        <p class="small text-muted"><?= $this->escapeHtml($section['help']) ?></p>
+                        <?php if (empty($section['groups'])): ?>
+                            <p class="text-muted mb-0">Rien à signaler.</p>
+                        <?php else: ?>
+                            <div class="list-group">
+                                <?php foreach (array_slice($section['groups'], 0, $limit, true) as $key => $items): ?>
+                                    <?php $firstUserId = $section['groupIsEmail'] ? (reset($items)['userId'] ?? null) : null; ?>
+                                    <div class="list-group-item px-2 py-2 text-break">
+                                        <div class="mb-1">
+                                            <?= $section['groupIsEmail'] ? $renderEmail((string) $key, $firstUserId) : $renderIp((string) $key) ?>
+                                            <span class="badge text-bg-light border"><?= count($items) ?> <?= $section['groupIsEmail'] ? 'IP' : 'adresse' . (count($items) > 1 ? 's' : '') ?></span>
+                                        </div>
+                                        <ul class="list-unstyled small mb-0 ps-3">
+                                            <?php foreach ($items as $item => $pair): ?>
+                                                <li>
+                                                    <?= $section['groupIsEmail'] ? $renderIp((string) $item) : $renderEmail((string) $item, $pair['userId']) ?>
+                                                    <?= $stats($pair) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php if (count($section['groups']) > $limit): ?>
+                                <p class="small text-muted mt-2 mb-0">Les <?= $limit ?> premiers sur <?= count($section['groups']) ?>, les plus fournis d'abord.</p>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
