@@ -157,6 +157,21 @@
                 <?php endif ?>            
                 Mon profil</a>
             </li>
+            <?php // Messagerie : config features.messagerie ; null = pas d'acces, entree masquee ?>
+            <?php $unreadMessages = $this->unreadMessages($this->currentUser); ?>
+            <?php if ($unreadMessages !== null): ?>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'messagerie') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('messagerie')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/customer-care.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Messagerie
+                <?php if ($unreadMessages > 0): ?>
+                    <span class="badge rounded-pill bg-danger ms-1"><?= (int) $unreadMessages ?></span>
+                <?php endif; ?>
+                </a>
+            </li>
+            <?php endif; ?>
             <!-- <li class="nav-item">
                     <a class="nav-link <?= ($activeMenu === 'arsenal') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('arsenal')) ?>">
                     <?php if($isFunny): ?>
@@ -294,6 +309,14 @@
                     <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>
                 Petites annonces
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-messagerie') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-messagerie')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Messagerie
                 </a>
             </li>
             <li class="nav-item">

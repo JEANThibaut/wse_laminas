@@ -1,0 +1,47 @@
+<?php use Messagerie\Util\MemberName; ?>
+<div class="card">
+    <h4 class="mb-3"><i class="fa-solid fa-envelope me-2"></i>Messagerie</h4>
+
+    <?php if (!$participants): ?>
+        <p class="text-muted mb-0">
+            Aucune conversation. Pour écrire à un membre, utilisez le bouton « Contacter » d'une
+            <a href="<?= $this->escapeHtmlAttr($this->url('annonces')) ?>">petite annonce</a>.
+        </p>
+    <?php else: ?>
+        <div class="list-group">
+            <?php foreach ($participants as $participant): ?>
+                <?php
+                $conversation = $participant->getConversation();
+                $unread = in_array($conversation->getId(), $unreadIds, true);
+                $last = $conversation->getLastMessage();
+                $from = $conversation->isAdmin() ? MemberName::ADMIN_LABEL : MemberName::of($conversation->otherUser($user));
+                ?>
+                <a href="<?= $this->escapeHtmlAttr($this->url('messagerie-conversation', ['id' => $conversation->getId()], ['fragment' => 'fin'])) ?>"
+                   class="list-group-item list-group-item-action px-2 py-2 <?= $unread ? 'list-group-item-warning' : '' ?>">
+                    <div class="d-flex justify-content-between align-items-start" style="gap: .5rem;">
+                        <div class="text-break" style="min-width: 0;">
+                            <div class="<?= $unread ? 'fw-bold' : 'fw-semibold' ?>">
+                                <?php if ($conversation->isAdmin()): ?>
+                                    <span class="badge bg-dark me-1"><i class="fa-solid fa-shield-halved"></i></span>
+                                <?php endif; ?>
+                                <?= $this->escapeHtml($from) ?>
+                            </div>
+                            <div class="small text-muted"><?= $this->escapeHtml($conversation->getSubject()) ?></div>
+                            <?php if ($last): ?>
+                                <div class="small text-truncate" style="max-width: 70vw;">
+                                    <?= $last->isFrom($user) ? '<span class="text-muted">Vous :</span> ' : '' ?><?= $this->escapeHtml(mb_substr($last->getBody(), 0, 120)) ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="text-end flex-shrink-0">
+                            <small class="text-muted d-block"><?= $this->escapeHtml($conversation->getLastMessageAt()->format('d/m H:i')) ?></small>
+                            <?php if ($unread): ?>
+                                <span class="badge bg-danger">Nouveau</span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>

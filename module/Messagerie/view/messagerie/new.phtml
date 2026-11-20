@@ -1,0 +1,24 @@
+<?php
+use Messagerie\Entity\Message;
+use Messagerie\Util\MemberName;
+?>
+<div class="card">
+    <div class="d-flex align-items-center mb-3" style="gap: .5rem;">
+        <a href="<?= $this->escapeHtmlAttr($this->url('annonces-view', ['id' => $annonce->getId()])) ?>" class="btn btn-sm btn-light" title="Retour à l'annonce"><i class="fa-solid fa-arrow-left"></i></a>
+        <div class="text-break" style="min-width: 0;">
+            <div class="fw-semibold">Écrire à <?= $this->escapeHtml(MemberName::of($annonce->getUser())) ?></div>
+            <div class="small text-muted"><?= $this->escapeHtml($annonce->getTitle()) ?></div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning small py-2">
+        Restez sur la messagerie du site. Ne payez jamais à l'avance une personne que vous ne connaissez pas :
+        privilégiez la remise en main propre, dans un lieu public.
+    </div>
+
+    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('messagerie-new', ['annonce' => $annonce->getId()])) ?>">
+        <textarea name="body" class="form-control mb-2" rows="5" required maxlength="<?= Message::BODY_MAX ?>"
+                  placeholder="Bonjour, votre annonce m'intéresse…"><?= $this->escapeHtml($draft) ?></textarea>
+        <button type="submit" class="btn btn-success"><i class="fa-solid fa-paper-plane me-1"></i>Envoyer</button>
+    </form>
+</div>

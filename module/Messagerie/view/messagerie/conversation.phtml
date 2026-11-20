@@ -1,0 +1,107 @@
+<?php
+use Messagerie\Entity\Message;
+use Messagerie\Util\MemberName;
+
+$annonce = $conversation->getAnnonce();
+?>
+<style>
+    .msg-thread { display: flex; flex-direction: column; gap: .5rem; }
+    .msg-bubble { max-width: 85%; padding: .5rem .75rem; white-space: pre-line; overflow-wrap: anywhere; }
+    .msg-mine { align-self: flex-end; background: #d1e7dd; }
+    .msg-theirs { align-self: flex-start; background: #f1f3f5; }
+    .msg-admin { align-self: stretch; max-width: 100%; background: #fff3cd; }
+    .msg-new { box-shadow: inset 3px 0 0 #dc3545; }
+    .msg-meta { font-size: .75rem; color: #6c757d; }
+</style>
+
+<div class="card">
+    <div class="d-flex align-items-center mb-2" style="gap: .5rem;">
+        <a href="<?= $this->escapeHtmlAttr($this->url('messagerie')) ?>" class="btn btn-sm btn-light" title="Retour"><i class="fa-solid fa-arrow-left"></i></a>
+        <div class="flex-grow-1 text-break" style="min-width: 0;">
+            <div class="fw-semibold">
+                <?php if ($conversation->isAdmin()): ?>
+                    <i class="fa-solid fa-shield-halved me-1"></i><?= $this->escapeHtml(MemberName::ADMIN_LABEL) ?>
+                <?php else: ?>
+                    <?= $this->escapeHtml(MemberName::of($other)) ?>
+                <?php endif; ?>
+            </div>
+            <div class="small text-muted">
+                <?php if ($annonce && ($annonce->isOnline() || $annonce->isOwnedBy($user))): ?>
+                    <a href="<?= $this->escapeHtmlAttr($this->url('annonces-view', ['id' => $annonce->getId()])) ?>"><?= $this->escapeHtml($conversation->getSubject()) ?></a>
+                <?php else: ?>
+                    <?= $this->escapeHtml($conversation->getSubject()) ?>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Options">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <?php if ($other): ?>
+                    <li>
+                        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('messagerie-block')) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $conversation->getId() ?>">
+                            <button type="submit" class="dropdown-item <?= $iBlocked ? '' : 'text-danger' ?>"
+                                    <?= $iBlocked ? '' : "onclick=\"return confirm('Bloquer ce membre ? Il ne pourra plus vous écrire.');\"" ?>>
+                                <i class="fa-solid fa-ban me-1"></i><?= $iBlocked ? 'Débloquer ce membre' : 'Bloquer ce membre' ?>
+                            </button>
+                        </form>
+                    </li>
+                <?php endif; ?>
+                <li>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('messagerie-archive')) ?>">
+                        <input type="hidden" name="id" value="<?= (int) $conversation->getId() ?>">
+                        <button type="submit" class="dropdown-item"><i class="fa-solid fa-box-archive me-1"></i>Archiver</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="msg-thread mb-3">
+        <?php foreach ($conversation->getMessages() as $message): ?>
+            <?php
+            $mine = $message->isFrom($user);
+            $isNew = !$mine && ($previousRead === null || $message->getCreatedAt() > $previousRead);
+            $class = $conversation->isAdmin() ? 'msg-admin' : ($mine ? 'msg-mine' : 'msg-theirs');
+            ?>
+            <div class="msg-bubble <?= $class ?> <?= $isNew ? 'msg-new' : '' ?>">
+                <div><?= $this->escapeHtml($message->getBody()) ?></div>
+                <div class="msg-meta text-end mt-1"><?= $this->escapeHtml($message->getCreatedAt()->format('d/m/Y H:i')) ?></div>
+            </div>
+        <?php endforeach; ?>
+        <span id="fin"></span>
+    </div>
+
+    <?php if ($conversation->isAdmin()): ?>
+        <p class="small text-muted mb-0"><i class="fa-solid fa-circle-info me-1"></i>Message d'information : il n'est pas possible d'y répondre.</p>
+    <?php elseif (!$other): ?>
+        <p class="small text-muted mb-0">Votre correspondant a quitté le site.</p>
+    <?php elseif ($iBlocked): ?>
+        <p class="small text-muted mb-0">Vous avez bloqué ce membre : débloquez-le (menu <i class="fa-solid fa-ellipsis-vertical"></i>) pour lui écrire.</p>
+    <?php else: ?>
+        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('messagerie-conversation', ['id' => $conversation->getId()])) ?>" class="msg-form">
+            <textarea name="body" class="form-control mb-2" rows="3" required maxlength="<?= Message::BODY_MAX ?>" placeholder="Votre message…"><?= $this->escapeHtml($draft) ?></textarea>
+            <div class="d-flex justify-content-between align-items-center" style="gap: .5rem;">
+                <small class="text-muted">Ne communiquez jamais vos coordonnées bancaires.</small>
+                <button type="submit" class="btn btn-success"><i class="fa-solid fa-paper-plane me-1"></i>Envoyer</button>
+            </div>
+        </form>
+    <?php endif; ?>
+</div>
+
+<script>
+    // Ouverture sur le dernier message (la page defile dans le bloc principal)
+    (function () {
+        var end = document.getElementById('fin');
+        if (end) { end.scrollIntoView({ block: 'end' }); }
+        var form = document.querySelector('.msg-form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                var button = form.querySelector('button[type=submit]');
+                button.disabled = true;
+            });
+        }
+    })();
+</script>

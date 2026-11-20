@@ -1,0 +1,85 @@
+<?php
+use Messagerie\Entity\Conversation;
+use Messagerie\Entity\Message;
+use Messagerie\Service\MessagerieManager;
+
+$audiences = [
+    MessagerieManager::AUDIENCE_ONE => 'Un membre',
+    MessagerieManager::AUDIENCE_MEMBERS => 'Membres de l’association (' . (int) $counts[MessagerieManager::AUDIENCE_MEMBERS] . ')',
+    MessagerieManager::AUDIENCE_ALL => 'Tous les comptes validés (' . (int) $counts[MessagerieManager::AUDIENCE_ALL] . ')',
+];
+?>
+<div class="card">
+    <h4 class="mb-1">Messagerie : message de l'administration</h4>
+    <p class="small text-muted mb-3">
+        Arrive dans la messagerie de chaque destinataire, signé « Administration WSE », sans réponse possible.
+        Les destinataires le voient dès que la messagerie leur est ouverte (config <code>features.messagerie</code>).
+    </p>
+
+    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-messagerie')) ?>">
+        <div class="mb-3">
+            <label class="form-label small fw-semibold mb-1" for="audience">Destinataires</label>
+            <select name="audience" id="audience" class="form-select">
+                <?php foreach ($audiences as $key => $label): ?>
+                    <option value="<?= $key ?>" <?= $values['audience'] === $key ? 'selected' : '' ?>><?= $this->escapeHtml($label) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="mb-3" id="oneUser">
+            <label class="form-label small fw-semibold mb-1" for="user_id">Membre</label>
+            <select name="user_id" id="user_id" class="form-select">
+                <option value="">Choisir…</option>
+                <?php foreach ($users as $option): ?>
+                    <option value="<?= (int) $option['id'] ?>" <?= $values['user_id'] === $option['id'] ? 'selected' : '' ?>><?= $this->escapeHtml($option['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small fw-semibold mb-1" for="subject">Objet</label>
+            <input type="text" name="subject" id="subject" class="form-control" required maxlength="<?= Conversation::SUBJECT_MAX ?>" value="<?= $this->escapeHtmlAttr($values['subject']) ?>">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small fw-semibold mb-1" for="body">Message</label>
+            <textarea name="body" id="body" class="form-control" rows="6" required maxlength="<?= Message::BODY_MAX ?>"><?= $this->escapeHtml($values['body']) ?></textarea>
+        </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="confirm" value="1" id="confirmSend" required>
+            <label class="form-check-label small" for="confirmSend">Je confirme l'envoi à ces destinataires.</label>
+        </div>
+        <button type="submit" class="btn btn-warning"><i class="fa-solid fa-paper-plane me-1"></i>Envoyer</button>
+    </form>
+</div>
+
+<?php if ($batches): ?>
+    <div class="card">
+        <h5 class="mb-2">Derniers envois</h5>
+        <div class="table-responsive">
+            <table class="table table-sm small mb-0">
+                <thead><tr><th>Date</th><th>Objet</th><th class="text-end">Lus</th></tr></thead>
+                <tbody>
+                <?php foreach ($batches as $batch): ?>
+                    <tr>
+                        <td class="text-nowrap"><?= $this->escapeHtml((new DateTime($batch['created_at']))->format('d/m/Y H:i')) ?></td>
+                        <td class="text-break"><?= $this->escapeHtml($batch['subject']) ?></td>
+                        <td class="text-end text-nowrap"><?= (int) $batch['readers'] ?> / <?= (int) $batch['recipients'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+    (function () {
+        var audience = document.getElementById('audience');
+        var one = document.getElementById('oneUser');
+        function toggle() { one.style.display = audience.value === '<?= MessagerieManager::AUDIENCE_ONE ?>' ? '' : 'none'; }
+        audience.addEventListener('change', toggle);
+        toggle();
+    })();
+</script>

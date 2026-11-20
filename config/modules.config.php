@@ -28,6 +28,7 @@ return [
     'Admin',
     'Photo',
     'Annonce',
+    'Messagerie',
     'Faction',
     'Actus',
 ];

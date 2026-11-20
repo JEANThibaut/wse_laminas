@@ -42,6 +42,7 @@
             "Admin\\": "module/Admin/src",
             "Photo\\": "module/Photo/src",
             "Annonce\\" : "module/Annonce/src",
+            "Messagerie\\": "module/Messagerie/src",
             "Faction\\": "module/Faction/src",
             "Actus\\": "module/Actus/src/"
         }

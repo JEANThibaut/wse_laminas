@@ -92,10 +92,12 @@ $photos = $annonce->getPhotos()->toArray();
             </div>
         <?php else: ?>
             <div class="d-flex flex-wrap" style="gap: .5rem;">
-                <?php // Messagerie et signalement : etapes suivantes du chantier ?>
-                <button type="button" class="btn btn-dark" disabled title="Bientôt disponible">
-                    <i class="fa-solid fa-envelope me-1"></i>Contacter
-                </button>
+                <?php if ($annonce->isOnline() && $this->featureAccess('messagerie', $this->currentUser)): ?>
+                    <a href="<?= $this->escapeHtmlAttr($this->url('messagerie-new', ['annonce' => $annonce->getId()])) ?>" class="btn btn-dark">
+                        <i class="fa-solid fa-envelope me-1"></i>Contacter
+                    </a>
+                <?php endif; ?>
+                <?php // Signalement : etape suivante du chantier ?>
                 <button type="button" class="btn btn-outline-danger" disabled title="Bientôt disponible">
                     <i class="fa-solid fa-flag me-1"></i>Signaler
                 </button>
