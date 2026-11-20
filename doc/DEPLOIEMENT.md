@@ -98,6 +98,7 @@ actif.
 
 - `config/autoload/local.php` et `config/autoload/global.php` (identifiants BDD, SMTP)
 - `public/photos/` (uploads utilisateurs)
+- `data/annonces/` (photos des petites annonces)
 - `data/sessions/` (sessions actives)
 
 Une modification de ces fichiers se fait a la main sur le serveur.

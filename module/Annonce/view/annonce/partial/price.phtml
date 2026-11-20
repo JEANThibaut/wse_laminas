@@ -1,0 +1,2 @@
+<?php /** Prix d'une annonce : "120 €" ou "À donner". */ ?>
+<span class="annonce-price"><?= $annonce->isFree() ? 'À donner' : $this->escapeHtml(number_format($annonce->getPrice(), 0, ',', ' ') . ' €') ?></span>

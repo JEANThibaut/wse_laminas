@@ -218,6 +218,9 @@ return [
     //    et envois). Charge aussi le manifeste et le service worker, sans
     //    lesquels les notifications ne marchent pas (iPhone : application installee)
     //  - queue : voir et rejoindre la file d'attente d'une partie complete
+    //  - annonces : espace Petites annonces (menu et pages). Il faut en plus un
+    //    compte valide (email confirme), ni bloque ni desactive. Ouverture a
+    //    tous : passer 'user' a true
     // Les cles VAPID ('push' => ['vapid' => ...]) sont generees au deploiement
     // depuis les secrets GitHub (config/autoload/push.global.php), jamais dans le repo.
     'features' => [
@@ -237,6 +240,12 @@ return [
             'user' => false,
             'admin' => true,
             'super_admin' => true,
+            'god' => true,
+        ],
+        'annonces' => [
+            'user' => false,
+            'admin' => false,
+            'super_admin' => false,
             'god' => true,
         ],
     ],

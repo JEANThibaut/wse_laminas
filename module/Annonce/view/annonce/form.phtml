@@ -1,0 +1,105 @@
+<?php
+use Annonce\Entity\Annonce;
+
+$isNew = $annonce === null;
+$existingPhotos = $annonce ? $annonce->getPhotos()->toArray() : [];
+?>
+<?= $this->partial('annonce/partial/header', ['active' => $isNew ? 'new' : '']) ?>
+
+<div class="card">
+    <h4 class="mb-3"><?= $isNew ? 'Publier une annonce' : 'Modifier mon annonce' ?></h4>
+
+    <?php if ($errors): ?>
+        <div class="alert alert-danger py-2">
+            <ul class="mb-0 ps-3">
+                <?php foreach ($errors as $error): ?>
+                    <li><?= $this->escapeHtml($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <div class="alert alert-info small py-2">
+        <i class="fa-solid fa-circle-info me-1"></i>
+        Seules les annonces <strong>liées à l'airsoft</strong> sont acceptées ; les autres seront supprimées.
+        Pour une réplique, indiquez sa <strong>puissance réelle</strong> (au-delà de 2 joules, ce n'est plus une réplique).
+        Pas de numéro de téléphone ni d'email dans l'annonce : les membres vous contacteront par la messagerie du site.
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="annonceForm"
+          action="<?= $this->escapeHtmlAttr($isNew ? $this->url('annonces-new') : $this->url('annonces-edit', ['id' => $annonce->getId()])) ?>">
+
+        <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Titre</label>
+            <input type="text" class="form-control" id="title" name="title" required minlength="3" maxlength="<?= Annonce::TITLE_MAX ?>"
+                   value="<?= $this->escapeHtmlAttr($values['title']) ?>" placeholder="Ex. : M4 AEG 1,1 J + 3 chargeurs">
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label fw-semibold">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="6" required minlength="10" maxlength="<?= Annonce::DESCRIPTION_MAX ?>"
+                      placeholder="État, puissance, accessoires inclus, remise en main propre…"><?= $this->escapeHtml($values['description']) ?></textarea>
+            <div class="form-text text-end"><span id="descriptionCount">0</span> / <?= Annonce::DESCRIPTION_MAX ?></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label fw-semibold">Prix</label>
+            <div class="d-flex align-items-center flex-wrap" style="gap: .75rem;">
+                <div class="input-group" style="max-width: 12rem;">
+                    <input type="number" class="form-control" id="price" name="price" min="0" max="<?= Annonce::PRICE_MAX ?>" step="1" inputmode="numeric"
+                           value="<?= $this->escapeHtmlAttr($values['price']) ?>" <?= $values['free'] ? 'disabled' : '' ?>>
+                    <span class="input-group-text">€</span>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="checkbox" id="free" name="free" value="1" <?= $values['free'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="free">À donner</label>
+                </div>
+            </div>
+        </div>
+
+        <?php if ($tags): ?>
+            <div class="mb-3">
+                <div class="form-label fw-semibold mb-1">Catégories <small class="text-muted fw-normal">(1 à <?= Annonce::TAGS_MAX ?>)</small></div>
+                <div class="d-flex flex-wrap" style="gap: .4rem;" id="tagList">
+                    <?php foreach ($tags as $tag): ?>
+                        <?php $checked = in_array($tag->getId(), $values['tags'], true); ?>
+                        <input type="checkbox" class="btn-check" name="tags[]" id="tag<?= (int) $tag->getId() ?>" value="<?= (int) $tag->getId() ?>" autocomplete="off" <?= $checked ? 'checked' : '' ?>>
+                        <label class="btn btn-sm btn-outline-secondary" for="tag<?= (int) $tag->getId() ?>"><?= $this->escapeHtml($tag->getLabel()) ?></label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div class="mb-3">
+            <div class="form-label fw-semibold mb-1">Photos <small class="text-muted fw-normal">(1 à <?= Annonce::PHOTOS_MAX ?>, la première sert de vignette)</small></div>
+
+            <?php if ($existingPhotos): ?>
+                <div class="d-flex flex-wrap mb-2" style="gap: .5rem;">
+                    <?php foreach ($existingPhotos as $photo): ?>
+                        <label class="position-relative" style="width: 80px;">
+                            <img src="<?= $this->escapeHtmlAttr($this->url('annonces-photo', ['id' => $photo->getId()])) ?>" class="annonce-cover" alt="">
+                            <span class="d-flex align-items-center small mt-1" style="gap: .25rem;">
+                                <input type="checkbox" class="form-check-input mt-0 js-remove-photo" name="remove_photos[]" value="<?= (int) $photo->getId() ?>">
+                                Supprimer
+                            </span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <input type="file" class="form-control" id="photos" name="photos[]" accept="image/*" multiple
+                   data-existing="<?= count($existingPhotos) ?>" data-max="<?= Annonce::PHOTOS_MAX ?>">
+            <div class="form-text" id="photosHelp">Les photos sont réduites automatiquement ; leur localisation n'est pas conservée.</div>
+            <div class="d-flex flex-wrap mt-2" style="gap: .5rem;" id="photosPreview"></div>
+        </div>
+
+        <div class="d-flex flex-wrap" style="gap: .5rem;">
+            <button type="submit" class="btn btn-success" id="annonceSubmit">
+                <i class="fa-solid fa-check me-1"></i><?= $isNew ? 'Publier' : 'Enregistrer' ?>
+            </button>
+            <a href="<?= $this->escapeHtmlAttr($isNew ? $this->url('annonces-mine') : $this->url('annonces-view', ['id' => $annonce->getId()])) ?>" class="btn btn-light">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script src="/js/annonce-photos.js?v=<?= (int) (@filemtime('public/js/annonce-photos.js') ?: time()) ?>"></script>

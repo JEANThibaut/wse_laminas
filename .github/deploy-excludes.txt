@@ -33,6 +33,7 @@
 ^config/development\.config\.php$
 ^data/sessions/
 ^public/photos/
+^data/annonces/
 
 # Commit deploye, ecrit a part a la fin de chaque deploiement
 ^\.deployed-commit$

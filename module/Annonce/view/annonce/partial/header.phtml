@@ -1,0 +1,40 @@
+<?php
+/**
+ * Haut de chaque page de l'espace : rappel des regles et navigation.
+ * $active : 'index', 'mine' ou 'new'.
+ */
+$active = $active ?? '';
+?>
+<style>
+    .annonce-tabs .btn { white-space: nowrap; }
+    .annonce-cover { aspect-ratio: 1 / 1; object-fit: cover; width: 100%; background: #e9ecef; }
+    .annonce-cover-empty { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; background: #e9ecef; color: #adb5bd; font-size: 2rem; }
+    .annonce-card { padding: 0 !important; height: 100%; }
+    .annonce-card .annonce-card-body { padding: .5rem .6rem; }
+    .annonce-card-title { font-weight: 600; font-size: .95rem; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .annonce-price { font-weight: 700; color: #198754; }
+    .annonce-carousel img { aspect-ratio: 4 / 3; object-fit: contain; background: #212529; width: 100%; }
+    .annonce-description { white-space: pre-line; overflow-wrap: anywhere; }
+</style>
+
+<div class="alert alert-warning small mb-3" role="note">
+    <i class="fa-solid fa-triangle-exclamation me-1"></i>
+    <strong>Espace entre joueurs.</strong> L'association ne vend rien, n'encaisse rien et ne garantit aucune transaction :
+    vous traitez directement avec l'autre membre, sous votre seule responsabilité.
+    Annonces <strong>airsoft uniquement</strong>. Vente et achat de répliques <strong>réservés aux majeurs</strong> ;
+    au-delà de 2 joules, l'objet relève de la réglementation sur les armes.
+    Ne payez jamais à l'avance une personne que vous ne connaissez pas.
+    <a href="<?= $this->escapeHtmlAttr($this->url('annonces-cgu')) ?>" class="alert-link">Conditions d'utilisation</a>
+</div>
+
+<div class="d-flex flex-wrap annonce-tabs mb-3" style="gap: .5rem;">
+    <a href="<?= $this->escapeHtmlAttr($this->url('annonces')) ?>" class="btn btn-sm <?= $active === 'index' ? 'btn-dark' : 'btn-light' ?>">
+        <i class="fa-solid fa-list me-1"></i>Annonces
+    </a>
+    <a href="<?= $this->escapeHtmlAttr($this->url('annonces-mine')) ?>" class="btn btn-sm <?= $active === 'mine' ? 'btn-dark' : 'btn-light' ?>">
+        <i class="fa-solid fa-user me-1"></i>Mes annonces
+    </a>
+    <a href="<?= $this->escapeHtmlAttr($this->url('annonces-new')) ?>" class="btn btn-sm <?= $active === 'new' ? 'btn-dark' : 'btn-success' ?>">
+        <i class="fa-solid fa-plus me-1"></i>Publier
+    </a>
+</div>

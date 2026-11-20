@@ -1,0 +1,73 @@
+<?= $this->partial('annonce/partial/header', ['active' => 'mine']) ?>
+
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="gap: .5rem;">
+        <h4 class="mb-0">Mes annonces</h4>
+        <span class="badge <?= $onlineCount >= $maxOnline ? 'bg-danger' : 'bg-dark' ?>"><?= (int) $onlineCount ?> / <?= (int) $maxOnline ?> en ligne</span>
+    </div>
+
+    <?php if ($restriction): ?>
+        <div class="alert alert-info small py-2 mb-2"><?= $this->escapeHtml($restriction) ?></div>
+    <?php endif; ?>
+
+    <?php if (!$annonces): ?>
+        <p class="text-muted mb-0">Vous n'avez pas encore publié d'annonce.</p>
+    <?php else: ?>
+        <div class="list-group">
+            <?php foreach ($annonces as $annonce): ?>
+                <?php $cover = $annonce->getCoverPhoto(); ?>
+                <div class="list-group-item px-2 py-2">
+                    <div class="d-flex align-items-center" style="gap: .6rem;">
+                        <a href="<?= $this->escapeHtmlAttr($this->url('annonces-view', ['id' => $annonce->getId()])) ?>" style="width: 64px; flex: 0 0 64px;">
+                            <?php if ($cover): ?>
+                                <img src="<?= $this->escapeHtmlAttr($this->url('annonces-photo', ['id' => $cover->getId()])) ?>" class="annonce-cover" alt="" loading="lazy">
+                            <?php else: ?>
+                                <div class="annonce-cover-empty" style="font-size: 1rem;"><i class="fa-regular fa-image"></i></div>
+                            <?php endif; ?>
+                        </a>
+                        <div class="flex-grow-1 text-break" style="min-width: 0;">
+                            <a href="<?= $this->escapeHtmlAttr($this->url('annonces-view', ['id' => $annonce->getId()])) ?>" class="fw-semibold text-dark text-decoration-none">
+                                <?= $this->escapeHtml($annonce->getTitle()) ?>
+                            </a>
+                            <div class="small"><?= $this->partial('annonce/partial/price', ['annonce' => $annonce]) ?></div>
+                            <div class="small text-muted">
+                                <?php if ($annonce->isOnline()): ?>
+                                    <span class="text-success">En ligne</span> jusqu'au <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?>
+                                <?php elseif ($annonce->isExpired()): ?>
+                                    <span class="text-danger">Expirée</span> depuis le <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?>
+                                <?php elseif ($annonce->getStatus() === \Annonce\Entity\Annonce::STATUS_REMOVED): ?>
+                                    <span class="text-danger">Retirée par la modération</span>
+                                <?php else: ?>
+                                    <span class="text-secondary">Retirée</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if (!$annonce->isClosed()): ?>
+                        <div class="d-flex flex-wrap justify-content-end mt-2" style="gap: .4rem;">
+                            <?php if ($renewable[$annonce->getId()] ?? false): ?>
+                                <form method="post" action="<?= $this->escapeHtmlAttr($this->url('annonces-renew')) ?>">
+                                    <input type="hidden" name="id" value="<?= (int) $annonce->getId() ?>">
+                                    <button type="submit" class="btn btn-sm btn-success"><i class="fa-solid fa-rotate me-1"></i>Renouveler</button>
+                                </form>
+                            <?php endif; ?>
+                            <a href="<?= $this->escapeHtmlAttr($this->url('annonces-edit', ['id' => $annonce->getId()])) ?>" class="btn btn-sm btn-warning">
+                                <i class="fa-solid fa-pen"></i><span class="visually-hidden">Modifier</span>
+                            </a>
+                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('annonces-withdraw')) ?>">
+                                <input type="hidden" name="id" value="<?= (int) $annonce->getId() ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Retirer"
+                                        onclick="return confirm('Retirer cette annonce ? Elle ne sera plus visible.');">
+                                    <i class="fa-solid fa-box-archive"></i><span class="visually-hidden">Retirer</span>
+                                </button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+            Les annonces expirées ou retirées sont supprimées définitivement, avec leurs photos, <?= (int) $purgeDays ?> jours plus tard.
+        </p>
+    <?php endif; ?>
+</div>

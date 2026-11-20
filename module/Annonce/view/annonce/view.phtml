@@ -1,0 +1,105 @@
+<?php
+$seller = $annonce->getUser();
+$sellerName = trim((string) $seller->getNickname()) !== '' ? $seller->getNickname() : $seller->getFirstname();
+$photos = $annonce->getPhotos()->toArray();
+?>
+<?= $this->partial('annonce/partial/header', ['active' => '']) ?>
+
+<div class="card p-0">
+    <?php if ($photos): ?>
+        <div id="annonceCarousel" class="carousel slide annonce-carousel" data-bs-ride="false">
+            <?php if (count($photos) > 1): ?>
+                <div class="carousel-indicators">
+                    <?php foreach ($photos as $index => $photo): ?>
+                        <button type="button" data-bs-target="#annonceCarousel" data-bs-slide-to="<?= (int) $index ?>"
+                                class="<?= $index === 0 ? 'active' : '' ?>" aria-label="Photo <?= (int) $index + 1 ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <div class="carousel-inner">
+                <?php foreach ($photos as $index => $photo): ?>
+                    <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                        <img src="<?= $this->escapeHtmlAttr($this->url('annonces-photo', ['id' => $photo->getId()])) ?>" alt="Photo <?= (int) $index + 1 ?>">
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($photos) > 1): ?>
+                <button class="carousel-control-prev" type="button" data-bs-target="#annonceCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Précédente</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#annonceCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Suivante</span>
+                </button>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="p-3">
+        <?php if (!$annonce->isOnline()): ?>
+            <div class="alert alert-secondary small py-2">
+                <?php if ($annonce->isExpired()): ?>
+                    Annonce expirée le <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?> : elle n'est plus visible des autres membres.
+                <?php else: ?>
+                    Annonce retirée : elle n'est plus visible des autres membres.
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <h4 class="mb-1 text-break"><?= $this->escapeHtml($annonce->getTitle()) ?></h4>
+        <div class="fs-5 mb-2"><?= $this->partial('annonce/partial/price', ['annonce' => $annonce]) ?></div>
+
+        <?php if ($annonce->getTags()->count()): ?>
+            <div class="d-flex flex-wrap mb-3" style="gap: .25rem;">
+                <?php foreach ($annonce->getTags() as $tag): ?>
+                    <a href="<?= $this->escapeHtmlAttr($this->url('annonces', [], ['query' => ['tag' => $tag->getId()]])) ?>" class="badge bg-secondary text-decoration-none">
+                        <?= $this->escapeHtml($tag->getLabel()) ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="annonce-description mb-3"><?= $this->escapeHtml($annonce->getDescription()) ?></div>
+
+        <div class="small text-muted mb-3">
+            <i class="fa-solid fa-user me-1"></i><?= $this->escapeHtml($sellerName) ?>
+            · publiée le <?= $this->escapeHtml($annonce->getCreatedAt()->format('d/m/Y')) ?>
+            <?php if ($annonce->isOnline()): ?>
+                · jusqu'au <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?>
+            <?php endif; ?>
+        </div>
+
+        <?php if ($isOwner): ?>
+            <div class="d-flex flex-wrap" style="gap: .5rem;">
+                <?php if (!$annonce->isClosed()): ?>
+                    <a href="<?= $this->escapeHtmlAttr($this->url('annonces-edit', ['id' => $annonce->getId()])) ?>" class="btn btn-warning">
+                        <i class="fa-solid fa-pen me-1"></i>Modifier
+                    </a>
+                <?php endif; ?>
+                <?php if ($canRenew): ?>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('annonces-renew')) ?>">
+                        <input type="hidden" name="id" value="<?= (int) $annonce->getId() ?>">
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-rotate me-1"></i>Renouveler</button>
+                    </form>
+                <?php endif; ?>
+                <?php if (!$annonce->isClosed()): ?>
+                    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('annonces-withdraw')) ?>">
+                        <input type="hidden" name="id" value="<?= (int) $annonce->getId() ?>">
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Retirer cette annonce ? Elle ne sera plus visible.');">
+                            <i class="fa-solid fa-box-archive me-1"></i>Retirer
+                        </button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
+            <div class="d-flex flex-wrap" style="gap: .5rem;">
+                <?php // Messagerie et signalement : etapes suivantes du chantier ?>
+                <button type="button" class="btn btn-dark" disabled title="Bientôt disponible">
+                    <i class="fa-solid fa-envelope me-1"></i>Contacter
+                </button>
+                <button type="button" class="btn btn-outline-danger" disabled title="Bientôt disponible">
+                    <i class="fa-solid fa-flag me-1"></i>Signaler
+                </button>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

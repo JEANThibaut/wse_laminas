@@ -1,0 +1,40 @@
+<?php use Annonce\Service\AnnonceSettings; ?>
+<?= $this->partial('annonce-admin/partial/nav', ['active' => 'settings']) ?>
+
+<div class="card">
+    <h4 class="mb-3">Petites annonces : réglages</h4>
+
+    <div class="alert alert-secondary small py-2">
+        <strong>Qui voit l'espace :</strong> réglé par la fonctionnalité <code>annonces</code> de la config
+        (<code>module/Application/config/module.config.php</code>, section <code>features</code>).
+        Aujourd'hui : GOD seulement. Pour faire tester, ouvrir le niveau <code>super_admin</code> ;
+        pour l'ouverture, passer <code>user</code> à <code>true</code>.
+    </div>
+
+    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces')) ?>">
+        <?php foreach (AnnonceSettings::EDITABLE as $key => [$label, $default, $min, $max]): ?>
+            <div class="mb-3">
+                <label for="<?= $key ?>" class="form-label small fw-semibold mb-1"><?= $this->escapeHtml($label) ?></label>
+                <input type="number" class="form-control" id="<?= $key ?>" name="<?= $key ?>" style="max-width: 10rem;"
+                       min="<?= (int) $min ?>" max="<?= (int) $max ?>" step="1" required value="<?= (int) $values[$key] ?>">
+                <div class="form-text">Par défaut : <?= (int) $default ?></div>
+            </div>
+        <?php endforeach; ?>
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+    </form>
+</div>
+
+<div class="card">
+    <h5>Purge</h5>
+    <p class="small text-muted">
+        Les annonces expirées ou retirées depuis plus de <?= (int) $values[AnnonceSettings::PURGE_DAYS] ?> jours
+        sont supprimées définitivement avec leurs photos, automatiquement une fois par jour
+        (à la première visite de la liste des annonces). Ce bouton lance la purge tout de suite.
+    </p>
+    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces')) ?>">
+        <input type="hidden" name="purge" value="1">
+        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Supprimer définitivement les annonces à purger ?');">
+            <i class="fa-solid fa-broom me-1"></i>Purger maintenant
+        </button>
+    </form>
+</div>

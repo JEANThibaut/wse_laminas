@@ -120,13 +120,16 @@
                 Les photos
             </a>
         </li>
-        <li class="nav-item d-none">
-            <a class="nav-link <?= ($activeMenu === 'annonce-index') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('annonce-index')) ?>">
+        <?php // Petites annonces : config features.annonces (GOD seulement pendant les tests) ?>
+        <?php if ($this->featureAccess('annonces', $this->currentUser)): ?>
+        <li class="nav-item">
+            <a class="nav-link <?= ($activeMenu === 'annonces') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('annonces')) ?>">
                 <?php if($isFunny): ?>
-                    <img class="" src="/images/icones/payment-method.png" alt="type" style="height: 20px; margin-right:10px;">
-                <?php endif ?>    
+                    <img class="mb-1" src="/images/icones/payment-method.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
             Petites annonces</a>
         </li>
+        <?php endif; ?>
         <!-- <li class="nav-item">
             <a class="nav-link <?= ($activeMenu === 'forum') ? 'active' : '' ?>" href="/forum-index">
                 <?php if($isFunny): ?>
@@ -283,6 +286,14 @@
                     <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
                 <?php endif ?>
                 FAQ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-annonces') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-annonces')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Petites annonces
                 </a>
             </li>
             <li class="nav-item">

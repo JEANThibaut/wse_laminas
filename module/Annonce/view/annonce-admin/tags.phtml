@@ -1,0 +1,61 @@
+<?php use Annonce\Entity\AnnonceTag; ?>
+<?= $this->partial('annonce-admin/partial/nav', ['active' => 'tags']) ?>
+
+<div class="card">
+    <h4 class="mb-1">Catégories</h4>
+    <p class="small text-muted mb-3">
+        Proposées à la publication (1 à 3 par annonce) et dans le filtre de recherche.
+        Une catégorie déjà utilisée ne peut pas être supprimée : elle est désactivée.
+    </p>
+
+    <?php if (!$tags): ?>
+        <p class="text-muted">Aucune catégorie.</p>
+    <?php else: ?>
+        <div class="list-group mb-2">
+            <?php $last = count($tags) - 1; ?>
+            <?php foreach (array_values($tags) as $index => $tag): ?>
+                <div class="list-group-item px-2 py-2">
+                    <div class="d-flex align-items-center" style="gap: .5rem;">
+                        <div class="d-flex flex-column" style="gap: .25rem;">
+                            <?php foreach (['up' => ['fa-chevron-up', 'Monter', $index === 0], 'down' => ['fa-chevron-down', 'Descendre', $index === $last]] as $direction => [$icon, $label, $disabled]): ?>
+                                <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces-tag-move')) ?>">
+                                    <input type="hidden" name="id" value="<?= (int) $tag->getId() ?>">
+                                    <input type="hidden" name="direction" value="<?= $direction ?>">
+                                    <button type="submit" class="btn btn-sm btn-light py-0 px-2" title="<?= $label ?>" aria-label="<?= $label ?>" <?= $disabled ? 'disabled' : '' ?>>
+                                        <i class="fa-solid <?= $icon ?>"></i>
+                                    </button>
+                                </form>
+                            <?php endforeach; ?>
+                        </div>
+                        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces-tag-edit')) ?>" class="d-flex flex-wrap align-items-center flex-grow-1" style="gap: .5rem; min-width: 0;">
+                            <input type="hidden" name="id" value="<?= (int) $tag->getId() ?>">
+                            <input type="text" name="label" class="form-control form-control-sm" style="flex: 1 1 10rem; min-width: 0;"
+                                   maxlength="<?= AnnonceTag::LABEL_MAX ?>" required value="<?= $this->escapeHtmlAttr($tag->getLabel()) ?>">
+                            <div class="form-check form-switch mb-0" title="Proposée aux membres">
+                                <input class="form-check-input" type="checkbox" name="is_active" value="1" id="active<?= (int) $tag->getId() ?>" <?= $tag->isActive() ? 'checked' : '' ?>>
+                                <label class="form-check-label small" for="active<?= (int) $tag->getId() ?>">Active</label>
+                            </div>
+                            <span class="badge bg-light text-dark" title="Annonces avec cette catégorie"><?= (int) ($usage[$tag->getId()] ?? 0) ?></span>
+                            <button type="submit" class="btn btn-sm btn-warning" title="Enregistrer" aria-label="Enregistrer"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </form>
+                        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces-tag-delete')) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $tag->getId() ?>">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Supprimer" aria-label="Supprimer"
+                                    onclick="return confirm('Supprimer cette catégorie ?');">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<div class="card">
+    <h5 class="mb-3">Ajouter une catégorie</h5>
+    <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces-tags')) ?>" class="d-flex flex-wrap" style="gap: .5rem;">
+        <input type="text" name="label" class="form-control" style="flex: 1 1 12rem;" maxlength="<?= AnnonceTag::LABEL_MAX ?>" required placeholder="Ex. : Grenades & pyrotechnie">
+        <button type="submit" class="btn btn-success">Ajouter</button>
+    </form>
+</div>

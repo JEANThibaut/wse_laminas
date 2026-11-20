@@ -1,0 +1,18 @@
+<?php
+/** Sous-onglets de GOD MODE > Petites annonces. $active : settings, tags ou cgu. */
+$items = [
+    'settings' => ['admin-annonces', 'fa-sliders', 'Réglages'],
+    'tags' => ['admin-annonces-tags', 'fa-tags', 'Catégories'],
+    'cgu' => ['admin-annonces-cgu', 'fa-file-contract', 'Conditions'],
+];
+?>
+<div class="d-flex flex-wrap align-items-center mb-3" style="gap: .5rem;">
+    <?php foreach ($items as $key => [$route, $icon, $label]): ?>
+        <a href="<?= $this->escapeHtmlAttr($this->url($route)) ?>" class="btn btn-sm <?= $active === $key ? 'btn-dark' : 'btn-light' ?>">
+            <i class="fa-solid <?= $icon ?> me-1"></i><?= $label ?>
+        </a>
+    <?php endforeach; ?>
+    <a href="<?= $this->escapeHtmlAttr($this->url('annonces')) ?>" class="btn btn-sm btn-outline-dark ms-auto">
+        <i class="fa-solid fa-eye me-1"></i>Voir l'espace
+    </a>
+</div>

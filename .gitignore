@@ -14,3 +14,6 @@ config/autoload/local.php
 /EN-PROD
 /PROD
 __pycache__/
+
+# Photos des petites annonces (uploads membres, serveur uniquement)
+/data/annonces

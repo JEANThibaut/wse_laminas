@@ -1,153 +1,261 @@
 <?php
 namespace Annonce\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use User\Entity\User;
 
 /**
+ * Petite annonce d'un membre.
+ *
+ * Une annonce "en ligne" dont la date d'expiration est passee est expiree :
+ * pas de statut a part, la date suffit (aucune tache planifiee necessaire).
+ *
  * @ORM\Entity(repositoryClass="Annonce\Repository\AnnonceRepository")
- * @ORM\Table(name="annonce")
+ * @ORM\Table(name="annonce", indexes={
+ *     @ORM\Index(name="idx_annonce_status_expires", columns={"status", "expires_at"}),
+ *     @ORM\Index(name="idx_annonce_user", columns={"user_id"})
+ * })
  */
 class Annonce
 {
+    public const STATUS_ONLINE = 'online';
+    // Retiree par son auteur
+    public const STATUS_WITHDRAWN = 'withdrawn';
+    // Retiree par la moderation
+    public const STATUS_REMOVED = 'removed';
+
+    public const TITLE_MAX = 80;
+    public const DESCRIPTION_MAX = 1500;
+    public const PRICE_MAX = 100000;
+    public const PHOTOS_MAX = 4;
+    public const TAGS_MAX = 3;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $idannonce;
-
-    /** @ORM\Column(type="datetime") */
-    private $date;
+    private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="User\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="iduser", nullable=false)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="iduser", nullable=false, onDelete="CASCADE")
      */
     private $user;
 
-
-    /** @ORM\Column(type="text") */
+    /** @ORM\Column(type="string", length=80) */
     private $title;
 
     /** @ORM\Column(type="text") */
     private $description;
 
-    
-    /** @ORM\Column(type="text") */
-    private $prix;
+    /**
+     * En euros ; null = a donner.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $price;
 
-    /** @ORM\Column(type="integer") */
-    private $validate;
+    /** @ORM\Column(type="string", length=20) */
+    private $status = self::STATUS_ONLINE;
 
-    /** @ORM\Column(type="text") */
-    private $photo_1;
+    /** @ORM\Column(name="created_at", type="datetime") */
+    private $createdAt;
 
-    /** @ORM\Column(type="text") */
-    private $photo_2;
+    /** @ORM\Column(name="updated_at", type="datetime") */
+    private $updatedAt;
 
-        /** @ORM\Column(type="text") */
-    private $photo_3;
+    /** @ORM\Column(name="expires_at", type="datetime") */
+    private $expiresAt;
 
-    public function getIdannonce()
+    /** @ORM\Column(name="renew_count", type="integer", options={"default": 0}) */
+    private $renewCount = 0;
+
+    /**
+     * Retrait (auteur ou moderation) : point de depart de la purge.
+     *
+     * @ORM\Column(name="closed_at", type="datetime", nullable=true)
+     */
+    private $closedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Annonce\Entity\AnnoncePhoto", mappedBy="annonce", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC", "id" = "ASC"})
+     */
+    private $photos;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Annonce\Entity\AnnonceTag")
+     * @ORM\JoinTable(name="annonce_tag_link",
+     *     joinColumns={@ORM\JoinColumn(name="annonce_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id", onDelete="CASCADE")}
+     * )
+     * @ORM\OrderBy({"position" = "ASC"})
+     */
+    private $tags;
+
+    public function __construct(User $user, \DateTime $expiresAt)
     {
-        return $this->idannonce;
+        $this->user = $user;
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+        $this->expiresAt = $expiresAt;
+        $this->photos = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
-    public function getDate()
+    public function getId(): ?int
     {
-        return $this->date;
+        return $this->id;
     }
 
-    public function setDate($date): self
-    {
-        $this->date = $date;
-        return $this;
-    }
-
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser($user): self
+    public function isOwnedBy(?User $user): bool
     {
-        $this->user = $user;
-        return $this;
+        return $user !== null && $user->getIdUser() === $this->user->getIdUser();
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
-    
-    public function setTitle( $title): self
+
+    public function getDescription(): string
+    {
+        return (string) $this->description;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function isFree(): bool
+    {
+        return $this->price === null;
+    }
+
+    /**
+     * Titre, description, prix (null = a donner) et tags (1 a 3).
+     *
+     * @param AnnonceTag[] $tags
+     */
+    public function update(string $title, string $description, ?int $price, array $tags): self
     {
         $this->title = $title;
-        return $this;
-    }
-  
-     public function getDescription()
-    {
-        return $this->description;
-    }
-    
-    public function setDescription( $description): self
-    {
         $this->description = $description;
+        $this->price = $price;
+        $this->tags->clear();
+        foreach ($tags as $tag) {
+            $this->tags->add($tag);
+        }
+        $this->updatedAt = new \DateTime();
         return $this;
     }
 
-    public function getPrix()
+    public function getStatus(): string
     {
-        return $this->prix;
+        return (string) $this->status;
     }
-    
-    public function setPrix( $prix): self
-    {
-        $this->prix = $prix;
-        return $this;
-    }
-    
-    public function getValidate()
-    {
-        return $this->validate;
-    }
-    
-    public function setValidate( $validate): self
-    {
-        $this->validate = $validate;
-        return $this;
-    }
-  
 
-    public function getPhoto1()
+    public function isOnline(): bool
     {
-        return $this->photo1;
+        return $this->status === self::STATUS_ONLINE && !$this->isExpired();
     }
-    
-    public function setPhoto1( $photo1): self
+
+    public function isExpired(): bool
     {
-        $this->photo1 = $photo1;
+        return $this->status === self::STATUS_ONLINE && $this->expiresAt <= new \DateTime();
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->status !== self::STATUS_ONLINE;
+    }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function getExpiresAt(): \DateTime
+    {
+        return $this->expiresAt;
+    }
+
+    public function getRenewCount(): int
+    {
+        return (int) $this->renewCount;
+    }
+
+    public function renew(\DateTime $expiresAt): self
+    {
+        $this->expiresAt = $expiresAt;
+        $this->renewCount = $this->getRenewCount() + 1;
+        $this->updatedAt = new \DateTime();
         return $this;
     }
-    public function getPhoto2()
+
+    public function close(string $status): self
     {
-        return $this->photo2;
-    }
-    
-    public function setPhoto2( $photo2): self
-    {
-        $this->photo2 = $photo2;
+        $this->status = $status;
+        $this->closedAt = new \DateTime();
         return $this;
     }
-    public function getPhoto3()
+
+    public function getClosedAt(): ?\DateTime
     {
-        return $this->photo3;
+        return $this->closedAt;
     }
-    
-    public function setPhoto3( $photo3): self
+
+    /**
+     * @return Collection<int, AnnoncePhoto>
+     */
+    public function getPhotos(): Collection
     {
-        $this->photo3 = $photo3;
-        return $this;
+        return $this->photos;
+    }
+
+    public function getCoverPhoto(): ?AnnoncePhoto
+    {
+        $first = $this->photos->first();
+        return $first ?: null;
+    }
+
+    public function addPhoto(string $filename): AnnoncePhoto
+    {
+        $last = $this->photos->last();
+        $photo = new AnnoncePhoto($this, $filename, $last ? $last->getPosition() + 1 : 1);
+        $this->photos->add($photo);
+        return $photo;
+    }
+
+    public function removePhoto(AnnoncePhoto $photo): void
+    {
+        $this->photos->removeElement($photo);
+    }
+
+    /**
+     * @return Collection<int, AnnonceTag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function hasTag(AnnonceTag $tag): bool
+    {
+        return $this->tags->contains($tag);
     }
 }

@@ -1,0 +1,57 @@
+<div class="card">
+    <h4 class="mb-1">Petites annonces : conditions d'utilisation</h4>
+    <p class="small text-muted mb-3">
+        Version <?= (int) $cgu->getVersion() ?> du <?= $this->escapeHtml($cgu->getPublishedAt()->format('d/m/Y')) ?>
+    </p>
+
+    <?php if (!$accepted): ?>
+        <div class="alert alert-info small py-2">
+            Avant d'accéder aux Petites annonces, lisez ces conditions <strong>jusqu'en bas</strong> puis acceptez-les.
+        </div>
+    <?php endif; ?>
+
+    <?php // Texte ecrit par le GOD (GOD MODE > Petites annonces > Conditions) : HTML conserve ?>
+    <div id="cguText" class="border p-3 mb-3 bg-light" style="max-height: 55vh; overflow-y: auto;" tabindex="0">
+        <?= $cgu->getContent() ?>
+    </div>
+
+    <?php if ($accepted): ?>
+        <div class="d-flex flex-wrap align-items-center" style="gap: .5rem;">
+            <span class="text-success small"><i class="fa-solid fa-circle-check me-1"></i>Vous avez accepté cette version.</span>
+            <a href="<?= $this->escapeHtmlAttr($this->url('annonces')) ?>" class="btn btn-dark btn-sm ms-auto">Retour aux annonces</a>
+        </div>
+    <?php else: ?>
+        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('annonces-cgu')) ?>">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="accept" name="accept" value="1" disabled required>
+                <label class="form-check-label" for="accept">
+                    J'ai lu et j'accepte les conditions d'utilisation des Petites annonces, et je certifie être majeur.
+                </label>
+                <div class="form-text" id="acceptHelp">Faites défiler le texte jusqu'en bas pour pouvoir cocher la case.</div>
+            </div>
+            <button type="submit" class="btn btn-success" id="acceptButton" disabled>Accepter et continuer</button>
+        </form>
+        <script>
+            (function () {
+                var text = document.getElementById('cguText');
+                var box = document.getElementById('accept');
+                var button = document.getElementById('acceptButton');
+                var help = document.getElementById('acceptHelp');
+                function unlock() {
+                    box.disabled = false;
+                    help.textContent = '';
+                }
+                function check() {
+                    // Marge de quelques pixels : arrondis des ecrans haute densite
+                    if (text.scrollTop + text.clientHeight >= text.scrollHeight - 8) {
+                        unlock();
+                        text.removeEventListener('scroll', check);
+                    }
+                }
+                text.addEventListener('scroll', check);
+                check();
+                box.addEventListener('change', function () { button.disabled = !box.checked; });
+            })();
+        </script>
+    <?php endif; ?>
+</div>
