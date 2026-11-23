@@ -382,6 +382,39 @@ class Annonce extends \Annonce\Entity\Annonce implements \Doctrine\ORM\Proxy\Pro
     /**
      * {@inheritDoc}
      */
+    public function isHidden(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isHidden', []);
+
+        return parent::isHidden();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hide(): \Annonce\Entity\Annonce
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'hide', []);
+
+        return parent::hide();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function restore(): \Annonce\Entity\Annonce
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'restore', []);
+
+        return parent::restore();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getClosedAt(): ?\DateTime
     {
 

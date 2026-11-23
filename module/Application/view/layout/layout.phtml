@@ -319,6 +319,18 @@
                 Messagerie
                 </a>
             </li>
+            <?php $pendingReports = $this->pendingReports($this->currentUser); ?>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'admin-moderation') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-moderation')) ?>">
+                <?php if($isFunny): ?>
+                    <img class="mb-1" src="/images/icones/management.png" alt="type" style="height: 20px; margin-right:10px;">
+                <?php endif ?>
+                Signalements
+                <?php if ($pendingReports > 0): ?>
+                    <span class="badge rounded-pill bg-danger ms-1"><?= (int) $pendingReports ?></span>
+                <?php endif; ?>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link <?= ($activeMenu === 'admin-email-domains') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-email-domains')) ?>">
                 <?php if($isFunny): ?>

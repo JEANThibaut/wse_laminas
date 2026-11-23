@@ -1,0 +1,45 @@
+<?php
+/**
+ * Fenetre "Signaler", une par page. Tout bouton portant data-report-type
+ * (annonce ou message) et data-report-id l'ouvre pour sa cible.
+ */
+use Moderation\Entity\Report;
+?>
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" method="post" action="<?= $this->escapeHtmlAttr($this->url('report')) ?>">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportModalTitle"><i class="fa-solid fa-flag me-2"></i>Signaler</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="type" id="reportType" value="">
+                <input type="hidden" name="id" id="reportId" value="">
+                <label class="form-label small fw-semibold" for="reportReason">Motif</label>
+                <select name="reason" id="reportReason" class="form-select mb-3" required>
+                    <?php foreach (Report::REASONS as $key => $label): ?>
+                        <option value="<?= $key ?>"><?= $this->escapeHtml($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <label class="form-label small fw-semibold" for="reportComment">Précisions <span class="text-muted fw-normal">(facultatif)</span></label>
+                <textarea name="comment" id="reportComment" class="form-control" rows="3" maxlength="<?= Report::COMMENT_MAX ?>"></textarea>
+                <p class="small text-muted mt-2 mb-0">Votre signalement est anonyme pour le membre concerné.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-danger">Envoyer le signalement</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('click', function (event) {
+        var button = event.target.closest('[data-report-type]');
+        if (!button) {
+            return;
+        }
+        document.getElementById('reportType').value = button.dataset.reportType;
+        document.getElementById('reportId').value = button.dataset.reportId;
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('reportModal')).show();
+    });
+</script>

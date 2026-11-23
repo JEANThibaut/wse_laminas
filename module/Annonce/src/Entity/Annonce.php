@@ -25,6 +25,8 @@ class Annonce
     public const STATUS_WITHDRAWN = 'withdrawn';
     // Retiree par la moderation
     public const STATUS_REMOVED = 'removed';
+    // Masquee automatiquement (trop de signalements), en attente de moderation
+    public const STATUS_HIDDEN = 'hidden';
 
     public const TITLE_MAX = 80;
     public const DESCRIPTION_MAX = 1500;
@@ -211,6 +213,34 @@ class Annonce
     {
         $this->status = $status;
         $this->closedAt = new \DateTime();
+        return $this;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->status === self::STATUS_HIDDEN;
+    }
+
+    /**
+     * Masquage en attente de moderation : pas de date de retrait, la purge
+     * ne la touche pas tant que la moderation n'a pas tranche.
+     */
+    public function hide(): self
+    {
+        if ($this->status === self::STATUS_ONLINE) {
+            $this->status = self::STATUS_HIDDEN;
+        }
+        return $this;
+    }
+
+    /**
+     * Signalements classes sans suite : l'annonce masquee revient en ligne.
+     */
+    public function restore(): self
+    {
+        if ($this->status === self::STATUS_HIDDEN) {
+            $this->status = self::STATUS_ONLINE;
+        }
         return $this;
     }
 

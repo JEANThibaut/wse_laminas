@@ -1,0 +1,125 @@
+<?php
+use Messagerie\Util\MemberName;
+use Moderation\Entity\Report;
+use Moderation\Entity\Sanction;
+use Moderation\Service\ModerationManager;
+?>
+<?= $this->partial('moderation-admin/partial/nav', ['active' => 'queue']) ?>
+
+<?php if (!$queue): ?>
+    <div class="card text-muted">Aucun signalement en attente.</div>
+<?php endif; ?>
+
+<?php foreach ($queue as $key => $group): ?>
+    <?php
+    $annonce = $group['annonce'];
+    $message = $group['message'];
+    $author = $authors[$key];
+    // Motif le plus cite, propose comme motif de retrait
+    $reasons = array_count_values(array_map(fn (Report $report) => $report->getReason(), $group['reports']));
+    arsort($reasons);
+    $mainReason = (string) array_key_first($reasons);
+    ?>
+    <div class="card">
+        <div class="d-flex justify-content-between align-items-start flex-wrap mb-2" style="gap: .5rem;">
+            <div class="text-break" style="min-width: 0;">
+                <span class="badge <?= $annonce ? 'bg-primary' : 'bg-info text-dark' ?>"><?= $annonce ? 'Annonce' : 'Message' ?></span>
+                <span class="badge bg-danger"><?= count($group['reports']) ?> signalement(s)</span>
+                <?php if ($annonce && $annonce->isHidden()): ?>
+                    <span class="badge bg-warning text-dark">Masquée automatiquement</span>
+                <?php endif; ?>
+                <div class="fw-semibold mt-1">
+                    <?php if ($annonce): ?>
+                        <a href="<?= $this->escapeHtmlAttr($this->url('annonces-view', ['id' => $annonce->getId()])) ?>" target="_blank" rel="noopener"><?= $this->escapeHtml($annonce->getTitle()) ?></a>
+                    <?php else: ?>
+                        <a href="<?= $this->escapeHtmlAttr($this->url('admin-moderation-conversation', ['id' => $message->getConversation()->getId()], ['query' => ['message' => $message->getId()]])) ?>">Lire la conversation</a>
+                    <?php endif; ?>
+                </div>
+                <div class="small text-muted">
+                    Auteur : <?= $this->escapeHtml($author ? MemberName::of($author['user']) . ' (' . trim($author['user']->getFirstname() . ' ' . $author['user']->getLastname()) . ')' : 'compte supprimé') ?>
+                    <?php if ($author && $author['history']): ?>
+                        · <?= count($author['history']) ?> sanction(s) passée(s)
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="border bg-light p-2 small mb-2" style="white-space: pre-line; overflow-wrap: anywhere; max-height: 10rem; overflow-y: auto;"><?=
+            $this->escapeHtml($annonce ? $annonce->getDescription() : $message->getBody())
+        ?></div>
+
+        <ul class="small mb-3 ps-3">
+            <?php foreach ($group['reports'] as $report): ?>
+                <li>
+                    <strong><?= $this->escapeHtml($report->getReasonLabel()) ?></strong>
+                    — <?= $this->escapeHtml(MemberName::of($report->getReporter())) ?>, <?= $this->escapeHtml($report->getCreatedAt()->format('d/m H:i')) ?>
+                    <?php if ($report->getComment()): ?>
+                        <div class="text-muted fst-italic" style="white-space: pre-line;"><?= $this->escapeHtml($report->getComment()) ?></div>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
+        <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-moderation-decide')) ?>" class="js-decision">
+            <input type="hidden" name="target" value="<?= $this->escapeHtmlAttr($key) ?>">
+            <div class="d-flex flex-wrap mb-2" style="gap: .75rem;">
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="radio" name="decision" id="remove-<?= $key ?>" value="<?= ModerationManager::DECISION_REMOVE ?>" checked>
+                    <label class="form-check-label" for="remove-<?= $key ?>"><?= $annonce ? 'Retirer l’annonce' : 'Retirer le message' ?></label>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="radio" name="decision" id="dismiss-<?= $key ?>" value="<?= ModerationManager::DECISION_DISMISS ?>">
+                    <label class="form-check-label" for="dismiss-<?= $key ?>">Classer sans suite<?= $annonce && $annonce->isHidden() ? ' (remise en ligne)' : '' ?></label>
+                </div>
+            </div>
+            <div class="row g-2 mb-2">
+                <div class="col-12 col-md-4">
+                    <label class="form-label small mb-0">Motif communiqué à l'auteur</label>
+                    <select name="motive" class="form-select form-select-sm">
+                        <?php foreach (Report::REASONS as $reason => $label): ?>
+                            <option value="<?= $reason ?>" <?= $reason === $mainReason ? 'selected' : '' ?>><?= $this->escapeHtml($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-8 col-md-5">
+                    <label class="form-label small mb-0">Sanction<?= $author ? ' (suggérée : ' . $this->escapeHtml(mb_strtolower(Sanction::TYPES[$author['suggested']])) . ')' : '' ?></label>
+                    <select name="sanction" class="form-select form-select-sm js-sanction" <?= $author ? '' : 'disabled' ?>>
+                        <option value="<?= ModerationManager::NO_SANCTION ?>">Aucune</option>
+                        <?php foreach (Sanction::TYPES as $type => $label): ?>
+                            <option value="<?= $type ?>" <?= $author && $type === $author['suggested'] ? 'selected' : '' ?>><?= $this->escapeHtml($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-4 col-md-3 js-days">
+                    <label class="form-label small mb-0">Durée (jours)</label>
+                    <input type="number" name="days" class="form-control form-control-sm" min="1" max="365" value="<?= (int) $suspensionDays ?>">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-sm btn-dark">Valider la décision</button>
+        </form>
+    </div>
+<?php endforeach; ?>
+
+<script>
+    (function () {
+        document.querySelectorAll('.js-decision').forEach(function (form) {
+            var sanction = form.querySelector('.js-sanction');
+            var days = form.querySelector('.js-days');
+            function sync() {
+                // Classer sans suite : pas de sanction proposee par defaut
+                if (form.querySelector('input[name=decision]:checked').value === 'dismiss' && sanction.dataset.touched !== '1') {
+                    sanction.value = 'none';
+                }
+                days.style.visibility = sanction.value === 'suspension' ? 'visible' : 'hidden';
+            }
+            form.querySelectorAll('input[name=decision]').forEach(function (radio) { radio.addEventListener('change', sync); });
+            sanction.addEventListener('change', function () { sanction.dataset.touched = '1'; sync(); });
+            form.addEventListener('submit', function (event) {
+                if (sanction.value === 'blacklist' && !confirm('Bloquer le compte ? Le membre ne pourra plus se connecter.')) {
+                    event.preventDefault();
+                }
+            });
+            sync();
+        });
+    })();
+</script>

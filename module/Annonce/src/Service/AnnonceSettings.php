@@ -22,6 +22,10 @@ class AnnonceSettings
     public const RENEW_WINDOW_DAYS = 'renew_window_days';
     // Suppression definitive (annonce et photos) ce nombre de jours apres expiration ou retrait
     public const PURGE_DAYS = 'purge_days';
+    // Signalements de membres differents qui masquent une annonce en attendant la moderation
+    public const REPORT_THRESHOLD = 'report_threshold';
+    // Duree proposee pour une interdiction temporaire de publier (jours)
+    public const SUSPENSION_DAYS = 'suspension_days';
     // Date de la derniere purge automatique (interne)
     public const LAST_PURGE = 'last_purge';
 
@@ -35,6 +39,8 @@ class AnnonceSettings
         self::MAX_RENEW => ['Renouvellements possibles par annonce', 1, 0, 10],
         self::RENEW_WINDOW_DAYS => ["Renouvellement proposé avant l'expiration (jours)", 7, 0, 60],
         self::PURGE_DAYS => ['Suppression définitive après expiration ou retrait (jours)', 30, 1, 365],
+        self::REPORT_THRESHOLD => ['Signalements avant masquage automatique', 3, 1, 20],
+        self::SUSPENSION_DAYS => ['Durée proposée pour une interdiction temporaire (jours)', 30, 1, 365],
     ];
 
     private EntityManager $entityManager;

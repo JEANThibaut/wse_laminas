@@ -1,0 +1,22 @@
+<?php use Messagerie\Util\MemberName; ?>
+<?= $this->partial('moderation-admin/partial/nav', ['active' => '']) ?>
+
+<div class="card">
+    <h5 class="mb-1">Conversation signalée</h5>
+    <p class="small text-muted mb-3">
+        <?= $this->escapeHtml($conversation->getSubject()) ?> ·
+        <?= $this->escapeHtml(implode(' / ', array_map(fn ($participant) => MemberName::of($participant->getUser()), $conversation->getParticipants()->toArray()))) ?>
+        <br>Consultée uniquement pour traiter un signalement (CGU, article 8).
+    </p>
+    <div class="d-flex flex-column" style="gap: .5rem;">
+        <?php foreach ($conversation->getMessages() as $message): ?>
+            <div class="p-2 <?= $message->getId() === $highlight ? 'border border-danger border-2' : 'border' ?>">
+                <div class="small fw-semibold"><?= $this->escapeHtml(MemberName::of($message->getSender())) ?>
+                    <span class="text-muted fw-normal">· <?= $this->escapeHtml($message->getCreatedAt()->format('d/m/Y H:i')) ?></span>
+                </div>
+                <div class="small" style="white-space: pre-line; overflow-wrap: anywhere;"><?= $this->escapeHtml($message->getBody()) ?></div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <a href="<?= $this->escapeHtmlAttr($this->url('admin-moderation')) ?>" class="btn btn-sm btn-light mt-3"><i class="fa-solid fa-arrow-left me-1"></i>Retour aux signalements</a>
+</div>

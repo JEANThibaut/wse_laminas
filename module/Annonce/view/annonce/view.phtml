@@ -39,6 +39,10 @@ $photos = $annonce->getPhotos()->toArray();
             <div class="alert alert-secondary small py-2">
                 <?php if ($annonce->isExpired()): ?>
                     Annonce expirée le <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?> : elle n'est plus visible des autres membres.
+                <?php elseif ($annonce->isHidden()): ?>
+                    Annonce masquée suite à des signalements, en attente de vérification par la modération.
+                <?php elseif ($annonce->getStatus() === \Annonce\Entity\Annonce::STATUS_REMOVED): ?>
+                    Annonce retirée par la modération : elle n'est plus visible des autres membres.
                 <?php else: ?>
                     Annonce retirée : elle n'est plus visible des autres membres.
                 <?php endif; ?>
@@ -97,11 +101,15 @@ $photos = $annonce->getPhotos()->toArray();
                         <i class="fa-solid fa-envelope me-1"></i>Contacter
                     </a>
                 <?php endif; ?>
-                <?php // Signalement : etape suivante du chantier ?>
-                <button type="button" class="btn btn-outline-danger" disabled title="Bientôt disponible">
-                    <i class="fa-solid fa-flag me-1"></i>Signaler
-                </button>
+                <?php if ($annonce->isOnline()): ?>
+                    <button type="button" class="btn btn-outline-danger" data-report-type="annonce" data-report-id="<?= (int) $annonce->getId() ?>">
+                        <i class="fa-solid fa-flag me-1"></i>Signaler
+                    </button>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
     </div>
 </div>
+<?php if (!$isOwner && $annonce->isOnline()): ?>
+    <?= $this->partial('moderation/partial/report-modal') ?>
+<?php endif; ?>

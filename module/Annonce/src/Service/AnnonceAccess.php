@@ -4,6 +4,7 @@ namespace Annonce\Service;
 use Application\Service\FeatureAccess;
 use Doctrine\ORM\EntityManager;
 use Game\Entity\GameRegister;
+use Moderation\Service\SanctionService;
 use User\Entity\User;
 
 /**
@@ -12,8 +13,9 @@ use User\Entity\User;
  * Voir : fonctionnalite "annonces" ouverte a son niveau (config features :
  * GOD seulement tant que l'espace est en test), compte valide (email
  * confirme), ni bloque ni desactive.
- * Publier : en plus, avoir ete pointe sur une partie passee, ou avoir valide
- * son email depuis au moins N jours (GOD MODE > Petites annonces).
+ * Publier : en plus, ne pas etre interdit de publier par la moderation, et
+ * avoir ete pointe sur une partie passee, ou avoir valide son email depuis
+ * au moins N jours (GOD MODE > Petites annonces).
  * Le GOD passe toujours, pour pouvoir tout tester.
  */
 class AnnonceAccess
@@ -23,12 +25,14 @@ class AnnonceAccess
     private EntityManager $entityManager;
     private FeatureAccess $featureAccess;
     private AnnonceSettings $settings;
+    private SanctionService $sanctions;
 
-    public function __construct(EntityManager $entityManager, FeatureAccess $featureAccess, AnnonceSettings $settings)
+    public function __construct(EntityManager $entityManager, FeatureAccess $featureAccess, AnnonceSettings $settings, SanctionService $sanctions)
     {
         $this->entityManager = $entityManager;
         $this->featureAccess = $featureAccess;
         $this->settings = $settings;
+        $this->sanctions = $sanctions;
     }
 
     public function canAccess(?User $user): bool
@@ -47,7 +51,14 @@ class AnnonceAccess
      */
     public function publishRestriction(User $user): ?string
     {
-        if ($user->isGod() || $this->hasPlayed($user)) {
+        if ($user->isGod()) {
+            return null;
+        }
+        // Interdiction de publier prononcee par la moderation
+        if ($restriction = $this->sanctions->publishRestriction($user)) {
+            return $restriction;
+        }
+        if ($this->hasPlayed($user)) {
             return null;
         }
         $validatedAt = $user->getDateValidation();

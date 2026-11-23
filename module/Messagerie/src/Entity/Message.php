@@ -79,4 +79,19 @@ class Message
     {
         return $this->createdAt;
     }
+
+    public const REDACTED = '[Message retiré par la modération]';
+
+    /**
+     * Retrait par la moderation : le texte est remplace, la trace du message reste.
+     */
+    public function redact(): void
+    {
+        $this->body = self::REDACTED;
+    }
+
+    public function isRedacted(): bool
+    {
+        return $this->body === self::REDACTED;
+    }
 }

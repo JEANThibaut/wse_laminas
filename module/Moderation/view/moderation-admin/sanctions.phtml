@@ -1,0 +1,45 @@
+<?php
+use Messagerie\Util\MemberName;
+use Moderation\Entity\Sanction;
+?>
+<?= $this->partial('moderation-admin/partial/nav', ['active' => 'sanctions']) ?>
+
+<div class="card">
+    <h4 class="mb-3">Sanctions</h4>
+    <?php if (!$sanctions): ?>
+        <p class="text-muted mb-0">Aucune sanction.</p>
+    <?php else: ?>
+        <div class="list-group">
+            <?php foreach ($sanctions as $sanction): ?>
+                <?php $member = $sanction->getUser(); ?>
+                <div class="list-group-item px-2 py-2">
+                    <div class="d-flex justify-content-between align-items-start" style="gap: .5rem;">
+                        <div class="text-break" style="min-width: 0;">
+                            <div class="fw-semibold">
+                                <?= $this->escapeHtml(MemberName::of($member) . ' (' . trim($member->getFirstname() . ' ' . $member->getLastname()) . ')') ?>
+                            </div>
+                            <div class="small">
+                                <span class="badge <?= $sanction->getType() === Sanction::TYPE_WARNING ? 'bg-secondary' : 'bg-danger' ?>"><?= $this->escapeHtml($sanction->getTypeLabel()) ?></span>
+                                <?php if ($sanction->getEndsAt()): ?>
+                                    jusqu'au <?= $this->escapeHtml($sanction->getEndsAt()->format('d/m/Y')) ?>
+                                <?php endif; ?>
+                                <?php if ($sanction->isRevoked()): ?>
+                                    <span class="text-success">· levée</span>
+                                <?php elseif (!$sanction->isActive()): ?>
+                                    <span class="text-muted">· terminée</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="small text-muted"><?= $this->escapeHtml($sanction->getReason()) ?> · <?= $this->escapeHtml($sanction->getCreatedAt()->format('d/m/Y')) ?></div>
+                        </div>
+                        <?php if ($sanction->isActive() && $sanction->getType() !== Sanction::TYPE_WARNING): ?>
+                            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-moderation-revoke')) ?>">
+                                <input type="hidden" name="id" value="<?= (int) $sanction->getId() ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('Lever cette sanction ?');">Lever</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>

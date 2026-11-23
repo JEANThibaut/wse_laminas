@@ -68,7 +68,15 @@ $annonce = $conversation->getAnnonce();
             ?>
             <div class="msg-bubble <?= $class ?> <?= $isNew ? 'msg-new' : '' ?>">
                 <div><?= $this->escapeHtml($message->getBody()) ?></div>
-                <div class="msg-meta text-end mt-1"><?= $this->escapeHtml($message->getCreatedAt()->format('d/m/Y H:i')) ?></div>
+                <div class="msg-meta d-flex justify-content-end align-items-center mt-1" style="gap: .5rem;">
+                    <?php if (!$mine && !$conversation->isAdmin() && !$message->isRedacted()): ?>
+                        <button type="button" class="btn btn-link btn-sm p-0 text-danger msg-meta text-decoration-none"
+                                data-report-type="message" data-report-id="<?= (int) $message->getId() ?>" title="Signaler ce message">
+                            <i class="fa-solid fa-flag"></i> Signaler
+                        </button>
+                    <?php endif; ?>
+                    <span><?= $this->escapeHtml($message->getCreatedAt()->format('d/m/Y H:i')) ?></span>
+                </div>
             </div>
         <?php endforeach; ?>
         <span id="fin"></span>
@@ -90,6 +98,10 @@ $annonce = $conversation->getAnnonce();
         </form>
     <?php endif; ?>
 </div>
+
+<?php if (!$conversation->isAdmin()): ?>
+    <?= $this->partial('moderation/partial/report-modal') ?>
+<?php endif; ?>
 
 <script>
     // Ouverture sur le dernier message (la page defile dans le bloc principal)

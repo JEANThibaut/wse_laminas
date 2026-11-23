@@ -1,0 +1,9 @@
+<?php /** Sous-onglets de GOD MODE > Signalements. $active : queue ou sanctions. */ ?>
+<div class="d-flex flex-wrap mb-3" style="gap: .5rem;">
+    <a href="<?= $this->escapeHtmlAttr($this->url('admin-moderation')) ?>" class="btn btn-sm <?= $active === 'queue' ? 'btn-dark' : 'btn-light' ?>">
+        <i class="fa-solid fa-flag me-1"></i>À traiter
+    </a>
+    <a href="<?= $this->escapeHtmlAttr($this->url('admin-moderation-sanctions')) ?>" class="btn btn-sm <?= $active === 'sanctions' ? 'btn-dark' : 'btn-light' ?>">
+        <i class="fa-solid fa-gavel me-1"></i>Sanctions
+    </a>
+</div>
