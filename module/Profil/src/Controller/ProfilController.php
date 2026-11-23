@@ -32,6 +32,10 @@ class ProfilController extends AbstractActionController
     {
 
         $currentUser = $this->authService->getIdentity();
+        // Visiteur non connecte (adresse tapee a la main) : pas de profil a afficher
+        if (!$currentUser) {
+            return $this->redirect()->toRoute('login');
+        }
         // $form = new \Profil\Form\RepliqueForm();
         $registers = $this->entityManager->getRepository(GameRegister::class)->findBy(['user'=>$currentUser]);
   
@@ -71,7 +75,7 @@ class ProfilController extends AbstractActionController
 
         if ($request->isPost()) {
             $data = InputSanitizer::cleanArray($request->getPost()->toArray());
-            $birthdate = \DateTime::createFromFormat('Y-m-d', $data['birthdate'] ?? '');
+            $birthdate = \DateTime::createFromFormat('!Y-m-d', $data['birthdate'] ?? '');
 
             if (!filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL)) {
                 $this->flashMessenger()->addErrorMessage("Adresse email invalide.");
@@ -87,7 +91,10 @@ class ProfilController extends AbstractActionController
                 $this->flashMessenger()->addErrorMessage("Date de naissance invalide.");
                 return $this->redirect()->toRoute('profil-index');
             }
-            if (!Age::isAdult($birthdate)) {
+            // Seulement si la date change : un compte deja en base (date ancienne ou
+            // fantaisiste) reste modifiable (email, pseudo...) sans toucher a sa date
+            $birthdateChanged = !$user->getBirthdate() || $user->getBirthdate()->format('Y-m-d') !== $birthdate->format('Y-m-d');
+            if ($birthdateChanged && !Age::isAdult($birthdate)) {
                 $this->flashMessenger()->addErrorMessage(Age::MINOR_MESSAGE);
                 return $this->redirect()->toRoute('profil-index');
             }

@@ -15,7 +15,10 @@ final class Age
     public static function isAdult(\DateTimeInterface $birthdate, ?\DateTimeInterface $today = null): bool
     {
         $today ??= new \DateTimeImmutable('today');
-        return $birthdate <= (new \DateTimeImmutable($today->format('Y-m-d')))->modify('-' . self::ADULT . ' years');
+        // Comparaison de dates seules : une date lue sans heure (createFromFormat
+        // sans "!") porte l'heure courante et serait refusee le jour des 18 ans
+        $born = new \DateTimeImmutable($birthdate->format('Y-m-d'));
+        return $born <= (new \DateTimeImmutable($today->format('Y-m-d')))->modify('-' . self::ADULT . ' years');
     }
 
     /**

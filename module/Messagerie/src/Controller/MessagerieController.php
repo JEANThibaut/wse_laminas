@@ -2,6 +2,8 @@
 namespace Messagerie\Controller;
 
 use Annonce\Entity\Annonce;
+use Annonce\Service\AnnonceAccess;
+use Annonce\Service\CguService;
 use Application\Service\AuthService;
 use Application\Util\InputSanitizer;
 use Doctrine\ORM\EntityManager;
@@ -22,13 +24,23 @@ class MessagerieController extends AbstractActionController
     private AuthService $authService;
     private MessagerieAccess $access;
     private MessagerieManager $manager;
+    private AnnonceAccess $annonceAccess;
+    private CguService $cguService;
 
-    public function __construct(EntityManager $entityManager, AuthService $authService, MessagerieAccess $access, MessagerieManager $manager)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        AuthService $authService,
+        MessagerieAccess $access,
+        MessagerieManager $manager,
+        AnnonceAccess $annonceAccess,
+        CguService $cguService
+    ) {
         $this->entityManager = $entityManager;
         $this->authService = $authService;
         $this->access = $access;
         $this->manager = $manager;
+        $this->annonceAccess = $annonceAccess;
+        $this->cguService = $cguService;
     }
 
     public function inboxAction()
@@ -96,6 +108,15 @@ class MessagerieController extends AbstractActionController
             return $redirect;
         }
         $user = $this->currentUser();
+        // Ecrire a un vendeur suppose l'acces aux annonces et leurs CGU acceptees,
+        // meme si la messagerie est ouverte avant les annonces
+        if (!$this->annonceAccess->canAccess($user)) {
+            $this->flashMessenger()->addErrorMessage('Accès refusé.');
+            return $this->redirect()->toRoute('messagerie');
+        }
+        if (!$this->cguService->hasAcceptedCurrent($user)) {
+            return $this->redirect()->toRoute('annonces-cgu');
+        }
         $annonce = $this->entityManager->getRepository(Annonce::class)->find(InputSanitizer::cleanInt($this->params()->fromRoute('annonce')));
         if (!$annonce || !$annonce->isOnline()) {
             $this->flashMessenger()->addErrorMessage("Cette annonce n'est plus en ligne.");

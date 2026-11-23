@@ -145,11 +145,18 @@ class OrganisationManager
         if (!$post->isMultiple() && count($optionIds) > 1) {
             return 'Un seul choix possible.';
         }
+        // Seulement la difference : Doctrine fait les INSERT avant les DELETE,
+        // recreer un vote garde violerait la contrainte unique (option, membre)
+        $kept = [];
         foreach ($this->votesOf($post, $user) as $vote) {
-            $this->entityManager->remove($vote);
+            if (in_array($vote->getOption()->getId(), $optionIds, true)) {
+                $kept[] = $vote->getOption()->getId();
+            } else {
+                $this->entityManager->remove($vote);
+            }
         }
         foreach ($post->getOptions() as $option) {
-            if (in_array($option->getId(), $optionIds, true)) {
+            if (in_array($option->getId(), $optionIds, true) && !in_array($option->getId(), $kept, true)) {
                 $this->entityManager->persist(new PollVote($option, $user));
             }
         }
