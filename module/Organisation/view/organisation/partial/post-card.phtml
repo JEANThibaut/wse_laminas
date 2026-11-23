@@ -1,0 +1,27 @@
+<?php
+/** Resume d'une publication dans le fil. $post */
+use Organisation\Entity\Post;
+use Organisation\Util\FrenchDate;
+
+$icons = [Post::TYPE_MESSAGE => 'fa-message', Post::TYPE_POLL => 'fa-square-poll-vertical', Post::TYPE_EVENT => 'fa-calendar-days'];
+$colors = [Post::TYPE_MESSAGE => 'bg-secondary', Post::TYPE_POLL => 'bg-primary', Post::TYPE_EVENT => 'bg-success'];
+?>
+<a href="<?= $this->escapeHtmlAttr($this->url('organisation-view', ['id' => $post->getId()])) ?>" class="card orga-post text-decoration-none text-dark mb-2">
+    <div class="d-flex align-items-center flex-wrap mb-1" style="gap: .35rem;">
+        <span class="badge <?= $colors[$post->getType()] ?>"><i class="fa-solid <?= $icons[$post->getType()] ?> me-1"></i><?= $this->escapeHtml($post->getTypeLabel()) ?></span>
+        <?php if ($post->isPinned()): ?>
+            <span class="badge bg-warning text-dark"><i class="fa-solid fa-thumbtack me-1"></i>Épinglé</span>
+        <?php endif; ?>
+        <?php if (($post->isPoll() || $post->isEvent()) && $post->isClosed()): ?>
+            <span class="badge bg-light text-dark">Clos</span>
+        <?php endif; ?>
+        <small class="text-muted ms-auto"><?= $this->escapeHtml($post->getCreatedAt()->format('d/m/Y')) ?></small>
+    </div>
+    <div class="fw-semibold text-break"><?= $this->escapeHtml($post->getTitle()) ?></div>
+    <?php if ($post->isEvent() && $post->getStartsAt()): ?>
+        <div class="small text-success"><i class="fa-regular fa-clock me-1"></i><?= $this->escapeHtml(FrenchDate::range($post->getStartsAt(), $post->getEndsAt())) ?></div>
+    <?php endif; ?>
+    <?php if ($post->getBody() !== ''): ?>
+        <div class="small text-muted text-truncate"><?= $this->escapeHtml(mb_substr($post->getBody(), 0, 140)) ?></div>
+    <?php endif; ?>
+</a>

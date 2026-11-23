@@ -72,6 +72,10 @@
                 'games' => ['fa-crosshairs', 'Parties', "Nouvelles parties, file d'attente, annulations…"],
                 'news' => ['fa-newspaper', 'Actualités', 'Les nouvelles du club.'],
             ];
+            // Seulement pour ceux qui ont acces a Espace membres > Organisation
+            if ($this->organisationAccess($this->currentUser)) {
+                $notificationRows['organisation'] = ['fa-people-group', 'Organisation', 'Messages, sondages et événements des membres.'];
+            }
             ?>
             <?php foreach ($notificationRows as $category => [$icon, $title, $description]): ?>
                 <label class="list-group-item notif-row d-flex align-items-center" for="notify-<?= $category ?>" data-notification-row>

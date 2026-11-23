@@ -1,0 +1,134 @@
+<?php
+use Organisation\Entity\PollOption;
+use Organisation\Entity\Post;
+use Organisation\Service\OrganisationManager;
+
+$isNew = $post === null;
+$action = $isNew ? $this->url('organisation-new', ['type' => $type]) : $this->url('organisation-edit', ['id' => $post->getId()]);
+$titles = [Post::TYPE_MESSAGE => 'un message', Post::TYPE_POLL => 'un sondage', Post::TYPE_EVENT => 'un événement'];
+?>
+<?= $this->partial('organisation/partial/header', ['active' => '', 'canEdit' => true]) ?>
+
+<div class="card">
+    <h5 class="mb-3"><?= $isNew ? 'Publier ' . $titles[$type] : 'Modifier ' . $titles[$type] ?></h5>
+
+    <?php if ($errors): ?>
+        <div class="alert alert-danger py-2">
+            <ul class="mb-0 ps-3">
+                <?php foreach ($errors as $error): ?><li><?= $this->escapeHtml($error) ?></li><?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" action="<?= $this->escapeHtmlAttr($action) ?>">
+        <div class="mb-3">
+            <label for="title" class="form-label fw-semibold"><?= $type === Post::TYPE_POLL ? 'Question' : 'Titre' ?></label>
+            <input type="text" class="form-control" id="title" name="title" required minlength="3" maxlength="<?= Post::TITLE_MAX ?>" value="<?= $this->escapeHtmlAttr($values['title']) ?>">
+        </div>
+
+        <?php if ($type === Post::TYPE_EVENT): ?>
+            <div class="row g-2 mb-3">
+                <div class="col-12 col-md-6">
+                    <label for="starts_at" class="form-label fw-semibold">Début</label>
+                    <input type="datetime-local" class="form-control" id="starts_at" name="starts_at" required value="<?= $this->escapeHtmlAttr($values['starts_at']) ?>">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="ends_at" class="form-label">Fin <small class="text-muted">(facultatif)</small></label>
+                    <input type="datetime-local" class="form-control" id="ends_at" name="ends_at" value="<?= $this->escapeHtmlAttr($values['ends_at']) ?>">
+                </div>
+                <div class="col-12">
+                    <label for="location" class="form-label">Lieu <small class="text-muted">(facultatif)</small></label>
+                    <input type="text" class="form-control" id="location" name="location" maxlength="<?= Post::LOCATION_MAX ?>" value="<?= $this->escapeHtmlAttr($values['location']) ?>">
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div class="mb-3">
+            <label for="body" class="form-label <?= $type === Post::TYPE_MESSAGE ? 'fw-semibold' : '' ?>">
+                <?= $type === Post::TYPE_MESSAGE ? 'Message' : 'Détails <small class="text-muted">(facultatif)</small>' ?>
+            </label>
+            <textarea class="form-control" id="body" name="body" rows="<?= $type === Post::TYPE_MESSAGE ? 8 : 4 ?>" maxlength="<?= Post::BODY_MAX ?>"
+                      <?= $type === Post::TYPE_MESSAGE ? 'required' : '' ?>><?= $this->escapeHtml($values['body']) ?></textarea>
+        </div>
+
+        <?php if ($type === Post::TYPE_POLL): ?>
+            <div class="mb-3">
+                <div class="form-label fw-semibold mb-1">Choix</div>
+                <?php if ($optionsLocked): ?>
+                    <div class="alert alert-secondary small py-2">Des membres ont déjà voté : les choix ne peuvent plus être modifiés.</div>
+                    <ul class="small">
+                        <?php foreach ($values['options'] as $label): ?><li><?= $this->escapeHtml($label) ?></li><?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <div id="pollOptions">
+                        <?php foreach ($values['options'] as $label): ?>
+                            <input type="text" class="form-control mb-2" name="options[]" maxlength="<?= PollOption::LABEL_MAX ?>" value="<?= $this->escapeHtmlAttr($label) ?>" placeholder="Choix">
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="d-flex flex-wrap" style="gap: .5rem;">
+                        <button type="button" class="btn btn-sm btn-light" id="addOption"><i class="fa-solid fa-plus me-1"></i>Ajouter un choix</button>
+                        <button type="button" class="btn btn-sm btn-light" id="yesNo">Oui / Non</button>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="multiple" name="multiple" value="1" <?= $values['multiple'] ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="multiple">Plusieurs choix possibles</label>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($type !== Post::TYPE_MESSAGE): ?>
+            <div class="mb-3">
+                <label for="closes_at" class="form-label">Réponses jusqu'au <small class="text-muted">(facultatif<?= $type === Post::TYPE_EVENT ? ' : par défaut, le début de l’événement' : '' ?>)</small></label>
+                <input type="datetime-local" class="form-control" id="closes_at" name="closes_at" style="max-width: 16rem;" value="<?= $this->escapeHtmlAttr($values['closes_at']) ?>">
+            </div>
+        <?php endif; ?>
+
+        <?php if ($isNew): ?>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="notify" name="notify" value="1" checked>
+                <label class="form-check-label" for="notify">
+                    <i class="fa-solid fa-bell me-1"></i>Prévenir les membres par notification
+                    <small class="d-block text-muted">Ceux qui ont installé l'application et activé les notifications « Organisation ».</small>
+                </label>
+            </div>
+        <?php endif; ?>
+
+        <div class="d-flex flex-wrap" style="gap: .5rem;">
+            <button type="submit" class="btn btn-success"><?= $isNew ? 'Publier' : 'Enregistrer' ?></button>
+            <a href="<?= $this->escapeHtmlAttr($isNew ? $this->url('organisation') : $this->url('organisation-view', ['id' => $post->getId()])) ?>" class="btn btn-light">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<?php if ($type === Post::TYPE_POLL && !$optionsLocked): ?>
+<script>
+    (function () {
+        var list = document.getElementById('pollOptions');
+        var max = <?= OrganisationManager::OPTIONS_MAX ?>;
+        function addOption(value) {
+            if (list.children.length >= max) { return; }
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'options[]';
+            input.className = 'form-control mb-2';
+            input.maxLength = <?= PollOption::LABEL_MAX ?>;
+            input.placeholder = 'Choix';
+            input.value = value || '';
+            list.appendChild(input);
+            return input;
+        }
+        document.getElementById('addOption').addEventListener('click', function () {
+            var input = addOption('');
+            if (input) { input.focus(); }
+        });
+        // Sondage oui / non : remplace les choix par "Oui" et "Non"
+        document.getElementById('yesNo').addEventListener('click', function () {
+            list.innerHTML = '';
+            addOption('Oui');
+            addOption('Non');
+            document.getElementById('multiple').checked = false;
+        });
+    })();
+</script>
+<?php endif; ?>

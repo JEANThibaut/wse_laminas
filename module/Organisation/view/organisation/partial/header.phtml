@@ -1,0 +1,43 @@
+<?php
+/**
+ * Navigation de l'espace Organisation. $active : feed, calendar ou ''. $canEdit : boutons de creation.
+ */
+use Organisation\Entity\Post;
+
+$active = $active ?? '';
+?>
+<style>
+    .orga-post { padding: .75rem !important; }
+    .orga-body { white-space: pre-line; overflow-wrap: anywhere; }
+    .orga-cal { table-layout: fixed; width: 100%; }
+    .orga-cal td, .orga-cal th { text-align: center; padding: .25rem 0; font-size: .85rem; }
+    .orga-cal .has-event a { display: inline-block; min-width: 1.8rem; padding: .1rem 0; background: #198754; color: #fff; font-weight: 600; text-decoration: none; }
+    .orga-cal .today { outline: 2px solid #212529; outline-offset: -2px; }
+    .orga-cal .other-month { color: #ced4da; }
+</style>
+
+<div class="d-flex flex-wrap align-items-center mb-3" style="gap: .5rem;">
+    <h4 class="mb-0 me-auto"><i class="fa-solid fa-people-group me-2"></i>Organisation</h4>
+    <a href="<?= $this->escapeHtmlAttr($this->url('organisation')) ?>" class="btn btn-sm <?= $active === 'feed' ? 'btn-dark' : 'btn-light' ?>">
+        <i class="fa-solid fa-list me-1"></i>Fil
+    </a>
+    <a href="<?= $this->escapeHtmlAttr($this->url('organisation-calendar')) ?>" class="btn btn-sm <?= $active === 'calendar' ? 'btn-dark' : 'btn-light' ?>">
+        <i class="fa-solid fa-calendar-days me-1"></i>Calendrier
+    </a>
+    <?php if (!empty($canEdit)): ?>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-plus me-1"></i>Publier
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <?php foreach ([Post::TYPE_MESSAGE => 'fa-message', Post::TYPE_POLL => 'fa-square-poll-vertical', Post::TYPE_EVENT => 'fa-calendar-plus'] as $type => $icon): ?>
+                    <li>
+                        <a class="dropdown-item" href="<?= $this->escapeHtmlAttr($this->url('organisation-new', ['type' => $type])) ?>">
+                            <i class="fa-solid <?= $icon ?> me-2"></i><?= Post::TYPES[$type] ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+</div>

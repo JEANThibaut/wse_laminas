@@ -194,9 +194,21 @@
             <?php endif; ?>
             -->
         <?php endif; ?>
-        <?php if ($this->currentUser && $this->currentUser->getIsMember()) : ?>
+        <?php // Organisation : config features.organisation (GOD seulement pour l'instant) + membre ou admin ?>
+        <?php $organisation = $this->organisationAccess($this->currentUser); ?>
+        <?php if ($this->currentUser && ($this->currentUser->getIsMember() || $organisation)) : ?>
              <hr>
             <h4>Espace membres</h4>
+            <?php if ($organisation): ?>
+            <li class="nav-item">
+                <a class="nav-link <?= ($activeMenu === 'organisation') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('organisation')) ?>">
+                    <?php if($isFunny): ?>
+                        <img class="mb-1" src="/images/icones/checklist.png" alt="type" style="height: 20px; margin-right:10px;">
+                    <?php endif ?>
+                    Organisation
+                </a>
+            </li>
+            <?php endif; ?>
             <li class="nav-item">
                 <a class="nav-link <?= ($activeMenu === 'admin-index') ? 'active' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('admin-next-games')) ?>">
                     <?php if($isFunny): ?>

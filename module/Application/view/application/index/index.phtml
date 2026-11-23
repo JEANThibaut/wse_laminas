@@ -20,6 +20,9 @@ $emailValidated = !$this->currentUser || $this->currentUser->isMailValidated();
 <?php endif; ?>
 
 
+<?php // Espace membres > Organisation : publications epinglees (rien si le compte n'y a pas acces) ?>
+<?= $this->partial('organisation/partial/home-pinned', ['posts' => $this->organisationPinned($this->currentUser)]) ?>
+
 <?php
 // File d'attente du joueur connecte (null si la file ne lui est pas proposee)
 $queueEntry = $queueStatus['entry'] ?? null;

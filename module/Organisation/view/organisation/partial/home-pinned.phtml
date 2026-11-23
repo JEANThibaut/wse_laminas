@@ -1,0 +1,26 @@
+<?php
+/**
+ * Accueil : publications epinglees de Espace membres > Organisation.
+ * $posts vide (pas d'acces, rien d'epingle) : rien n'est affiche.
+ */
+use Organisation\Util\FrenchDate;
+?>
+<?php if ($posts): ?>
+    <div class="card" style="padding: .75rem;">
+        <div class="d-flex justify-content-between align-items-center mb-2" style="gap: .5rem;">
+            <span class="fw-semibold"><i class="fa-solid fa-thumbtack me-1 text-warning"></i>Espace membres</span>
+            <a href="<?= $this->escapeHtmlAttr($this->url('organisation')) ?>" class="small">Tout voir</a>
+        </div>
+        <?php foreach ($posts as $post): ?>
+            <a href="<?= $this->escapeHtmlAttr($this->url('organisation-view', ['id' => $post->getId()])) ?>" class="d-block text-decoration-none text-dark border-top pt-2 mt-2">
+                <span class="badge bg-dark me-1"><?= $this->escapeHtml($post->getTypeLabel()) ?></span>
+                <span class="fw-semibold text-break"><?= $this->escapeHtml($post->getTitle()) ?></span>
+                <?php if ($post->isEvent() && $post->getStartsAt()): ?>
+                    <span class="d-block small text-success"><i class="fa-regular fa-clock me-1"></i><?= $this->escapeHtml(FrenchDate::range($post->getStartsAt(), $post->getEndsAt())) ?></span>
+                <?php elseif ($post->getBody() !== ''): ?>
+                    <span class="d-block small text-muted text-truncate"><?= $this->escapeHtml(mb_substr($post->getBody(), 0, 140)) ?></span>
+                <?php endif; ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

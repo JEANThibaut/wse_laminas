@@ -1,0 +1,119 @@
+<?php
+use Messagerie\Util\MemberName;
+use Organisation\Entity\Rsvp;
+use Organisation\Util\FrenchDate;
+
+$names = fn (array $users) => implode(', ', array_map([MemberName::class, 'of'], $users));
+?>
+<?= $this->partial('organisation/partial/header', ['active' => '', 'canEdit' => $canEdit]) ?>
+
+<div class="card">
+    <div class="d-flex align-items-center flex-wrap mb-2" style="gap: .35rem;">
+        <span class="badge bg-dark"><?= $this->escapeHtml($post->getTypeLabel()) ?></span>
+        <?php if ($post->isPinned()): ?>
+            <span class="badge bg-warning text-dark"><i class="fa-solid fa-thumbtack me-1"></i>Épinglé</span>
+        <?php endif; ?>
+        <small class="text-muted ms-auto">
+            <?= $this->escapeHtml(MemberName::of($post->getAuthor())) ?> · <?= $this->escapeHtml($post->getCreatedAt()->format('d/m/Y')) ?>
+        </small>
+    </div>
+
+    <h4 class="text-break"><?= $this->escapeHtml($post->getTitle()) ?></h4>
+
+    <?php if ($post->isEvent()): ?>
+        <div class="mb-2">
+            <div><i class="fa-regular fa-clock me-1"></i><?= $this->escapeHtml(ucfirst(FrenchDate::range($post->getStartsAt(), $post->getEndsAt()))) ?></div>
+            <?php if ($post->getLocation()): ?>
+                <div><i class="fa-solid fa-location-dot me-1"></i><?= $this->escapeHtml($post->getLocation()) ?></div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($post->getBody() !== ''): ?>
+        <div class="orga-body mb-3"><?= $this->escapeHtml($post->getBody()) ?></div>
+    <?php endif; ?>
+
+    <?php if ($post->isPoll()): ?>
+        <?php if (!$post->isClosed()): ?>
+            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('organisation-vote')) ?>" class="mb-3">
+                <input type="hidden" name="id" value="<?= (int) $post->getId() ?>">
+                <div class="small text-muted mb-1">
+                    <?= $post->isMultiple() ? 'Plusieurs choix possibles.' : 'Un seul choix.' ?>
+                    <?php if ($post->getClosesAt()): ?>Réponses jusqu'au <?= $this->escapeHtml(FrenchDate::dayTime($post->getClosesAt())) ?>.<?php endif; ?>
+                </div>
+                <?php foreach ($post->getOptions() as $option): ?>
+                    <div class="form-check">
+                        <input class="form-check-input" type="<?= $post->isMultiple() ? 'checkbox' : 'radio' ?>" name="options[]"
+                               id="option<?= (int) $option->getId() ?>" value="<?= (int) $option->getId() ?>"
+                               <?= in_array($option->getId(), $myOptions, true) ? 'checked' : '' ?>>
+                        <label class="form-check-label text-break" for="option<?= (int) $option->getId() ?>"><?= $this->escapeHtml($option->getLabel()) ?></label>
+                    </div>
+                <?php endforeach; ?>
+                <button type="submit" class="btn btn-sm btn-primary mt-2"><?= $myOptions ? 'Modifier mon vote' : 'Voter' ?></button>
+            </form>
+        <?php else: ?>
+            <p class="small text-muted">Sondage clos.</p>
+        <?php endif; ?>
+
+        <?php if ($showResults): ?>
+            <div class="small fw-semibold mb-1">Résultats (<?= (int) $results['voters'] ?> votant<?= $results['voters'] > 1 ? 's' : '' ?>)</div>
+            <?php foreach ($results['options'] as $row): ?>
+                <?php $percent = $results['voters'] > 0 ? (int) round($row['count'] * 100 / $results['voters']) : 0; ?>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small" style="gap: .5rem;">
+                        <span class="text-break"><?= $this->escapeHtml($row['option']->getLabel()) ?></span>
+                        <span class="text-nowrap"><?= (int) $row['count'] ?> (<?= $percent ?> %)</span>
+                    </div>
+                    <div class="progress" style="height: .5rem; border-radius: 0;">
+                        <div class="progress-bar" style="width: <?= $percent ?>%;"></div>
+                    </div>
+                    <?php if ($canEdit && $row['voters']): ?>
+                        <div class="small text-muted"><?= $this->escapeHtml($names($row['voters'])) ?></div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php elseif (!$post->isClosed()): ?>
+            <p class="small text-muted mb-0">Les résultats s'affichent après votre vote.</p>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if ($post->isEvent()): ?>
+        <?php if (!$post->isClosed()): ?>
+            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('organisation-answer')) ?>" class="d-flex flex-wrap mb-2" style="gap: .5rem;">
+                <input type="hidden" name="id" value="<?= (int) $post->getId() ?>">
+                <button type="submit" name="answer" value="<?= Rsvp::YES ?>" class="btn <?= $myAnswer && $myAnswer->isYes() ? 'btn-success' : 'btn-outline-success' ?>">
+                    <i class="fa-solid fa-check me-1"></i>Je participe
+                </button>
+                <button type="submit" name="answer" value="<?= Rsvp::NO ?>" class="btn <?= $myAnswer && !$myAnswer->isYes() ? 'btn-danger' : 'btn-outline-danger' ?>">
+                    <i class="fa-solid fa-xmark me-1"></i>Je ne participe pas
+                </button>
+            </form>
+            <?php if ($post->getClosesAt()): ?>
+                <p class="small text-muted">Réponses jusqu'au <?= $this->escapeHtml(FrenchDate::dayTime($post->getClosesAt())) ?>.</p>
+            <?php endif; ?>
+        <?php else: ?>
+            <p class="small text-muted">Les réponses sont closes<?= $myAnswer ? ' : vous avez répondu « ' . ($myAnswer->isYes() ? 'je participe' : 'je ne participe pas') . ' »' : '' ?>.</p>
+        <?php endif; ?>
+        <div class="small">
+            <div><strong class="text-success"><?= count($answers['yes']) ?> participant<?= count($answers['yes']) > 1 ? 's' : '' ?></strong><?= $answers['yes'] ? ' : ' . $this->escapeHtml($names($answers['yes'])) : '' ?></div>
+            <div><strong class="text-danger"><?= count($answers['no']) ?> absent<?= count($answers['no']) > 1 ? 's' : '' ?></strong><?= $answers['no'] ? ' : ' . $this->escapeHtml($names($answers['no'])) : '' ?></div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($canEdit): ?>
+        <hr class="mt-3">
+        <div class="d-flex flex-wrap" style="gap: .5rem;">
+            <a href="<?= $this->escapeHtmlAttr($this->url('organisation-edit', ['id' => $post->getId()])) ?>" class="btn btn-sm btn-warning"><i class="fa-solid fa-pen me-1"></i>Modifier</a>
+            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('organisation-pin')) ?>">
+                <input type="hidden" name="id" value="<?= (int) $post->getId() ?>">
+                <button type="submit" class="btn btn-sm btn-light"><i class="fa-solid fa-thumbtack me-1"></i><?= $post->isPinned() ? 'Désépingler' : 'Épingler' ?></button>
+            </form>
+            <form method="post" action="<?= $this->escapeHtmlAttr($this->url('organisation-delete')) ?>">
+                <input type="hidden" name="id" value="<?= (int) $post->getId() ?>">
+                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer définitivement cette publication et ses réponses ?');">
+                    <i class="fa-solid fa-trash me-1"></i>Supprimer
+                </button>
+            </form>
+        </div>
+    <?php endif; ?>
+</div>

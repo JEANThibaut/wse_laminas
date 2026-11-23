@@ -905,6 +905,16 @@ class AdminController extends AbstractActionController
     ];
 
     /**
+     * Categories proposees a l'envoi manuel : pas "Organisation", reservee aux
+     * publications de l'espace membres (ses destinataires non membres ne
+     * pourraient pas la couper, l'interrupteur n'apparaissant qu'aux membres).
+     */
+    private static function manualPushCategories(): array
+    {
+        return array_diff_key(PushService::CATEGORY_LABELS, [PushService::CATEGORY_ORGANISATION => true]);
+    }
+
+    /**
      * Envoi d'une notification aux appareils abonnes, reserve au GOD. En
      * phase de test, PushService ecarte tout compte non autorise.
      */
@@ -928,7 +938,7 @@ class AdminController extends AbstractActionController
             $url = trim($data['url'] ?? '') ?: '/';
 
             if ($title === '' || $body === '' || !array_key_exists($target, self::PUSH_TARGETS)
-                || !array_key_exists($category, PushService::CATEGORY_LABELS)) {
+                || !array_key_exists($category, self::manualPushCategories())) {
                 $this->flashMessenger()->addErrorMessage('Type, titre, message et destinataires sont obligatoires.');
                 return $this->redirect()->toRoute('admin-notifications');
             }
@@ -964,7 +974,7 @@ class AdminController extends AbstractActionController
         $view = new ViewModel([
             'configured' => $this->pushService->isConfigured(),
             'targets' => self::PUSH_TARGETS,
-            'categories' => PushService::CATEGORY_LABELS,
+            'categories' => self::manualPushCategories(),
             'preferenceColumns' => $this->pushService->hasPreferenceColumns(),
             'myPreferences' => $this->pushService->getPreferences($currentUser),
             'players' => $this->findActivePlayers(),

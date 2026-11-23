@@ -1,0 +1,41 @@
+<?php
+use Organisation\Entity\Post;
+use Organisation\Util\FrenchDate;
+?>
+<?= $this->partial('organisation/partial/header', ['active' => 'feed', 'canEdit' => $canEdit]) ?>
+
+<?php if ($upcoming): ?>
+    <div class="card orga-post mb-3">
+        <div class="small fw-semibold mb-1"><i class="fa-solid fa-calendar-days me-1"></i>Prochains événements</div>
+        <?php foreach ($upcoming as $event): ?>
+            <a href="<?= $this->escapeHtmlAttr($this->url('organisation-view', ['id' => $event->getId()])) ?>" class="d-block small text-decoration-none text-break">
+                <strong><?= $this->escapeHtml(FrenchDate::dayTime($event->getStartsAt())) ?></strong> — <?= $this->escapeHtml($event->getTitle()) ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<div class="d-flex flex-wrap mb-2" style="gap: .35rem;">
+    <a href="<?= $this->escapeHtmlAttr($this->url('organisation')) ?>" class="badge text-decoration-none <?= $type === null ? 'bg-dark' : 'bg-light text-dark' ?>">Tout</a>
+    <?php foreach (Post::TYPES as $key => $label): ?>
+        <a href="<?= $this->escapeHtmlAttr($this->url('organisation', [], ['query' => ['type' => $key]])) ?>"
+           class="badge text-decoration-none <?= $type === $key ? 'bg-dark' : 'bg-light text-dark' ?>"><?= $this->escapeHtml($label) ?>s</a>
+    <?php endforeach; ?>
+</div>
+
+<?php if (count($posts) === 0): ?>
+    <div class="card text-muted">Rien de publié pour le moment.</div>
+<?php else: ?>
+    <?php foreach ($posts as $post): ?>
+        <?= $this->partial('organisation/partial/post-card', ['post' => $post]) ?>
+    <?php endforeach; ?>
+
+    <?php if ($pages > 1): ?>
+        <?php $query = $type ? ['type' => $type] : []; ?>
+        <nav class="d-flex justify-content-center align-items-center mt-3" style="gap: .5rem;">
+            <a class="btn btn-sm btn-light <?= $page <= 1 ? 'disabled' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('organisation', [], ['query' => $query + ['page' => $page - 1]])) ?>"><i class="fa-solid fa-chevron-left"></i></a>
+            <span class="badge bg-dark"><?= (int) $page ?> / <?= (int) $pages ?></span>
+            <a class="btn btn-sm btn-light <?= $page >= $pages ? 'disabled' : '' ?>" href="<?= $this->escapeHtmlAttr($this->url('organisation', [], ['query' => $query + ['page' => $page + 1]])) ?>"><i class="fa-solid fa-chevron-right"></i></a>
+        </nav>
+    <?php endif; ?>
+<?php endif; ?>

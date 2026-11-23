@@ -223,6 +223,9 @@ return [
     //    tous : passer 'user' a true
     //  - messagerie : messagerie interne (menu avec compteur de non-lus,
     //    "Contacter" sur les annonces). Memes conditions de compte valide
+    //  - organisation : Espace membres > Organisation (messages, sondages,
+    //    evenements). Il faut en plus etre membre de l'association ou admin
+    //  - organisation_edition : publier dans Organisation
     // Les cles VAPID ('push' => ['vapid' => ...]) sont generees au deploiement
     // depuis les secrets GitHub (config/autoload/push.global.php), jamais dans le repo.
     'features' => [
@@ -251,6 +254,18 @@ return [
             'god' => true,
         ],
         'messagerie' => [
+            'user' => false,
+            'admin' => false,
+            'super_admin' => false,
+            'god' => true,
+        ],
+        'organisation' => [
+            'user' => false,
+            'admin' => false,
+            'super_admin' => false,
+            'god' => true,
+        ],
+        'organisation_edition' => [
             'user' => false,
             'admin' => false,
             'super_admin' => false,

@@ -1,0 +1,51 @@
+<?php
+use Organisation\Util\FrenchDate;
+
+// Grille du lundi precedant le 1er au dimanche suivant le dernier jour du mois
+$first = clone $month;
+$start = (clone $first)->modify('-' . ((int) $first->format('N') - 1) . ' days');
+$last = (clone $next)->modify('-1 day');
+$end = (clone $last)->modify('+' . (7 - (int) $last->format('N')) . ' days');
+$today = (new DateTime())->format('Y-m-d');
+?>
+<?= $this->partial('organisation/partial/header', ['active' => 'calendar', 'canEdit' => $canEdit]) ?>
+
+<div class="card orga-post">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <a class="btn btn-sm btn-light" href="<?= $this->escapeHtmlAttr($this->url('organisation-calendar', [], ['query' => ['mois' => $previous->format('Y-m')]])) ?>" aria-label="Mois précédent"><i class="fa-solid fa-chevron-left"></i></a>
+        <strong><?= $this->escapeHtml(FrenchDate::month($month)) ?></strong>
+        <a class="btn btn-sm btn-light" href="<?= $this->escapeHtmlAttr($this->url('organisation-calendar', [], ['query' => ['mois' => $next->format('Y-m')]])) ?>" aria-label="Mois suivant"><i class="fa-solid fa-chevron-right"></i></a>
+    </div>
+    <table class="orga-cal">
+        <thead><tr><?php foreach (FrenchDate::DAYS_SHORT as $day): ?><th class="text-muted"><?= $day ?></th><?php endforeach; ?></tr></thead>
+        <tbody>
+        <?php for ($day = clone $start; $day <= $end; $day->modify('+1 day')): ?>
+            <?php if ($day->format('N') === '1'): ?><tr><?php endif; ?>
+            <?php
+            $inMonth = $day->format('Y-m') === $month->format('Y-m');
+            $hasEvent = $inMonth && isset($byDay[(int) $day->format('j')]);
+            $classes = trim(($inMonth ? '' : 'other-month') . ($hasEvent ? ' has-event' : '') . ($day->format('Y-m-d') === $today ? ' today' : ''));
+            ?>
+            <td class="<?= $classes ?>">
+                <?php if ($hasEvent): ?>
+                    <a href="#jour-<?= (int) $day->format('j') ?>"><?= (int) $day->format('j') ?></a>
+                <?php else: ?>
+                    <?= (int) $day->format('j') ?>
+                <?php endif; ?>
+            </td>
+            <?php if ($day->format('N') === '7'): ?></tr><?php endif; ?>
+        <?php endfor; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php if (!$events): ?>
+    <div class="card text-muted">Aucun événement ce mois-ci.</div>
+<?php else: ?>
+    <?php foreach ($byDay as $dayNumber => $dayEvents): ?>
+        <div id="jour-<?= (int) $dayNumber ?>" class="small fw-semibold text-muted mt-2 mb-1"><?= $this->escapeHtml(ucfirst(FrenchDate::day($dayEvents[0]->getStartsAt()))) ?></div>
+        <?php foreach ($dayEvents as $post): ?>
+            <?= $this->partial('organisation/partial/post-card', ['post' => $post]) ?>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+<?php endif; ?>

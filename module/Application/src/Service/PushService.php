@@ -24,14 +24,19 @@ class PushService
     public const CATEGORY_GAMES = 'games';
     // Actualites du club
     public const CATEGORY_NEWS = 'news';
+    // Espace membres > Organisation : nouvelles publications
+    public const CATEGORY_ORGANISATION = 'organisation';
     public const CATEGORY_LABELS = [
         self::CATEGORY_GAMES => 'Parties',
         self::CATEGORY_NEWS => 'Actualités',
+        self::CATEGORY_ORGANISATION => 'Organisation',
     ];
     // Colonne ENUM('true','false') de la table user pour chaque categorie
+    // (notification_orga : migration 2026-11-23_organisation.sql)
     private const CATEGORY_COLUMNS = [
         self::CATEGORY_GAMES => 'notification_partie',
         self::CATEGORY_NEWS => 'notification_actu',
+        self::CATEGORY_ORGANISATION => 'notification_orga',
     ];
 
     private EntityManager $entityManager;
@@ -99,18 +104,26 @@ class PushService
     public function getPreferences(User $user): array
     {
         $preferences = array_fill_keys(array_keys(self::CATEGORY_LABELS), false);
+        $connection = $this->entityManager->getConnection();
         try {
-            $row = $this->entityManager->getConnection()->fetchAssociative(
+            $row = $connection->fetchAssociative(
                 'SELECT ' . implode(', ', self::CATEGORY_COLUMNS) . ' FROM user WHERE iduser = ?',
                 [$user->getIdUser()]
-            );
+            ) ?: [];
         } catch (\Throwable $e) {
-            // Colonnes pas encore creees (migration non jouee) : valeurs par defaut
-            error_log('preferences de notification : ' . $e->getMessage());
-            return $preferences;
+            // Une colonne manque (migration pas encore jouee) : les autres restent lues,
+            // une categorie recente ne coupe pas les notifications des anciennes
+            $row = [];
+            foreach (self::CATEGORY_COLUMNS as $column) {
+                try {
+                    $row[$column] = $connection->fetchOne('SELECT ' . $column . ' FROM user WHERE iduser = ?', [$user->getIdUser()]);
+                } catch (\Throwable $missing) {
+                    error_log('preferences de notification (' . $column . ') : ' . $missing->getMessage());
+                }
+            }
         }
         foreach (self::CATEGORY_COLUMNS as $category => $column) {
-            if ($row && isset($row[$column])) {
+            if (isset($row[$column])) {
                 $preferences[$category] = $row[$column] === 'true';
             }
         }
@@ -118,15 +131,15 @@ class PushService
     }
 
     /**
-     * Les colonnes de preferences existent-elles dans la table user ?
-     * (migration doc/migrations/2026-10-05_user_notification.sql jouee)
+     * Les colonnes de preferences existent-elles dans la table user ? Toutes,
+     * ou celle d'une categorie (migrations 2026-10-05_user_notification.sql,
+     * 2026-11-23_organisation.sql).
      */
-    public function hasPreferenceColumns(): bool
+    public function hasPreferenceColumns(?string $category = null): bool
     {
+        $columns = $category !== null ? [self::CATEGORY_COLUMNS[$category] ?? ''] : self::CATEGORY_COLUMNS;
         try {
-            $this->entityManager->getConnection()->fetchOne(
-                'SELECT ' . implode(', ', self::CATEGORY_COLUMNS) . ' FROM user LIMIT 1'
-            );
+            $this->entityManager->getConnection()->fetchOne('SELECT ' . implode(', ', $columns) . ' FROM user LIMIT 1');
             return true;
         } catch (\Throwable $e) {
             return false;
@@ -141,10 +154,10 @@ class PushService
         if (!isset(self::CATEGORY_COLUMNS[$category])) {
             throw new \InvalidArgumentException('Categorie de notification inconnue : ' . $category);
         }
-        if (!$this->hasPreferenceColumns()) {
+        if (!$this->hasPreferenceColumns($category)) {
             throw new \RuntimeException(
-                'Les colonnes notification_partie et notification_actu manquent dans la table user : '
-                . 'la migration 2026-10-05_user_notification.sql n\'a pas été jouée.'
+                'La colonne ' . self::CATEGORY_COLUMNS[$category] . ' manque dans la table user : '
+                . 'la migration correspondante (doc/migrations) n\'a pas été jouée.'
             );
         }
         $this->entityManager->getConnection()->executeStatement(

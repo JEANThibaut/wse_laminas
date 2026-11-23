@@ -30,6 +30,7 @@ return [
     'Annonce',
     'Messagerie',
     'Moderation',
+    'Organisation',
     'Faction',
     'Actus',
 ];

@@ -44,6 +44,7 @@
             "Annonce\\" : "module/Annonce/src",
             "Messagerie\\": "module/Messagerie/src",
             "Moderation\\": "module/Moderation/src",
+            "Organisation\\": "module/Organisation/src",
             "Faction\\": "module/Faction/src",
             "Actus\\": "module/Actus/src/"
         }
