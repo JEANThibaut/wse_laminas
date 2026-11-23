@@ -316,6 +316,39 @@ class Annonce extends \Annonce\Entity\Annonce implements \Doctrine\ORM\Proxy\Pro
     /**
      * {@inheritDoc}
      */
+    public function isPending(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isPending', []);
+
+        return parent::isPending();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function submitForValidation(): \Annonce\Entity\Annonce
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'submitForValidation', []);
+
+        return parent::submitForValidation();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function approve(\DateTime $expiresAt): \Annonce\Entity\Annonce
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'approve', [$expiresAt]);
+
+        return parent::approve($expiresAt);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getCreatedAt(): \DateTime
     {
 

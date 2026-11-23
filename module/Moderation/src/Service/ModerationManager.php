@@ -64,6 +64,10 @@ class ModerationManager
             // Classee sans suite : l'annonce masquee par les signalements revient
             $annonce->restore();
         }
+        // Trace sur l'annonce : qui a decide, quand (refus, retrait ou classement)
+        if ($annonce) {
+            $annonce->markModerated($admin);
+        }
         foreach ($reports as $report) {
             $report->handle($decision === self::DECISION_REMOVE ? Report::STATUS_ACTIONED : Report::STATUS_DISMISSED, $admin);
         }

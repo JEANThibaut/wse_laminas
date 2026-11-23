@@ -27,6 +27,8 @@ class Annonce
     public const STATUS_REMOVED = 'removed';
     // Masquee automatiquement (trop de signalements), en attente de moderation
     public const STATUS_HIDDEN = 'hidden';
+    // En attente de validation (reglage "validation avant publication")
+    public const STATUS_PENDING = 'pending';
 
     public const TITLE_MAX = 80;
     public const DESCRIPTION_MAX = 1500;
@@ -81,6 +83,19 @@ class Annonce
      * @ORM\Column(name="closed_at", type="datetime", nullable=true)
      */
     private $closedAt;
+
+    /**
+     * Derniere decision de moderation (validation, refus, retrait ou
+     * classement d'un signalement) : qui l'a prise et quand. Le statut dit
+     * de quelle decision il s'agit.
+     *
+     * @ORM\ManyToOne(targetEntity="User\Entity\User")
+     * @ORM\JoinColumn(name="moderated_by", referencedColumnName="iduser", nullable=true, onDelete="SET NULL")
+     */
+    private $moderatedBy;
+
+    /** @ORM\Column(name="moderated_at", type="datetime", nullable=true) */
+    private $moderatedAt;
 
     /**
      * @ORM\OneToMany(targetEntity="Annonce\Entity\AnnoncePhoto", mappedBy="annonce", cascade={"persist", "remove"}, orphanRemoval=true)
@@ -176,9 +191,64 @@ class Annonce
         return $this->status === self::STATUS_ONLINE && $this->expiresAt <= new \DateTime();
     }
 
+    /**
+     * Fermee pour son auteur (ni modification, ni renouvellement, ni retrait) :
+     * retiree, ou masquee en attendant la moderation. Une annonce en attente
+     * de validation reste modifiable et retirable.
+     */
     public function isClosed(): bool
     {
-        return $this->status !== self::STATUS_ONLINE;
+        return $this->status !== self::STATUS_ONLINE && $this->status !== self::STATUS_PENDING;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    /**
+     * Mise en attente de validation (creation ou modification par l'auteur).
+     */
+    public function submitForValidation(): self
+    {
+        if ($this->status === self::STATUS_ONLINE || $this->status === self::STATUS_PENDING) {
+            $this->status = self::STATUS_PENDING;
+        }
+        return $this;
+    }
+
+    /**
+     * Validee par la moderation : en ligne, duree de vie complete a partir d'aujourd'hui.
+     */
+    public function approve(\DateTime $expiresAt, User $moderator): self
+    {
+        if ($this->status === self::STATUS_PENDING) {
+            $this->status = self::STATUS_ONLINE;
+            $this->expiresAt = $expiresAt;
+            $this->updatedAt = new \DateTime();
+            $this->markModerated($moderator);
+        }
+        return $this;
+    }
+
+    /**
+     * Trace de la decision de moderation : qui, quand.
+     */
+    public function markModerated(User $moderator): self
+    {
+        $this->moderatedBy = $moderator;
+        $this->moderatedAt = new \DateTime();
+        return $this;
+    }
+
+    public function getModeratedBy(): ?User
+    {
+        return $this->moderatedBy;
+    }
+
+    public function getModeratedAt(): ?\DateTime
+    {
+        return $this->moderatedAt;
     }
 
     public function getCreatedAt(): \DateTime

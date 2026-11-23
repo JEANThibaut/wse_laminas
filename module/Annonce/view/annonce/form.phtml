@@ -23,10 +23,11 @@ $existingPhotos = $annonce ? $annonce->getPhotos()->toArray() : [];
         <i class="fa-solid fa-circle-info me-1"></i>
         Seules les annonces <strong>liées à l'airsoft</strong> sont acceptées ; les autres seront supprimées.
         Pour une réplique, indiquez sa <strong>puissance réelle</strong> (au-delà de 2 joules, ce n'est plus une réplique).
-        Pas de numéro de téléphone ni d'email dans l'annonce : les membres vous contacteront par la messagerie du site.
+        Pas de numéro de téléphone ni d'email dans l'annonce : les autres utilisateurs vous contacteront par la messagerie du site.
     </div>
 
     <form method="post" enctype="multipart/form-data" id="annonceForm"
+          data-seller="<?= $this->escapeHtmlAttr(\Messagerie\Util\MemberName::of($this->currentUser)) ?>"
           action="<?= $this->escapeHtmlAttr($isNew ? $this->url('annonces-new') : $this->url('annonces-edit', ['id' => $annonce->getId()])) ?>">
 
         <div class="mb-3">
@@ -94,12 +95,37 @@ $existingPhotos = $annonce ? $annonce->getPhotos()->toArray() : [];
         </div>
 
         <div class="d-flex flex-wrap" style="gap: .5rem;">
+            <?php // Ouvre d'abord l'apercu ; la publication part du bouton de confirmation (annonce-photos.js) ?>
             <button type="submit" class="btn btn-success" id="annonceSubmit">
-                <i class="fa-solid fa-check me-1"></i><?= $isNew ? 'Publier' : 'Enregistrer' ?>
+                <i class="fa-solid fa-eye me-1"></i>Aperçu et <?= $isNew ? 'publication' : 'enregistrement' ?>
             </button>
             <a href="<?= $this->escapeHtmlAttr($isNew ? $this->url('annonces-mine') : $this->url('annonces-view', ['id' => $annonce->getId()])) ?>" class="btn btn-light">Annuler</a>
         </div>
     </form>
+</div>
+
+<?php // Apercu : rempli par annonce-photos.js avec les valeurs du formulaire, rien n'est envoye avant confirmation ?>
+<div class="modal fade" id="annoncePreview" tabindex="-1" aria-labelledby="annoncePreviewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="annoncePreviewTitle"><i class="fa-solid fa-eye me-2"></i>Aperçu de votre annonce</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="small text-muted mb-1">Dans la liste des annonces :</div>
+                <div style="max-width: 11rem;" class="mb-3" id="previewCard"></div>
+                <div class="small text-muted mb-1">Fiche de l'annonce :</div>
+                <div id="previewView"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><i class="fa-solid fa-pen me-1"></i>Modifier</button>
+                <button type="button" class="btn btn-success" id="previewConfirm">
+                    <i class="fa-solid fa-check me-1"></i><?= $isNew ? 'Confirmer la publication' : 'Confirmer les modifications' ?>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="/js/annonce-photos.js?v=<?= (int) (@filemtime('public/js/annonce-photos.js') ?: time()) ?>"></script>

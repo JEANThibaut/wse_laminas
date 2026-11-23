@@ -37,13 +37,20 @@ class AnnonceAccess
 
     public function canAccess(?User $user): bool
     {
-        if (!$user || !$this->featureAccess->isAllowed(self::FEATURE, $user)) {
+        if (!$user) {
             return false;
         }
         if ($user->isGod()) {
             return true;
         }
-        return $user->isMailValidated() && !$user->isBlocked() && !$user->isDeactivated();
+        if ($user->isBlocked() || $user->isDeactivated()) {
+            return false;
+        }
+        // Moderateur (nomme par le GOD) : voit l'espace meme ferme aux autres, pour examiner les annonces
+        if ($user->isModerator()) {
+            return true;
+        }
+        return $this->featureAccess->isAllowed(self::FEATURE, $user) && $user->isMailValidated();
     }
 
     /**

@@ -276,6 +276,39 @@ class User
     }
 
     /**
+     * Moderateur : traite les signalements et valide les annonces, sans le
+     * GOD MODE. Role MODERATOR dans le JSON `roles`, attribue par le GOD.
+     */
+    public function isModerator(): bool
+    {
+        return $this->isInRoles('moderator');
+    }
+
+    /**
+     * Peut moderer : GOD ou moderateur.
+     */
+    public function canModerate(): bool
+    {
+        return $this->isGod() || $this->isModerator();
+    }
+
+    /**
+     * Ajoute ou retire le role MODERATOR, sans toucher aux autres roles.
+     */
+    public function setModerator(bool $moderator): self
+    {
+        $roles = json_decode((string) $this->getRoles(), true);
+        $roles = array_values(array_filter(
+            is_array($roles) ? $roles : [],
+            fn ($role) => strtolower((string) $role) !== 'moderator'
+        ));
+        if ($moderator) {
+            $roles[] = 'MODERATOR';
+        }
+        return $this->setRoles(json_encode($roles));
+    }
+
+    /**
      * Ajoute ou retire le role SUPER_ADMIN, sans toucher aux autres roles.
      * L'ajout donne aussi les droits admin ; le retrait les laisse en place.
      */

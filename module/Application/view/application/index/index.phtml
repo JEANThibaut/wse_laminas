@@ -1,3 +1,5 @@
+<?php // Moderation (GOD, moderateurs) : ce qui attend une decision, avant tout le reste ?>
+<?= $this->partial('moderation/partial/home-todo', ['todo' => $this->moderationTodo($this->currentUser)]) ?>
 <?php
 // L'inscription aux parties exige une adresse email validee
 $emailValidated = !$this->currentUser || $this->currentUser->isMailValidated();

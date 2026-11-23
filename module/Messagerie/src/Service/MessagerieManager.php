@@ -215,10 +215,10 @@ class MessagerieManager
     private function checkCanSend(User $sender, User $recipient): ?string
     {
         if ($this->hasBlocked($recipient, $sender)) {
-            return 'Ce membre ne reçoit plus vos messages.';
+            return 'Cet utilisateur ne reçoit plus vos messages.';
         }
         if ($this->hasBlocked($sender, $recipient)) {
-            return 'Vous avez bloqué ce membre : débloquez-le pour lui écrire.';
+            return 'Vous avez bloqué cet utilisateur : débloquez-le pour lui écrire.';
         }
         if (!$sender->isGod() && $this->conversations()->countMessagesSince($sender, new \DateTime(self::RATE_PERIOD)) >= self::RATE_LIMIT) {
             return "Vous envoyez beaucoup de messages : patientez quelques minutes.";

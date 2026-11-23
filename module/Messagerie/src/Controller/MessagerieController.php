@@ -168,8 +168,8 @@ class MessagerieController extends AbstractActionController
         if ($other) {
             $blocked = $this->manager->toggleBlock($user, $other);
             $this->flashMessenger()->addSuccessMessage($blocked
-                ? 'Membre bloqué : il ne peut plus vous écrire.'
-                : 'Membre débloqué.');
+                ? 'Utilisateur bloqué : il ne peut plus vous écrire.'
+                : 'Utilisateur débloqué.');
         }
         return $this->redirect()->toRoute('messagerie-conversation', ['id' => $conversation->getId()]);
     }

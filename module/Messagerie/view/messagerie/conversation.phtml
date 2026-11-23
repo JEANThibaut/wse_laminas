@@ -43,8 +43,8 @@ $annonce = $conversation->getAnnonce();
                         <form method="post" action="<?= $this->escapeHtmlAttr($this->url('messagerie-block')) ?>">
                             <input type="hidden" name="id" value="<?= (int) $conversation->getId() ?>">
                             <button type="submit" class="dropdown-item <?= $iBlocked ? '' : 'text-danger' ?>"
-                                    <?= $iBlocked ? '' : "onclick=\"return confirm('Bloquer ce membre ? Il ne pourra plus vous écrire.');\"" ?>>
-                                <i class="fa-solid fa-ban me-1"></i><?= $iBlocked ? 'Débloquer ce membre' : 'Bloquer ce membre' ?>
+                                    <?= $iBlocked ? '' : "onclick=\"return confirm('Bloquer cet utilisateur ? Il ne pourra plus vous écrire.');\"" ?>>
+                                <i class="fa-solid fa-ban me-1"></i><?= $iBlocked ? 'Débloquer cet utilisateur' : 'Bloquer cet utilisateur' ?>
                             </button>
                         </form>
                     </li>
@@ -87,7 +87,7 @@ $annonce = $conversation->getAnnonce();
     <?php elseif (!$other): ?>
         <p class="small text-muted mb-0">Votre correspondant a quitté le site.</p>
     <?php elseif ($iBlocked): ?>
-        <p class="small text-muted mb-0">Vous avez bloqué ce membre : débloquez-le (menu <i class="fa-solid fa-ellipsis-vertical"></i>) pour lui écrire.</p>
+        <p class="small text-muted mb-0">Vous avez bloqué cet utilisateur : débloquez-le (menu <i class="fa-solid fa-ellipsis-vertical"></i>) pour lui écrire.</p>
     <?php else: ?>
         <form method="post" action="<?= $this->escapeHtmlAttr($this->url('messagerie-conversation', ['id' => $conversation->getId()])) ?>" class="msg-form">
             <textarea name="body" class="form-control mb-2" rows="3" required maxlength="<?= Message::BODY_MAX ?>" placeholder="Votre message…"><?= $this->escapeHtml($draft) ?></textarea>

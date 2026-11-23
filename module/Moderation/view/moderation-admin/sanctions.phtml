@@ -31,7 +31,9 @@ use Moderation\Entity\Sanction;
                             </div>
                             <div class="small text-muted"><?= $this->escapeHtml($sanction->getReason()) ?> · <?= $this->escapeHtml($sanction->getCreatedAt()->format('d/m/Y')) ?></div>
                         </div>
-                        <?php if ($sanction->isActive() && $sanction->getType() !== Sanction::TYPE_WARNING): ?>
+                        <?php // Debloquer un compte : GOD seulement ?>
+                        <?php if ($sanction->isActive() && $sanction->getType() !== Sanction::TYPE_WARNING
+                            && ($canBlacklist || $sanction->getType() !== Sanction::TYPE_BLACKLIST)): ?>
                             <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-moderation-revoke')) ?>">
                                 <input type="hidden" name="id" value="<?= (int) $sanction->getId() ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('Lever cette sanction ?');">Lever</button>

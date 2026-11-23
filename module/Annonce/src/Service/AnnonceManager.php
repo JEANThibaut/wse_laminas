@@ -149,6 +149,11 @@ class AnnonceManager
         foreach ($stored as $filename) {
             $annonce->addPhoto($filename);
         }
+        // Validation avant publication : creation ou modification repasse en attente
+        // (sauf pour la moderation), pour qu'un contenu valide ne puisse pas etre change ensuite
+        if ($this->settings->requiresValidation() && !$user->canModerate()) {
+            $annonce->submitForValidation();
+        }
         $this->entityManager->flush();
         foreach ($removed as $photo) {
             $this->photoStorage->delete($annonce->getId(), $photo->getFilename());
@@ -158,12 +163,38 @@ class AnnonceManager
     }
 
     /**
+     * Validation par la moderation : en ligne pour sa duree de vie complete.
+     */
+    public function approve(Annonce $annonce, User $moderator): bool
+    {
+        if (!$annonce->isPending()) {
+            return false;
+        }
+        $annonce->approve($this->newExpiry(), $moderator);
+        $this->entityManager->flush();
+        return true;
+    }
+
+    /**
+     * @return Annonce[] annonces en attente de validation, les plus anciennes d'abord
+     */
+    public function pendingAnnonces(): array
+    {
+        return $this->entityManager->getRepository(Annonce::class)->findBy(['status' => Annonce::STATUS_PENDING], ['updatedAt' => 'ASC']);
+    }
+
+    public function countPending(): int
+    {
+        return $this->entityManager->getRepository(Annonce::class)->count(['status' => Annonce::STATUS_PENDING]);
+    }
+
+    /**
      * Renouvellement propose : annonce en ligne (expiree ou non), proche de son
      * expiration, et renouvellements pas epuises.
      */
     public function canRenew(Annonce $annonce): bool
     {
-        if ($annonce->isClosed() || $annonce->getRenewCount() >= $this->settings->getInt(AnnonceSettings::MAX_RENEW)) {
+        if ($annonce->isClosed() || $annonce->isPending() || $annonce->getRenewCount() >= $this->settings->getInt(AnnonceSettings::MAX_RENEW)) {
             return false;
         }
         $windowStart = (clone $annonce->getExpiresAt())

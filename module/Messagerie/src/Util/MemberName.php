@@ -14,7 +14,7 @@ final class MemberName
     public static function of(?User $user): string
     {
         if (!$user) {
-            return 'Membre supprimé';
+            return 'Compte supprimé';
         }
         $nickname = trim((string) $user->getNickname());
         return $nickname !== '' ? $nickname : trim((string) $user->getFirstname());

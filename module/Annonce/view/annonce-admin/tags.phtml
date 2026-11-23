@@ -31,7 +31,7 @@
                             <input type="hidden" name="id" value="<?= (int) $tag->getId() ?>">
                             <input type="text" name="label" class="form-control form-control-sm" style="flex: 1 1 10rem; min-width: 0;"
                                    maxlength="<?= AnnonceTag::LABEL_MAX ?>" required value="<?= $this->escapeHtmlAttr($tag->getLabel()) ?>">
-                            <div class="form-check form-switch mb-0" title="Proposée aux membres">
+                            <div class="form-check form-switch mb-0" title="Proposée aux utilisateurs">
                                 <input class="form-check-input" type="checkbox" name="is_active" value="1" id="active<?= (int) $tag->getId() ?>" <?= $tag->isActive() ? 'checked' : '' ?>>
                                 <label class="form-check-label small" for="active<?= (int) $tag->getId() ?>">Active</label>
                             </div>

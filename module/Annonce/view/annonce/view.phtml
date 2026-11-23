@@ -38,13 +38,15 @@ $photos = $annonce->getPhotos()->toArray();
         <?php if (!$annonce->isOnline()): ?>
             <div class="alert alert-secondary small py-2">
                 <?php if ($annonce->isExpired()): ?>
-                    Annonce expirée le <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?> : elle n'est plus visible des autres membres.
+                    Annonce expirée le <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?> : elle n'est plus visible des autres utilisateurs.
+                <?php elseif ($annonce->isPending()): ?>
+                    Annonce en attente de validation par la modération : elle sera visible des autres utilisateurs une fois validée.
                 <?php elseif ($annonce->isHidden()): ?>
                     Annonce masquée suite à des signalements, en attente de vérification par la modération.
                 <?php elseif ($annonce->getStatus() === \Annonce\Entity\Annonce::STATUS_REMOVED): ?>
-                    Annonce retirée par la modération : elle n'est plus visible des autres membres.
+                    Annonce retirée par la modération : elle n'est plus visible des autres utilisateurs.
                 <?php else: ?>
-                    Annonce retirée : elle n'est plus visible des autres membres.
+                    Annonce retirée : elle n'est plus visible des autres utilisateurs.
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -71,6 +73,23 @@ $photos = $annonce->getPhotos()->toArray();
                 · jusqu'au <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?>
             <?php endif; ?>
         </div>
+
+        <?php // Trace de moderation : GOD et moderateurs seulement ?>
+        <?php if ($this->currentUser && $this->currentUser->canModerate() && $annonce->getModeratedAt()): ?>
+            <?php
+            $decisions = [
+                \Annonce\Entity\Annonce::STATUS_ONLINE => 'Validée',
+                \Annonce\Entity\Annonce::STATUS_REMOVED => 'Retirée',
+                \Annonce\Entity\Annonce::STATUS_PENDING => 'Modifiée depuis la dernière validation, en attente',
+            ];
+            ?>
+            <div class="small text-muted mb-3">
+                <i class="fa-solid fa-shield-halved me-1"></i>
+                <?= $this->escapeHtml($decisions[$annonce->getStatus()] ?? 'Modérée') ?>
+                par <?= $this->escapeHtml(\Messagerie\Util\MemberName::of($annonce->getModeratedBy())) ?>
+                le <?= $this->escapeHtml($annonce->getModeratedAt()->format('d/m/Y à H:i')) ?>
+            </div>
+        <?php endif; ?>
 
         <?php if ($isOwner): ?>
             <div class="d-flex flex-wrap" style="gap: .5rem;">

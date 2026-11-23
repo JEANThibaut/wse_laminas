@@ -160,6 +160,10 @@ class UserController extends AbstractActionController
                     if ($currentUser && $currentUser->isGod() && isset($data['isSuperAdmin'])) {
                         $user->setSuperAdmin(InputSanitizer::cleanBool($data['isSuperAdmin']));
                     }
+                    // Moderateur : attribue par le GOD seulement
+                    if ($currentUser && $currentUser->isGod() && isset($data['isModerator'])) {
+                        $user->setModerator((bool) InputSanitizer::cleanBool($data['isModerator']));
+                    }
                     $user->setIsAdmin(InputSanitizer::cleanBool($data['isAdmin'] ?? 0));
                     $user->setIsMember(InputSanitizer::cleanBool($data['isMember'] ?? 0));
                     $user->setIsBlacklist(InputSanitizer::cleanBool($data['isBlacklist'] ?? 0));

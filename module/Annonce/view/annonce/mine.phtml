@@ -35,6 +35,8 @@
                                     <span class="text-success">En ligne</span> jusqu'au <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?>
                                 <?php elseif ($annonce->isExpired()): ?>
                                     <span class="text-danger">Expirée</span> depuis le <?= $this->escapeHtml($annonce->getExpiresAt()->format('d/m/Y')) ?>
+                                <?php elseif ($annonce->isPending()): ?>
+                                    <span class="text-primary">En attente de validation</span>
                                 <?php elseif ($annonce->isHidden()): ?>
                                     <span class="text-warning">Masquée</span> : en attente de vérification par la modération
                                 <?php elseif ($annonce->getStatus() === \Annonce\Entity\Annonce::STATUS_REMOVED): ?>

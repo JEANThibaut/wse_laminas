@@ -33,7 +33,7 @@
         <h5 class="mb-2">Dernières acceptations (version en vigueur)</h5>
         <div class="table-responsive">
             <table class="table table-sm small mb-0">
-                <thead><tr><th>Membre</th><th>Date</th><th>IP</th></tr></thead>
+                <thead><tr><th>Utilisateur</th><th>Date</th><th>IP</th></tr></thead>
                 <tbody>
                 <?php foreach ($acceptances as $acceptance): ?>
                     <?php $member = $acceptance->getUser(); ?>
@@ -53,13 +53,13 @@
     <h5 class="mb-1">Publier une nouvelle version</h5>
     <p class="small text-muted">
         Texte en HTML (titres <code>&lt;h5&gt;</code>, paragraphes <code>&lt;p&gt;</code>, listes…). Une version publiée n'est plus
-        modifiable : c'est la preuve de ce que les membres ont accepté. <strong>Tous les membres devront accepter la nouvelle version.</strong>
+        modifiable : c'est la preuve de ce que les utilisateurs ont accepté. <strong>Tous les utilisateurs devront accepter la nouvelle version.</strong>
     </p>
     <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces-cgu')) ?>">
         <textarea name="content" class="form-control font-monospace small mb-3" rows="16" required><?= $current ? $this->escapeHtml($current->getContent()) : '' ?></textarea>
         <div class="form-check mb-3">
             <input class="form-check-input" type="checkbox" name="confirm" value="1" id="confirmPublish" required>
-            <label class="form-check-label small" for="confirmPublish">Je publie une nouvelle version : tous les membres devront l'accepter à nouveau.</label>
+            <label class="form-check-label small" for="confirmPublish">Je publie une nouvelle version : tous les utilisateurs devront l'accepter à nouveau.</label>
         </div>
         <button type="submit" class="btn btn-warning">Publier la version <?= $current ? $current->getVersion() + 1 : 1 ?></button>
     </form>

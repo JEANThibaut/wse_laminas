@@ -260,7 +260,9 @@ class AnnonceController extends AbstractActionController
             $files = $request->getFiles()->toArray();
             $result = $this->annonceManager->save($annonce, $user, $post, $this->normalizeUploads($files['photos'] ?? []));
             if (!$result['errors']) {
-                $this->flashMessenger()->addSuccessMessage($annonce ? 'Annonce enregistrée.' : 'Annonce publiée !');
+                $this->flashMessenger()->addSuccessMessage($result['annonce']->isPending()
+                    ? 'Annonce envoyée : elle sera visible après validation par la modération.'
+                    : ($annonce ? 'Annonce enregistrée.' : 'Annonce publiée !'));
                 return $this->redirect()->toRoute('annonces-view', ['id' => $result['annonce']->getId()]);
             }
             $errors = $result['errors'];
@@ -328,7 +330,7 @@ class AnnonceController extends AbstractActionController
 
     private function canSee(Annonce $annonce, ?User $user): bool
     {
-        return $annonce->isOnline() || $annonce->isOwnedBy($user) || ($user && $user->isGod());
+        return $annonce->isOnline() || $annonce->isOwnedBy($user) || ($user && $user->canModerate());
     }
 
     private function findAnnonce(int $id): ?Annonce

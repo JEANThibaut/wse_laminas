@@ -78,6 +78,14 @@ $generatedPasswords = $this->flashMessenger()->setNamespace('generatedPassword')
                 </select>
                 <div class="form-text">Toujours admin, plus les fonctionnalités en test ouvertes aux super-admins (config features). Retirer le super-admin laisse les droits admin.</div>
             </div>
+            <div class="form-group mt-3">
+                <label for="isModerator">Modérateur</label>
+                <select class="form-control" name="isModerator" id="isModerator">
+                    <option value="1" <?= $user->isModerator() ? 'selected' : '' ?>>Oui</option>
+                    <option value="0" <?= !$user->isModerator() ? 'selected' : '' ?>>Non</option>
+                </select>
+                <div class="form-text">Traite les signalements et valide les petites annonces (menu Modération), sans le GOD MODE. Ne peut pas bloquer un compte.</div>
+            </div>
             <?php endif; ?>
         </div>
 

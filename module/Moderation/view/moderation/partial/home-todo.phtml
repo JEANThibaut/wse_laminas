@@ -1,0 +1,25 @@
+<?php
+/**
+ * Accueil, tout en haut : ce qui attend la moderation (GOD et moderateurs).
+ * $todo : resultat du helper moderationTodo ; null ou rien en attente : rien d'affiche.
+ */
+?>
+<?php if ($todo && $todo['total'] > 0): ?>
+    <a href="<?= $this->escapeHtmlAttr($this->url('admin-moderation')) ?>" class="card text-decoration-none text-dark border-start border-4 border-danger" style="padding: .75rem;">
+        <div class="d-flex align-items-center" style="gap: .75rem;">
+            <span class="badge rounded-pill bg-danger fs-6"><?= (int) $todo['total'] ?></span>
+            <div class="flex-grow-1">
+                <div class="fw-semibold">À traiter</div>
+                <div class="small">
+                    <?php if ($todo['pending'] > 0): ?>
+                        <span class="d-block"><i class="fa-solid fa-hourglass-half me-1"></i><?= (int) $todo['pending'] ?> annonce<?= $todo['pending'] > 1 ? 's' : '' ?> à valider</span>
+                    <?php endif; ?>
+                    <?php if ($todo['reports'] > 0): ?>
+                        <span class="d-block"><i class="fa-solid fa-flag me-1"></i><?= (int) $todo['reports'] ?> signalement<?= $todo['reports'] > 1 ? 's' : '' ?> en attente</span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-muted"></i>
+        </div>
+    </a>
+<?php endif; ?>

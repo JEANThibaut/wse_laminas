@@ -108,7 +108,11 @@
         });
     }
 
+    // Photos nouvellement choisies (deja redimensionnees), pour l'apercu avant publication
+    var newFiles = [];
+
     function showPreview(files) {
+        newFiles = files;
         preview.innerHTML = '';
         files.forEach(function (file) {
             var img = document.createElement('img');
@@ -151,13 +155,147 @@
         });
     }
 
+    // ---------------------------------------------------------------
+    // Apercu avant publication : le bouton du formulaire ouvre l'apercu,
+    // seul le bouton de confirmation envoie vraiment le formulaire.
+    // Construit avec textContent : aucun texte saisi n'est interprete en HTML.
+    // ---------------------------------------------------------------
+    var modalElement = document.getElementById('annoncePreview');
+    var confirmButton = document.getElementById('previewConfirm');
+    var confirmed = false;
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) { node.className = className; }
+        if (text !== undefined) { node.textContent = text; }
+        return node;
+    }
+
+    function priceText() {
+        if (free && free.checked) { return 'À donner'; }
+        var value = parseInt(price ? price.value : '', 10);
+        return isNaN(value) ? '' : value.toLocaleString('fr-FR') + ' €';
+    }
+
+    // Photos telles qu'elles apparaitront : celles gardees, puis les nouvelles
+    function photoUrls() {
+        var urls = [];
+        form.querySelectorAll('.js-remove-photo').forEach(function (box) {
+            var img = box.closest('label') ? box.closest('label').querySelector('img') : null;
+            if (img && !box.checked) { urls.push(img.src); }
+        });
+        newFiles.forEach(function (file) { urls.push(URL.createObjectURL(file)); });
+        return urls;
+    }
+
+    function selectedTags() {
+        var labels = [];
+        form.querySelectorAll('input[name="tags[]"]:checked').forEach(function (box) {
+            var label = form.querySelector('label[for="' + box.id + '"]');
+            if (label) { labels.push(label.textContent.trim()); }
+        });
+        return labels;
+    }
+
+    function buildPreview() {
+        var title = document.getElementById('title').value.trim();
+        var urls = photoUrls();
+        var today = new Date();
+        var day = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0');
+
+        // Vignette de la liste
+        var card = el('div', 'card annonce-card mb-0');
+        if (urls[0]) {
+            var cover = el('img', 'annonce-cover');
+            cover.src = urls[0];
+            cover.alt = '';
+            card.appendChild(cover);
+        } else {
+            var empty = el('div', 'annonce-cover-empty');
+            empty.appendChild(el('i', 'fa-regular fa-image'));
+            card.appendChild(empty);
+        }
+        var body = el('div', 'annonce-card-body');
+        body.appendChild(el('div', 'annonce-card-title', title));
+        var line = el('div', 'd-flex justify-content-between align-items-end mt-1');
+        line.appendChild(el('span', 'annonce-price', priceText()));
+        line.appendChild(el('small', 'text-muted', day));
+        body.appendChild(line);
+        card.appendChild(body);
+        var cardBox = document.getElementById('previewCard');
+        cardBox.innerHTML = '';
+        cardBox.appendChild(card);
+
+        // Fiche
+        var view = el('div', 'card p-0 mb-0');
+        if (urls.length) {
+            var carousel = el('div', 'carousel slide annonce-carousel');
+            carousel.id = 'previewCarousel';
+            var inner = el('div', 'carousel-inner');
+            urls.forEach(function (url, index) {
+                var item = el('div', 'carousel-item' + (index === 0 ? ' active' : ''));
+                var img = el('img');
+                img.src = url;
+                img.alt = 'Photo ' + (index + 1);
+                item.appendChild(img);
+                inner.appendChild(item);
+            });
+            carousel.appendChild(inner);
+            if (urls.length > 1) {
+                [['prev', 'Précédente'], ['next', 'Suivante']].forEach(function (pair) {
+                    var control = el('button', 'carousel-control-' + pair[0]);
+                    control.type = 'button';
+                    control.setAttribute('data-bs-target', '#previewCarousel');
+                    control.setAttribute('data-bs-slide', pair[0]);
+                    control.appendChild(el('span', 'carousel-control-' + pair[0] + '-icon'));
+                    control.appendChild(el('span', 'visually-hidden', pair[1]));
+                    carousel.appendChild(control);
+                });
+            }
+            view.appendChild(carousel);
+        }
+        var content = el('div', 'p-3');
+        content.appendChild(el('h4', 'mb-1 text-break', title));
+        var priceLine = el('div', 'fs-5 mb-2');
+        priceLine.appendChild(el('span', 'annonce-price', priceText()));
+        content.appendChild(priceLine);
+        var tags = selectedTags();
+        if (tags.length) {
+            var tagLine = el('div', 'd-flex flex-wrap mb-3');
+            tagLine.style.gap = '.25rem';
+            tags.forEach(function (tag) { tagLine.appendChild(el('span', 'badge bg-secondary', tag)); });
+            content.appendChild(tagLine);
+        }
+        content.appendChild(el('div', 'annonce-description mb-3', description ? description.value.trim() : ''));
+        content.appendChild(el('div', 'small text-muted', (form.dataset.seller || 'Vous') + ' · publiée le ' + day + '/' + today.getFullYear()));
+        view.appendChild(content);
+        var viewBox = document.getElementById('previewView');
+        viewBox.innerHTML = '';
+        viewBox.appendChild(view);
+    }
+
+    // Bootstrap est charge apres ce script (bas du layout) : ne pas le tester ici
+    if (modalElement && confirmButton) {
+        confirmButton.addEventListener('click', function () {
+            confirmed = true;
+            confirmButton.disabled = true;
+            confirmButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Envoi…';
+            submit.disabled = true;
+            // submit() n'est pas intercepte : le formulaire part tel quel
+            form.submit();
+        });
+    }
+
     form.addEventListener('submit', function (event) {
-        if (pending) {
-            event.preventDefault();
-            pending.then(function () { form.submit(); });
+        // Sans fenetre d'apercu (script Bootstrap absent) : envoi direct, comme avant
+        if (confirmed || !modalElement || !window.bootstrap) {
+            submit.disabled = true;
             return;
         }
-        submit.disabled = true;
-        submit.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Envoi…';
+        event.preventDefault();
+        (pending || Promise.resolve()).then(function () {
+            buildPreview();
+            bootstrap.Modal.getOrCreateInstance(modalElement).show();
+        });
     });
 })();

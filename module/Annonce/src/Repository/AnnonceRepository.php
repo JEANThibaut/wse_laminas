@@ -51,17 +51,18 @@ class AnnonceRepository extends EntityRepository
     }
 
     /**
-     * Annonces comptant dans le quota : en ligne et non expirees.
+     * Annonces comptant dans le quota : en ligne et non expirees, ou en
+     * attente de validation (sinon on pourrait en deposer sans limite).
      */
     public function countOnlineByOwner(User $user): int
     {
         return (int) $this->createQueryBuilder('a')
             ->select('COUNT(a.id)')
             ->where('a.user = :user')
-            ->andWhere('a.status = :online')
-            ->andWhere('a.expiresAt > :now')
+            ->andWhere('(a.status = :online AND a.expiresAt > :now) OR a.status = :pending')
             ->setParameter('user', $user)
             ->setParameter('online', Annonce::STATUS_ONLINE)
+            ->setParameter('pending', Annonce::STATUS_PENDING)
             ->setParameter('now', new \DateTime())
             ->getQuery()
             ->getSingleScalarResult();

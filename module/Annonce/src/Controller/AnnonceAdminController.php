@@ -57,6 +57,7 @@ class AnnonceAdminController extends AbstractActionController
                     $this->settings->set($key, (string) InputSanitizer::cleanInt($value));
                 }
             }
+            $this->settings->set(AnnonceSettings::REQUIRE_VALIDATION, $request->getPost(AnnonceSettings::REQUIRE_VALIDATION) ? '1' : '0');
             $this->flashMessenger()->addSuccessMessage('Réglages enregistrés.');
             return $this->redirect()->toRoute('admin-annonces');
         }
@@ -65,7 +66,10 @@ class AnnonceAdminController extends AbstractActionController
         foreach (array_keys(AnnonceSettings::EDITABLE) as $key) {
             $values[$key] = $this->settings->getInt($key);
         }
-        return $this->page('annonce-admin/settings', ['values' => $values]);
+        return $this->page('annonce-admin/settings', [
+            'values' => $values,
+            'requireValidation' => $this->settings->requiresValidation(),
+        ]);
     }
 
     /**
@@ -181,7 +185,7 @@ class AnnonceAdminController extends AbstractActionController
             if ($content === '') {
                 $this->flashMessenger()->addErrorMessage('Le texte des conditions est obligatoire.');
             } elseif (!$request->getPost('confirm')) {
-                $this->flashMessenger()->addErrorMessage('Cochez la confirmation : tous les membres devront accepter à nouveau.');
+                $this->flashMessenger()->addErrorMessage('Cochez la confirmation : tous les utilisateurs devront accepter à nouveau.');
             } else {
                 $version = $this->cguService->publish($content);
                 $this->flashMessenger()->addSuccessMessage('Version ' . $version->getVersion() . ' publiée.');

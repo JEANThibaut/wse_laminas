@@ -2,6 +2,7 @@
 namespace Moderation\Controller;
 
 use Annonce\Entity\Annonce;
+use Annonce\Service\AnnonceManager;
 use Application\Service\AuthService;
 use Application\Util\InputSanitizer;
 use Doctrine\ORM\EntityManager;
@@ -16,8 +17,9 @@ use Moderation\Service\SanctionService;
 use User\Entity\User;
 
 /**
- * GOD MODE > Signalements : file des signalements en attente, decision,
- * historique des sanctions, lecture d'une conversation signalee.
+ * Moderation (GOD et moderateurs) : annonces a valider, signalements en
+ * attente, decision, historique des sanctions, lecture d'une conversation
+ * signalee. Le blocage de compte (et sa levee) reste reserve au GOD.
  */
 class ModerationAdminController extends AbstractActionController
 {
@@ -26,46 +28,52 @@ class ModerationAdminController extends AbstractActionController
     private ReportService $reportService;
     private SanctionService $sanctionService;
     private ModerationManager $moderation;
+    private AnnonceManager $annonceManager;
 
     public function __construct(
         EntityManager $entityManager,
         AuthService $authService,
         ReportService $reportService,
         SanctionService $sanctionService,
-        ModerationManager $moderation
+        ModerationManager $moderation,
+        AnnonceManager $annonceManager
     ) {
         $this->entityManager = $entityManager;
         $this->authService = $authService;
         $this->reportService = $reportService;
         $this->sanctionService = $sanctionService;
         $this->moderation = $moderation;
+        $this->annonceManager = $annonceManager;
     }
 
     public function queueAction()
     {
-        if (!$admin = $this->god()) {
+        if (!$moderator = $this->moderator()) {
             return $this->denied();
         }
         $queue = $this->reportService->pendingQueue();
         $authors = [];
         foreach ($queue as $key => $group) {
-            $author = $group['annonce'] ? $group['annonce']->getUser() : $group['message']->getSender();
-            $authors[$key] = $author ? [
-                'user' => $author,
-                'suggested' => $this->sanctionService->suggestedType($author),
-                'history' => $this->sanctionService->history($author),
-            ] : null;
+            $authors[$key] = $this->authorInfo($group['annonce'] ? $group['annonce']->getUser() : $group['message']->getSender());
+        }
+        $pending = $this->annonceManager->pendingAnnonces();
+        $pendingAuthors = [];
+        foreach ($pending as $annonce) {
+            $pendingAuthors[$annonce->getId()] = $this->authorInfo($annonce->getUser());
         }
         return $this->page('moderation-admin/queue', [
             'queue' => $queue,
             'authors' => $authors,
+            'pending' => $pending,
+            'pendingAuthors' => $pendingAuthors,
             'suspensionDays' => $this->moderation->suspensionDays(),
+            'canBlacklist' => $moderator->isGod(),
         ]);
     }
 
     public function decideAction()
     {
-        if (!$admin = $this->god()) {
+        if (!$moderator = $this->moderator()) {
             return $this->denied();
         }
         $request = $this->getRequest();
@@ -73,16 +81,19 @@ class ModerationAdminController extends AbstractActionController
             [$type, $id] = array_pad(explode('-', (string) $request->getPost('target'), 2), 2, 0);
             $annonce = $type === 'annonce' ? $this->entityManager->getRepository(Annonce::class)->find((int) $id) : null;
             $message = $type === 'message' ? $this->entityManager->getRepository(Message::class)->find((int) $id) : null;
+            $sanction = (string) $request->getPost('sanction', ModerationManager::NO_SANCTION);
             if (!$annonce && !$message) {
                 $this->flashMessenger()->addErrorMessage('Cible introuvable.');
+            } elseif ($sanction === Sanction::TYPE_BLACKLIST && !$moderator->isGod()) {
+                $this->flashMessenger()->addErrorMessage('Le blocage de compte est réservé au GOD.');
             } else {
                 $summary = $this->moderation->decide(
-                    $admin,
+                    $moderator,
                     $annonce,
                     $message,
                     $request->getPost('decision') === ModerationManager::DECISION_REMOVE ? ModerationManager::DECISION_REMOVE : ModerationManager::DECISION_DISMISS,
                     (string) $request->getPost('motive'),
-                    (string) $request->getPost('sanction', ModerationManager::NO_SANCTION),
+                    $sanction,
                     InputSanitizer::cleanInt($request->getPost('days'))
                 );
                 $this->flashMessenger()->addSuccessMessage($summary);
@@ -91,22 +102,45 @@ class ModerationAdminController extends AbstractActionController
         return $this->redirect()->toRoute('admin-moderation');
     }
 
-    public function sanctionsAction()
+    /**
+     * Validation d'une annonce en attente : elle passe en ligne.
+     */
+    public function approveAction()
     {
-        if (!$this->god()) {
+        if (!$moderator = $this->moderator()) {
             return $this->denied();
         }
-        return $this->page('moderation-admin/sanctions', ['sanctions' => $this->sanctionService->recent()]);
+        $request = $this->getRequest();
+        $annonce = $request->isPost() ? $this->entityManager->getRepository(Annonce::class)->find(InputSanitizer::cleanInt($request->getPost('id'))) : null;
+        if ($annonce && $this->annonceManager->approve($annonce, $moderator)) {
+            $this->flashMessenger()->addSuccessMessage('Annonce validée : elle est en ligne.');
+        } else {
+            $this->flashMessenger()->addErrorMessage('Annonce introuvable ou déjà traitée.');
+        }
+        return $this->redirect()->toRoute('admin-moderation');
+    }
+
+    public function sanctionsAction()
+    {
+        if (!$moderator = $this->moderator()) {
+            return $this->denied();
+        }
+        return $this->page('moderation-admin/sanctions', [
+            'sanctions' => $this->sanctionService->recent(),
+            'canBlacklist' => $moderator->isGod(),
+        ]);
     }
 
     public function revokeAction()
     {
-        if (!$this->god()) {
+        if (!$moderator = $this->moderator()) {
             return $this->denied();
         }
         $request = $this->getRequest();
         $sanction = $request->isPost() ? $this->entityManager->getRepository(Sanction::class)->find(InputSanitizer::cleanInt($request->getPost('id'))) : null;
-        if ($sanction) {
+        if ($sanction && $sanction->getType() === Sanction::TYPE_BLACKLIST && !$moderator->isGod()) {
+            $this->flashMessenger()->addErrorMessage('Seul le GOD peut débloquer un compte.');
+        } elseif ($sanction) {
             $this->sanctionService->revoke($sanction);
             $this->flashMessenger()->addSuccessMessage('Sanction levée.');
         }
@@ -118,7 +152,7 @@ class ModerationAdminController extends AbstractActionController
      */
     public function conversationAction()
     {
-        if (!$this->god()) {
+        if (!$this->moderator()) {
             return $this->denied();
         }
         $conversation = $this->entityManager->getRepository(Conversation::class)->find(InputSanitizer::cleanInt($this->params()->fromRoute('id')));
@@ -132,10 +166,22 @@ class ModerationAdminController extends AbstractActionController
         ]);
     }
 
-    private function god(): ?User
+    private function authorInfo(?User $author): ?array
+    {
+        return $author ? [
+            'user' => $author,
+            'suggested' => $this->sanctionService->suggestedType($author),
+            'history' => $this->sanctionService->history($author),
+        ] : null;
+    }
+
+    /**
+     * Compte connecte s'il peut moderer (GOD ou moderateur), sinon null.
+     */
+    private function moderator(): ?User
     {
         $user = $this->authService->getIdentity();
-        return $user instanceof User && $user->isGod() ? $user : null;
+        return $user instanceof User && $user->canModerate() && !$user->isBlocked() ? $user : null;
     }
 
     private function denied()

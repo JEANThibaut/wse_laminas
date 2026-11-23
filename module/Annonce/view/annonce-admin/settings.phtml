@@ -12,6 +12,14 @@
     </div>
 
     <form method="post" action="<?= $this->escapeHtmlAttr($this->url('admin-annonces')) ?>">
+        <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" role="switch" id="require_validation" name="require_validation" value="1" <?= $requireValidation ? 'checked' : '' ?>>
+            <label class="form-check-label fw-semibold small" for="require_validation">Validation avant publication</label>
+            <div class="form-text">
+                Toute annonce créée ou modifiée attend la validation d'un modérateur (Modération / GOD MODE &gt; Signalements)
+                avant d'être visible. Désactivé : publication immédiate, contrôle par les signalements.
+            </div>
+        </div>
         <?php foreach (AnnonceSettings::EDITABLE as $key => [$label, $default, $min, $max]): ?>
             <div class="mb-3">
                 <label for="<?= $key ?>" class="form-label small fw-semibold mb-1"><?= $this->escapeHtml($label) ?></label>

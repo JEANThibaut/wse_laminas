@@ -4,7 +4,7 @@ use Messagerie\Entity\Message;
 use Messagerie\Service\MessagerieManager;
 
 $audiences = [
-    MessagerieManager::AUDIENCE_ONE => 'Un membre',
+    MessagerieManager::AUDIENCE_ONE => 'Un utilisateur',
     MessagerieManager::AUDIENCE_MEMBERS => 'Membres de l’association (' . (int) $counts[MessagerieManager::AUDIENCE_MEMBERS] . ')',
     MessagerieManager::AUDIENCE_ALL => 'Tous les comptes validés (' . (int) $counts[MessagerieManager::AUDIENCE_ALL] . ')',
 ];
@@ -27,7 +27,7 @@ $audiences = [
         </div>
 
         <div class="mb-3" id="oneUser">
-            <label class="form-label small fw-semibold mb-1" for="user_id">Membre</label>
+            <label class="form-label small fw-semibold mb-1" for="user_id">Utilisateur</label>
             <select name="user_id" id="user_id" class="form-select">
                 <option value="">Choisir…</option>
                 <?php foreach ($users as $option): ?>

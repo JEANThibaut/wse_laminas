@@ -13,7 +13,8 @@ $routes = [
     // GOD MODE > Signalements
     ['admin-moderation', Literal::class, '/admin/signalements', Controller\ModerationAdminController::class, 'queue'],
     ['admin-moderation-decide', Literal::class, '/admin/signalements/decision', Controller\ModerationAdminController::class, 'decide'],
-    ['admin-moderation-sanctions', Literal::class, '/admin/signalements/sanctions', Controller\ModerationAdminController::class, 'sanctions'],
+    ['admin-moderation-approve', Literal::class, '/admin/signalements/valider', Controller\ModerationAdminController::class, 'approve'],
+    ['admin-moderation-sanctions',Literal::class, '/admin/signalements/sanctions', Controller\ModerationAdminController::class, 'sanctions'],
     ['admin-moderation-revoke', Literal::class, '/admin/signalements/sanctions/lever', Controller\ModerationAdminController::class, 'revoke'],
     ['admin-moderation-conversation', Segment::class, '/admin/signalements/conversation/:id', Controller\ModerationAdminController::class, 'conversation'],
 ];
@@ -46,10 +47,10 @@ return [
     ],
     'view_helpers' => [
         'aliases' => [
-            'pendingReports' => View\Helper\PendingReports::class,
+            'moderationTodo' => View\Helper\ModerationTodo::class,
         ],
         'factories' => [
-            View\Helper\PendingReports::class => ReflectionBasedAbstractFactory::class,
+            View\Helper\ModerationTodo::class => ReflectionBasedAbstractFactory::class,
         ],
     ],
     'view_manager' => [

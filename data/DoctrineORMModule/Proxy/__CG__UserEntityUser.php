@@ -532,6 +532,39 @@ class User extends \User\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function isModerator(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'isModerator', []);
+
+        return parent::isModerator();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function canModerate(): bool
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'canModerate', []);
+
+        return parent::canModerate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setModerator(bool $moderator): \User\Entity\User
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setModerator', [$moderator]);
+
+        return parent::setModerator($moderator);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setSuperAdmin(bool $superAdmin): \User\Entity\User
     {
 

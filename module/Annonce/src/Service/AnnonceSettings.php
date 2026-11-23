@@ -28,13 +28,20 @@ class AnnonceSettings
     public const SUSPENSION_DAYS = 'suspension_days';
     // Date de la derniere purge automatique (interne)
     public const LAST_PURGE = 'last_purge';
+    // Validation avant publication : "1" = toute annonce creee ou modifiee attend la moderation
+    public const REQUIRE_VALIDATION = 'require_validation';
+
+    public function requiresValidation(): bool
+    {
+        return $this->get(self::REQUIRE_VALIDATION) === '1';
+    }
 
     /**
      * Reglages entiers modifiables : cle => [libelle, defaut, minimum, maximum].
      */
     public const EDITABLE = [
         self::MIN_DAYS => ["Ancienneté minimale pour publier sans avoir joué (jours)", 30, 0, 365],
-        self::MAX_ONLINE => ['Annonces en ligne par membre', 3, 1, 20],
+        self::MAX_ONLINE => ['Annonces en ligne par utilisateur', 3, 1, 20],
         self::DURATION_DAYS => ["Durée de vie d'une annonce (jours)", 30, 1, 365],
         self::MAX_RENEW => ['Renouvellements possibles par annonce', 1, 0, 10],
         self::RENEW_WINDOW_DAYS => ["Renouvellement proposé avant l'expiration (jours)", 7, 0, 60],
