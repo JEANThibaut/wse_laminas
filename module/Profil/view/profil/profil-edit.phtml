@@ -22,7 +22,7 @@
 
         <div class="col-md-6">
             <label for="birthdate" class="form-label">Date de naissance</label>
-            <input type="date" class="form-control" id="birthdate" name="birthdate"
+            <input type="date" class="form-control" id="birthdate" name="birthdate" max="<?= \Application\Util\Age::latestBirthdate() ?>"
                    value="<?= $this->escapeHtmlAttr($user->getBirthdate() ? $user->getBirthdate()->format('Y-m-d') : '') ?>" required>
         </div>
 

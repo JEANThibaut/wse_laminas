@@ -39,7 +39,8 @@
                         <div class="col-4">
                             <select name="birthday_year" class="form-control" required>
                                 <option value="">Année</option>
-                                <?php for ($y = date('Y'); $y >= 1950; $y--): ?>
+                                <?php // Site reserve aux majeurs : pas d'annee de naissance trop recente ?>
+                                <?php for ($y = (int) date('Y') - \Application\Util\Age::ADULT; $y >= 1950; $y--): ?>
                                     <option value="<?= $this->escapeHtmlAttr($y) ?>"><?= $this->escapeHtml($y) ?></option>
                                 <?php endfor; ?>
                             </select>

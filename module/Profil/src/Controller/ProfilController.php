@@ -8,6 +8,7 @@ use Profil\Entity\Replique;
 use User\Entity\User;
 use Game\Entity\GameRegister;
 use Application\Util\InputSanitizer;
+use Application\Util\Age;
 use Application\Service\PushService;
 
 class ProfilController extends AbstractActionController
@@ -84,6 +85,10 @@ class ProfilController extends AbstractActionController
             }
             if (!$birthdate) {
                 $this->flashMessenger()->addErrorMessage("Date de naissance invalide.");
+                return $this->redirect()->toRoute('profil-index');
+            }
+            if (!Age::isAdult($birthdate)) {
+                $this->flashMessenger()->addErrorMessage(Age::MINOR_MESSAGE);
                 return $this->redirect()->toRoute('profil-index');
             }
 

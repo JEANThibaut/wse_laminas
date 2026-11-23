@@ -9,6 +9,7 @@ use Application\Service\AuthService;
 use User\Entity\User;
 use Application\Form\RegisterForm;
 use Application\Util\InputSanitizer;
+use Application\Util\Age;
 use Laminas\Session\Container;
 
 class AuthController extends AbstractActionController
@@ -243,6 +244,8 @@ class AuthController extends AbstractActionController
             }
             if (!checkdate($birthday_month, $birthday_day, $birthday_year)) {
                 $errors[] = "La date de naissance est invalide.";
+            } elseif (!Age::isAdult(new \DateTimeImmutable(sprintf('%04d-%02d-%02d', $birthday_year, $birthday_month, $birthday_day)))) {
+                $errors[] = Age::MINOR_MESSAGE;
             }
 
             if (!empty($errors)) {
